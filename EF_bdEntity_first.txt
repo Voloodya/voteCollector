@@ -1,0 +1,3 @@
+// Создание db_Context и сущностей по БД
+Scaffold-Dbcontext -provider Pomelo.EntityFrameworkCore.MySql -connection "server=localhost; port=3306; user=root; password=root; database=voterCollector" -OutputDir "Models" -ContextDir "Data" -DataAnnotations
+//

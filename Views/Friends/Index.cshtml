@@ -1,0 +1,173 @@
+﻿@model IEnumerable<voteCollector.Models.Friend>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FamilyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PatronymicName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Building)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Apartment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telephone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Organization)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateRegistrationSite)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VotingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Voter)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Adress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Qrcode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.District)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldActivity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupU)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.House)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MicroDistrict)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PollingStation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FamilyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PatronymicName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Building)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apartment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telephone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Organization)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateRegistrationSite)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VotingDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Voter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Adress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Qrcode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City.IdCity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.District.IdDistrict)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FieldActivity.IdFieldActivity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupU.IdGroup)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.House.IdHouse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MicroDistrict.IdMicroDistrict)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PollingStation.IdPollingStation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Street.IdStreet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Password)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdFriend">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdFriend">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdFriend">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,183 @@
+﻿@model CollectVoters.DTO.RegisterModel
+@{
+    ViewData["Title"] = "Register Page";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" />
+
+<style>
+    .form-width {
+        max-width: 25rem;
+    }
+
+    .has-float-label {
+        position: relative;
+    }
+
+        .has-float-label label {
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: text;
+            font-size: 70%;
+            opacity: 1;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+            top: -.5em;
+            left: 0.70rem;
+            z-index: 3;
+            line-height: 1;
+            padding: 0 1px;
+            white-space: nowrap;
+        }
+
+            .has-float-label label::after {
+                content: " ";
+                display: block;
+                position: absolute;
+                background: white;
+                height: 2px;
+                top: 50%;
+                left: -.2em;
+                right: -.2em;
+                z-index: -1;
+            }
+
+        .has-float-label .form-control::-webkit-input-placeholder {
+            opacity: 1;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+        }
+
+        .has-float-label .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder {
+            opacity: 0;
+        }
+
+        .has-float-label .form-control:placeholder-shown:not(:focus) + label {
+            font-size: 150%;
+            opacity: .5;
+            top: .3em;
+        }
+
+    .input-group .has-float-label {
+        display: table-cell;
+    }
+
+        .input-group .has-float-label .form-control {
+            border-radius: 0.25rem;
+        }
+
+        .input-group .has-float-label:not(:last-child) .form-control {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .input-group .has-float-label:not(:first-child) .form-control {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+            margin-left: -1px;
+        }
+</style>
+
+
+<h2>Регистрация</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-5"></div>
+        <div class="p-x-1 p-y-3">
+            <form class="card card-block m-x-auto bg-faded form-width" asp-action="Register" asp-controller="Account" asp-anti-forgery="true" method="post">
+                <legend class="m-b-1 text-xs-center">Регистрация</legend>
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div class="form-group input-group">
+                    <span class="has-float-label">
+                        <input asp-for="UserName" class="form-control" id="email" type="email" />
+                        <span asp-validation-for="UserName" />
+                        <label asp-for="UserName" for="email">Введите Email</label><br />
+                    </span>
+                </div>
+                <div class="form-group input-group">
+                    <span class="has-float-label">
+                        <input asp-for="Name" class="form-control" id="first" type="text" placeholder="Имя"/>
+                        <span asp-validation-for="Name" />
+                        <label asp-for="Name" for="first">Имя</label>
+                    </span><br />
+                </div>
+                <div>
+                    <span class="has-float-label">
+                        <input asp-for="FamilyName" class="form-control" id="last" type="text" placeholder="Фамилия"/>
+                        <span asp-validation-for="FamilyName" />
+                        <label asp-for="FamilyName" for="last">Фамилия</label>
+                    </span><br />
+                </div>
+                <div class="has-float-label">
+                    <span class="has-float-label">
+                        <label asp-for="Telephone">Телефон:</label>
+                        <input type="text" class="form-control" id="inputTel" asp-for="Telephone" />
+                        <span asp-validation-for="Telephone" />
+                    </span><br />
+                </div>
+                <div class="form-group has-float-label">
+                    <span class="has-float-label">
+                        <label asp-for="Password" for="password">Пароль</label>
+                        <input asp-for="Password" class="form-control" id="password" type="password" />
+                        <span asp-validation-for="Password" />
+                    </span><br />
+                </div>
+                <div class="form-group has-float-label">
+                    <span class="has-float-label">
+                        <label asp-for="ConfirmPassword" for="password2">Повтор пароля</label>
+                        <input asp-for="ConfirmPassword" class="form-control" id="password2" type="password" />
+                        <span asp-validation-for="ConfirmPassword"/>
+                    </span><br />
+                        <!--  <label>
+                  <font size="1" color="red" face="Arial">Пароль должен содержать не менее 8 симв. (лат.). Состоять из лат.симвл. верхнего и нижнего регистра и цифр</font>
+              </label> -->
+                </div>
+                <div class="text-xs-center">
+                    <button class="btn btn-block btn-primary" type="submit">Зарегистрироваться</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@{
+    if (TempData["msg"] != null)
+    {
+        <script>
+            alert('@TempData["msg"]')
+        </script>
+    }
+}
+
+<script>
+    const inputTel = document.querySelector('#inputTel')
+    let msg;
+
+    //Работает
+    inputTel.addEventListener('focusout', event => {
+        let length = inputTel.value.length
+        if (length > 12) msg = 'Количество символов не должно превышать 12!'
+        else if (length < 11) msg = 'Количество символов не должно быть меньше 11!'
+        alert(msg);
+    });
+    //Работает
+    $("#inputTel").on('focusout', funcCount2);
+
+    var funcCount2 = function () {
+        let length = $("#inputTel").text(this.value.length);
+        if (length > 12) msg.textContent = 'Количество символов в номере телефона не должно превышать 12!';
+        else if (length < 11) msg.textContent = 'Количество символов в номере телефона не должно быть меньше 11!';
+        alert(msg.textContent);
+    }
+
+    var funcCount = function () {
+        let length = inputTel.value.length;
+        if (length > 12) msg = 'Количество символов в номере телефона не должно превышать 12!';
+        else if (length < 11) msg = 'Количество символов в номере телефона не должно быть меньше 11!';
+        alert(msg);
+    }
+
+</script>

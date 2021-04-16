@@ -1,0 +1,128 @@
+﻿@model CollectVoters.DTO.LoginModel
+@{
+    ViewData["Title"] = "Login Page";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" />
+
+<style>
+    .form-width {
+        max-width: 25rem;
+    }
+
+    .has-float-label {
+        position: relative;
+    }
+
+        .has-float-label label {
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: text;
+            font-size: 75%;
+            opacity: 1;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+            top: -.5em;
+            left: 0.75rem;
+            z-index: 3;
+            line-height: 1;
+            padding: 0 1px;
+        }
+
+            .has-float-label label::after {
+                content: " ";
+                display: block;
+                position: absolute;
+                background: white;
+                height: 2px;
+                top: 50%;
+                left: -.2em;
+                right: -.2em;
+                z-index: -1;
+            }
+
+        .has-float-label .form-control::-webkit-input-placeholder {
+            opacity: 1;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+        }
+
+        .has-float-label .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder {
+            opacity: 0;
+        }
+
+        .has-float-label .form-control:placeholder-shown:not(:focus) + label {
+            font-size: 150%;
+            opacity: .5;
+            top: .3em;
+        }
+
+    .input-group .has-float-label {
+        display: table-cell;
+    }
+
+        .input-group .has-float-label .form-control {
+            border-radius: 0.25rem;
+        }
+
+        .input-group .has-float-label:not(:last-child) .form-control {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .input-group .has-float-label:not(:first-child) .form-control {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+            margin-left: -1px;
+        }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-5"></div>
+        <div class="p-x-1 p-y-3">
+            <form class="card card-block m-x-auto bg-faded form-width" method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" asp-anti-forgery="true">
+                <legend class="m-b-1 text-xs-center">АВТОРИЗАЦИЯ</legend>
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div class="form-group input-group">
+                    <span class="has-float-label">
+                        <input asp-for="UserName" class="form-control" type="email" id="inputEmail" placeholder="E-mail" />
+                        <span asp-validation-for="UserName"></span>
+                        <i class="fa fa-user"></i>
+                        <label class="control-label">Имя пользователя</label><br />
+                    </span>
+                </div>
+                <div class="form-group input-group">
+                    <span class="has-float-label">
+                        <input asp-for="Password" class="form-control" type="password" id="inputPassword" placeholder="Password" />
+                        <span asp-validation-for="Password"></span>
+                        <i class="fa fa-lock"></i>
+                        <a href="#" class="fa fa-question-circle"></a>
+                        <label for="inputPassword" class="control-label">Пароль</label>
+                    </span><br />
+                </div>
+                <div class="text-xs-center">
+                    <input type="submit" class="btn btn-block btn-primary" value="Войти" />
+                </div>
+                <div class="form-group">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-action="Register" asp-controller="Account">
+                            <font size="2" color="blue" face="Arial">Зарегистрироваться</font>
+                        </a>
+                    </li>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+
+@{
+    if (TempData["msg"] != null)
+    {
+        <script>
+            alert('@TempData["msg"]')
+        </script>
+    }
+}
