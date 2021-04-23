@@ -28,5 +28,6 @@ namespace voteCollector.Models
         public virtual ICollection<Friend> Friends { get; set; }
         [InverseProperty("GroupU")]
         public virtual ICollection<Groupsusers> Groupsusers { get; set; }
+
     }
 }

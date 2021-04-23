@@ -9,13 +9,13 @@ using voteCollector.Models;
 
 namespace voteCollector.Data
 {
-    public partial class voterCollectorContext : DbContext
+    public partial class VoterCollectorContext : DbContext
     {
-        public voterCollectorContext()
+        public VoterCollectorContext()
         {
         }
 
-        public voterCollectorContext(DbContextOptions<voterCollectorContext> options)
+        public VoterCollectorContext(DbContextOptions<VoterCollectorContext> options)
             : base(options)
         {
         }
@@ -413,7 +413,6 @@ namespace voteCollector.Data
 
             OnModelCreatingPartial(modelBuilder);
         }
-
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

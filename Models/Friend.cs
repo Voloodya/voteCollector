@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -51,7 +52,9 @@ namespace voteCollector.Models
         public DateTime? DateRegistrationSite { get; set; }
         [Column("Voting_date", TypeName = "date")]
         public DateTime? VotingDate { get; set; }
-        public sbyte? Voter { get; set; }
+        [DisplayName("Проголос-л")]
+        [Column("Voter", TypeName = "TINYINT")]
+        public bool Voter { get; set; }
         [Column(TypeName = "varchar(500)")]
         public string Adress { get; set; }
         [Column("QRcode", TypeName = "varchar(4500)")]

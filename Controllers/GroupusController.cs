@@ -14,9 +14,9 @@ namespace voteCollector.Controllers
     [Authorize(Roles = "admin")]
     public class GroupusController : Controller
     {
-        private readonly voterCollectorContext _context;
+        private readonly VoterCollectorContext _context;
 
-        public GroupusController(voterCollectorContext context)
+        public GroupusController(VoterCollectorContext context)
         {
             _context = context;
         }

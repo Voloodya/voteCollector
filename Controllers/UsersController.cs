@@ -14,9 +14,9 @@ namespace voteCollector.Controllers
     [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
-        private readonly voterCollectorContext _context;
+        private readonly VoterCollectorContext _context;
 
-        public UsersController(voterCollectorContext context)
+        public UsersController(VoterCollectorContext context)
         {
             _context = context;
         }
@@ -50,7 +50,7 @@ namespace voteCollector.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "IdRole");
+            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name");
             return View();
         }
 
@@ -67,7 +67,7 @@ namespace voteCollector.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "IdRole", user.RoleId);
+            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
         }
 
@@ -84,7 +84,7 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
-            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "IdRole", user.RoleId);
+            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
         }
 
@@ -120,7 +120,7 @@ namespace voteCollector.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "IdRole", user.RoleId);
+            ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
         }
 
@@ -157,6 +157,13 @@ namespace voteCollector.Controllers
         private bool UserExists(long id)
         {
             return _context.User.Any(e => e.IdUser == id);
+        }
+
+        private List<Groupu> GetGroupsUser(string userName)
+        {
+            User userSave = _context.User.Where(u => u.UserName.Equals(userName)).FirstOrDefault();
+            List<Groupsusers> groupsUsers = userSave.Groupsusers.ToList();
+            return groupsUsers.Select(g => g.GroupU).ToList();
         }
     }
 }

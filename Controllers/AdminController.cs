@@ -1,54 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using voteCollector.Data;
 using CollectVoters.DTO;
+using voteCollector.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using voteCollector.Data;
-using voteCollector.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace voteCollector.Controllers
+
+namespace CollectVoters.Controllers
 {
-    [Authorize(Roles = "admin, user")]
-    public class FriendsController : Controller
+    [Authorize(Roles = "admin")]
+    public class AdminController : Controller
     {
-        private readonly ILogger<FriendsController> _logger;
+        private readonly ILogger<AdminController> _logger;
         private readonly VoterCollectorContext _context;
 
-        public FriendsController(VoterCollectorContext context, ILogger<FriendsController> logger)
+        public AdminController(VoterCollectorContext context, ILogger<AdminController> logger)
         {
-            _logger = logger;
             _context = context;
+            _logger = logger;
         }
 
         // GET: Friends
         [HttpGet]
         public async Task<IActionResult> Index()
-        {
-            string userName;
-            // userName=(string)TempData["userName"];
-            userName = User.Identity.Name;
+        {            
+            List<Groupu> groupsUser = GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
-                                    Where(f => f.User.UserName.Equals(userName));
-            return View(await voterCollectorContext.ToListAsync());
+            if (groupsUser.Contains(mainGroup))
+            {
+                var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User);
+
+                return View(await voterCollectorContext.ToListAsync());
+            }
+            else
+            {
+                var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
+                    Where(f => groupsUser.Contains(f.GroupU));
+
+                return View(await voterCollectorContext.ToListAsync());
+            }            
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index([Bind("UserName", "Password", "ReturnUrl")] LoginModel loginViewModel)
         {
-            string userName;
-            // userName=(string)TempData["userName"];
-            userName = User.Identity.Name;
+            List<Groupu> groupsUser = GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
-                                    Where(f => f.User.UserName.Equals(userName));
-            return View(await voterCollectorContext.ToListAsync());
+            if (groupsUser.Contains(mainGroup))
+            {
+                var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User);
+
+                return View(await voterCollectorContext.ToListAsync());
+            }
+            else
+            {
+                var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
+                    Where(f => groupsUser.Contains(f.GroupU));
+
+                return View(await voterCollectorContext.ToListAsync());
+            }
         }
 
         // GET: Friends/Details/5
@@ -180,6 +199,7 @@ namespace voteCollector.Controllers
                         User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                         friend.UserId = userSave.IdUser;
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
+
                         try
                         {
                             _context.Update(friend);
@@ -258,11 +278,18 @@ namespace voteCollector.Controllers
             return _context.Friend.Any(e => e.IdFriend == id);
         }
 
+        [Authorize(Roles = "admin")]
+        public IActionResult About()
+        {
+            return Content("Вход только для администратора");
+        }
+
         private List<Groupu> GetGroupsUser(string userName)
         {
             User userSave = _context.User.Where(u => u.UserName.Equals(userName)).FirstOrDefault();
-            List<Groupsusers> groupsUsers = userSave.Groupsusers.ToList();
+            List<Groupsusers> groupsUsers = _context.Groupsusers.Include(gr => gr.GroupU).Where(gr => gr.UserId == userSave.IdUser).ToList();
             return groupsUsers.Select(g => g.GroupU).ToList();
         }
+
     }
 }

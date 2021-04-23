@@ -137,6 +137,7 @@ create table Friend(
 INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');
 
+INSERT INTO GroupU (Name) VALUES ('Main');
 INSERT INTO GroupU (Name) VALUES ('UIS');
 INSERT INTO GroupU (Name) VALUES ('FinUp');
 
@@ -148,6 +149,7 @@ INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_na
                      'Полиграф','Полиграфович','Шариков','1987.01.01','+00000000000');
                      
 Insert into GroupsUsers(GroupU_id, User_id) values(1,1);
+Insert into GroupsUsers(GroupU_id, User_id) values(3,1);
 Insert into GroupsUsers(GroupU_id, User_id) values(1,2);
 Insert into GroupsUsers(GroupU_id, User_id) values(2,1);
 Insert into GroupsUsers(GroupU_id, User_id) values(1,3);

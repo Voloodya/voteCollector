@@ -1,26 +1,18 @@
 ﻿@model voteCollector.Models.Friend
 
 @{
-    ViewData["Title"] = "Create";
-}
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
-@functions {
-    public string GetAntiXsrfRequestToken()
-    {
-        return Xsrf.GetAndStoreTokens(Context).RequestToken;
-    }
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Create</h1>
+<h1>Edit</h1>
 
 <h4>Friend</h4>
 <hr />
 <div class="row">
-    <input type="hidden" id="RequestVerificationToken"
-           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdFriend" />
             <div class="form-group">
                 <label asp-for="FamilyName" class="control-label"></label>
                 <input asp-for="FamilyName" class="form-control" />
@@ -43,23 +35,28 @@
             </div>
             <div class="form-group">
                 <label asp-for="CityId" class="control-label"></label>
-                <select id="CityId" asp-for="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
+                <select asp-for="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
+                <span asp-validation-for="CityId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DistrictId" class="control-label"></label>
                 <select asp-for="DistrictId" class="form-control" asp-items="ViewBag.DistrictId"></select>
+                <span asp-validation-for="DistrictId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="StreetId" class="control-label"></label>
-                <select id="StreetId" asp-for="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
+                <select asp-for="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
+                <span asp-validation-for="StreetId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MicroDistrictId" class="control-label"></label>
                 <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
+                <span asp-validation-for="MicroDistrictId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="HouseId" class="control-label"></label>
                 <select asp-for="HouseId" class="form-control" asp-items="ViewBag.HouseId"></select>
+                <span asp-validation-for="HouseId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Building" class="control-label"></label>
@@ -79,6 +76,7 @@
             <div class="form-group">
                 <label asp-for="PollingStationId" class="control-label"></label>
                 <select asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStationId"></select>
+                <span asp-validation-for="PollingStationId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Organization" class="control-label"></label>
@@ -88,6 +86,7 @@
             <div class="form-group">
                 <label asp-for="FieldActivityId" class="control-label"></label>
                 <select asp-for="FieldActivityId" class="form-control" asp-items="ViewBag.FieldActivityId"></select>
+                <span asp-validation-for="FieldActivityId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PhoneNumberResponsible" class="control-label"></label>
@@ -101,12 +100,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="VotingDate" class="control-label"></label>
-                <input id="dateVoting" asp-for="VotingDate" class="form-control" />
+                <input asp-for="VotingDate" class="form-control" />
                 <span asp-validation-for="VotingDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Voter" class="control-label"></label>
-                <input id="boolVoter" type="checkbox" asp-for="Voter" class="form-control" onchange="setDate('dateVoting')" />
+                <input asp-for="Voter" class="form-control" />
+                <span asp-validation-for="Voter" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Adress" class="control-label"></label>
+                <input asp-for="Adress" class="form-control" />
+                <span asp-validation-for="Adress" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Qrcode" class="control-label"></label>
@@ -121,13 +126,15 @@
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
                 <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GroupUId" class="control-label"></label>
                 <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
+                <span asp-validation-for="GroupUId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -137,62 +144,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<environment include="Development">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-</environment>
-
 @section Scripts {
-
-    <script>
-        function setDate(idObject) {
-
-            chbox = document.getElementById('boolVoter');
-            if (chbox.checked) {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                var yyyy = today.getFullYear();
-                today = yyyy + '-' + mm + '-' + dd;
-                document.getElementById(idObject).value = today;
-            }
-            else {
-                document.getElementById(idObject).value = null;
-            }
-        }
-
-        $(function () {
-            $("#CityId").change(function () {
-                var formData = new FormData();
-                formData.append('citySelected', { 'CityId': Number.parseInt($('#CityId').val()), 'NameCity':'' });
-                $.ajax({
-                    url: "http://localhost:18246/api/streetsAPI/search",
-                    headers:
-                    {
-                        'Accept': 'application/json',
-                        "RequestVerificationToken": $('#RequestVerificationToken').val()
-                    },
-                    type: 'POST',
-                    contentType: "application/json;charset=utf-8",
-                    data: JSON.stringify(formData),
-                    success: function (data) {
-                        $('#StreetId').replaceWith(data);
-                    },
-                    error: function (result, status, er) {
-                        alert("error: " + result + " status: " + status + " er:" + er);
-                    }
-                });
-            });
-        });
-    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    @{
-        if (TempData["msg"] != null)
-        {
-            <script>
-            alert('@TempData["msg"]')
-            </script>
-        }
-    }
 }
-

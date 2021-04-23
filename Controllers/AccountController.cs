@@ -15,8 +15,8 @@ namespace voteCollector.Controllers
 {
     public class AccountController : Controller
     {
-        private voterCollectorContext db_context;
-        public AccountController(voterCollectorContext context)
+        private VoterCollectorContext db_context;
+        public AccountController(VoterCollectorContext context)
         {
             db_context = context;
         }

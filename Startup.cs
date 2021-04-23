@@ -34,7 +34,7 @@ namespace voteCollector
                     options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/login");
                 });
             //Add
-            services.AddDbContext<voterCollectorContext>();
+            services.AddDbContext<VoterCollectorContext>();
 
             services.AddControllersWithViews();
             //Add

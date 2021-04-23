@@ -14,9 +14,9 @@ namespace voteCollector.Controllers
     [Authorize(Roles = "admin")]
     public class GroupsusersController : Controller
     {
-        private readonly voterCollectorContext _context;
+        private readonly VoterCollectorContext _context;
 
-        public GroupsusersController(voterCollectorContext context)
+        public GroupsusersController(VoterCollectorContext context)
         {
             _context = context;
         }
@@ -51,8 +51,8 @@ namespace voteCollector.Controllers
         // GET: Groupsusers/Create
         public IActionResult Create()
         {
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password");
+            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
             return View();
         }
 
@@ -69,8 +69,8 @@ namespace voteCollector.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", groupsusers.UserId);
+            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -87,8 +87,8 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", groupsusers.UserId);
+            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -124,8 +124,8 @@ namespace voteCollector.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", groupsusers.UserId);
+            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
             return View(groupsusers);
         }
 
