@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace voteCollector.DTO
 {
-    public class CityDTO
+    public class HouseDTO
     {
-        public int CityId { get; set; }
+        public int IdHouse { get; set; }
         public string Name { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using voteCollector.Data;
+using voteCollector.DTO;
 using voteCollector.Models;
 
 namespace voteCollector.Controllers
@@ -83,21 +84,31 @@ namespace voteCollector.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name");
+            int selectedIndexCity = 1;
+            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
-            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
+            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");           
+            ViewData["StreetId"] = new SelectList(_context.Street.Where(s => s.CityId==1), "IdStreet", "Name");
+            //ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
+            SelectList houses= new SelectList(_context.House, "IdHouse", "Name");
+            ViewBag.GetHouses = houses;
             ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name");
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name");
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName");
             return View();
         }
 
+
+        [HttpGet]
+        public IActionResult GetHouses(int? id)
+        {
+            List<House> house = _context.House.Where(h => h.StreetId == id).ToList<House>();
+            return PartialView(_context.House.Where(h => h.StreetId == id));
+        }
+
+
         // POST: Friends/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,DistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,Qrcode,Description,UserId,GroupUId")] Friend friend)

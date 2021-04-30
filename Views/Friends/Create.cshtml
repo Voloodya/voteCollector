@@ -53,13 +53,13 @@
                 <label asp-for="StreetId" class="control-label"></label>
                 <select id="StreetId" asp-for="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="MicroDistrictId" class="control-label"></label>
                 <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="HouseId" class="control-label"></label>
-                <select asp-for="HouseId" class="form-control" asp-items="ViewBag.HouseId"></select>
+                <select asp-for="HouseId" class="form-control" asp-items="ViewBag.GetHouses"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Building" class="control-label"></label>
@@ -78,7 +78,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PollingStationId" class="control-label"></label>
-                <select asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStationId"></select>
+                <select id="PollingStationId" asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStations"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Organization" class="control-label"></label>
@@ -162,20 +162,24 @@
 
         $(function () {
             $("#CityId").change(function () {
-                var formData = new FormData();
-                formData.append('citySelected', { 'CityId': Number.parseInt($('#CityId').val()), 'NameCity':'' });
+                var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': get($('#StreetId').prop('selectedIndex')).textContent};
                 $.ajax({
-                    url: "http://localhost:18246/api/streetsAPI/search",
+                    url: "http://localhost:18246/api/API/searchStreets",
                     headers:
                     {
                         'Accept': 'application/json',
-                        "RequestVerificationToken": $('#RequestVerificationToken').val()
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('#RequestVerificationToken').val()
                     },
                     type: 'POST',
-                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
                     data: JSON.stringify(formData),
                     success: function (data) {
-                        $('#StreetId').replaceWith(data);
+
+                        dataFilling(data, 'idStreet', 'name', '#StreetId', '<option/>');
+                    //    for (var i = 0; i < data.length; i++) {
+                    //        $streets.append('<option value = ' + data[i].idStreet + '>' + data[i].name + '</option>');
+                    //    }
                     },
                     error: function (result, status, er) {
                         alert("error: " + result + " status: " + status + " er:" + er);
@@ -183,6 +187,88 @@
                 });
             });
         });
+
+
+         $(function () {
+             $("#StreetId").change(function () {
+                 var id = $('#StreetId').val();
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetHouses")/' + id,
+                    success: function (data) {
+                        $('#HouseId').replaceWith(data);
+                    },
+                    error: function (result, status, er) {
+                        alert("error: " + result + " status: " + status + " er:" + er);
+                    }
+                });
+            });
+         });
+
+        $(function () {
+            $("#StreetId").change(function () {
+                var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': '' };
+                $.ajax({
+                    url: "http://localhost:18246/api/API/searchPollingStations/street",
+                    headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('#RequestVerificationToken').val()
+                    },
+                    type: 'POST',
+                    dataType: "json",
+                    data: JSON.stringify(formData),
+                    success: function (data) {
+                        dataFilling(data, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+                    },
+                    error: function (result, status, er) {
+                        alert("error: " + result + " status: " + status + " er:" + er);
+                    }
+                });
+            });
+        });
+
+        $(function () {
+            $("#HouseId").change(function () {
+                var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': '' };
+                $.ajax({
+                    url: "http://localhost:18246/api/API/searchPollingStations/house",
+                    headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('#RequestVerificationToken').val()
+                    },
+                    type: 'POST',
+                    dataType: "json",
+                    data: JSON.stringify(formData),
+                    success: function (data) {
+                        dataFilling(data, 'idPollingStation','name', '#PollingStationId', '<option/>');                  
+                    },
+                    error: function (result, status, er) {
+                        alert("error: " + result + " status: " + status + " er:" + er);
+                    }
+                });
+            });
+        });
+
+
+
+        function dataFilling(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
+
+            var objectHtml = $(idObject);
+            objectHtml.empty();
+
+            $.each(data, function (index, dataInstance) {
+                objectHtml.append($(propertyHtml,
+                    {
+                        value: dataInstance[nameProperty1],
+                        text: dataInstance[nameProperty2]
+                    }));
+            });
+        }
+
     </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
