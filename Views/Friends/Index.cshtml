@@ -76,10 +76,10 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.DateBirth)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.Building)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.Apartment)
             </th>
             <th>
@@ -100,10 +100,10 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Voter)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.Adress)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.Qrcode)
             </th>
             <th>
@@ -112,7 +112,7 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.City)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.District)
             </th>
             <th>
@@ -121,7 +121,7 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.House)
             </th>
             <th>
@@ -133,17 +133,35 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Street)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.User)
             </th>
-            <th></th>
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
+        @*<tr>
+            <td><input type="text" id="filter0" /></td>
+            <td><input type="text" id="filter1" /></td>
+            <td><input type="text" id="filter2" /></td>
+            <td><input type="text" id="filter3" /></td>
+            <td><input type="text" id="filter4" /></td>
+            <td><input type="text" id="filter5" /></td>
+            <td><input type="text" id="filter6" /></td>
+            <td><input type="text" id="filter7" /></td>
+            <td><input type="text" id="filter8" /></td>
+            <td><input type="text" id="filter9" /></td>
+            <td><input type="text" id="filter10" /></td>
+            <td><input type="text" id="filter11" /></td>
+            <td><input type="text" id="filter12" /></td>
+            <td><input type="text" id="filter13" /></td>
+            <td><input type="text" id="filter14" /></td>
+            <td><input type="text" id="filter15" /></td>
+        </tr>*@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.FamilyName)
                 </td>
                 <td>
@@ -152,75 +170,233 @@ else
                 <td>
                     @Html.DisplayFor(modelItem => item.PatronymicName)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.DateBirth)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.Building)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.Apartment)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Telephone)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.Organization)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.DateRegistrationSite)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.VotingDate)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.Voter)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.Adress)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.Qrcode)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.City.Name)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.District.Name)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.FieldActivity.Name)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.GroupU.Name)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.House.Name)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.PollingStation.Name)
                 </td>
-                <td>
+                <td class="colFilter">
                     @Html.DisplayFor(modelItem => item.Street.Name)
                 </td>
-                <td>
+                <td style="display:none">
                     @Html.DisplayFor(modelItem => item.User.FamilyName)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdFriend">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdFriend">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdFriend">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdFriend">Править</a> |
+                    <a asp-action="Details" asp-route-id="@item.IdFriend">Подробнее</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdFriend">Удалить</a>
                 </td>
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FamilyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PatronymicName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateBirth)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.Building)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.Apartment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telephone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Organization)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateRegistrationSite)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VotingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Voter)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.Adress)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.Qrcode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.District)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldActivity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupU)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.House)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MicroDistrict)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PollingStation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>Действия</th>
+        </tr>
+    </tfoot>
 </table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script>
+
+           // Define a custom selector icontains instead of overriding the existing expression contains
+        // A global js asset file will be a good place to put this code
+        //$.expr[':'].icontains = function(a, i, m) {
+        //  return $(a).text().toUpperCase()
+        //      .indexOf(m[3].toUpperCase()) >= 0;
+        //};
+
+        
+        //$(function() {
+        //    $('#filter15').on('keyup', function() {  // changed 'change' event to 'keyup'. Add a delay if you prefer
+        //        $("#friendTable td.colFilter:icontains('" + $(this).val() + "')").parent().show();  // Use our new selector icontains
+        //        $("#friendTable td.colFilter:not(:icontains('" + $(this).val() + "'))").parent().hide();  // Use our new selector icontains
+        //    });
+
+        //});
+
+        $(document).ready(function () {
+            $('#friendTable').DataTable({
+
+                retrieve: true,
+                paging: false,
+                //ajax: '/ajax/arrays.txt',
+                language: {
+                    url: "http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
+                },
+
+               initComplete: function () {
+                    this.api().columns([0, 3, 7,9, 10,11,14,15,16,17,18,19]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">Все</option></select>')
+                            .appendTo($($(column.header()))) //$(column.footer().empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        $(select).click(function (e) {
+                            e.stopPropagation();
+                        });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            if (column.search() === '^' + d + '$') {
+                                select.append('<option value="' + d + '" selected="selected">' + d.substr(0, 30) + '</option>')
+                            } else {
+                                select.append('<option value="' + d + '">' + d.substr(0, 30) + '</option>')
+                            }
+                        });
+                    });
+                }
+            });
+        });
+
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+
+
+

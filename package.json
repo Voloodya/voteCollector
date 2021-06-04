@@ -4,6 +4,6 @@
   "private": true,
   "devDependencies": {},
   "dependencies": {
-    "select2": "~4.0"
+    "select2": "^4.0.13"
   }
 }

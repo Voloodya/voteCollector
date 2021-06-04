@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,9 +22,11 @@ namespace voteCollector.Models
         [Key]
         [Column("Id_Group")]
         public int IdGroup { get; set; }
+        [DisplayName("Группа")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
 
+        [DisplayName("Избиратели")]
         [InverseProperty("GroupU")]
         public virtual ICollection<Friend> Friends { get; set; }
         [InverseProperty("GroupU")]

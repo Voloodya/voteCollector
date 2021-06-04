@@ -91,11 +91,12 @@ namespace voteCollector.Controllers
             ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");           
             ViewData["StreetId"] = new SelectList(_context.Street.Where(s => s.CityId==1), "IdStreet", "Name");
-            //ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
-            SelectList houses= new SelectList(_context.House, "IdHouse", "Name");
-            ViewBag.GetHouses = houses;
+            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
             ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+            ViewData["UserId"] = new SelectList(_context.User.Select(x => 
+            new { IdUser = x.IdUser, UserName=x.UserName, Password=x.Password, RoleId=x.RoleId, FamilyName = x.FamilyName ?? string.Empty, Name=x.Name ?? string.Empty, PatronymicName=x.PatronymicName ?? string.Empty, DateBirth=x.DateBirth, Telephone=x.Telephone,
+                Role=x.Role, Friends=x.Friends, Groupsusers=x.Groupsusers, numberFriends=x.numberFriends
+            }), "IdUser", "FamilyName");
             return View();
         }
 
@@ -155,15 +156,31 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "IdCity", friend.CityId);
-            ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "IdDistrict", friend.DistrictId);
-            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "IdFieldActivity", friend.FieldActivityId);
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", friend.GroupUId);
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "IdHouse", friend.HouseId);
-            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "IdMicroDistrict", friend.MicroDistrictId);
-            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "IdPollingStation", friend.PollingStationId);
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "IdStreet", friend.StreetId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", friend.UserId);
+            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name", friend.DistrictId);
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", friend.GroupUId);
+            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
+            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
+            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
+            var selectLists= new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
+            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
+            ViewData["UserId"] = new SelectList(_context.User.Select(x =>
+            new User {
+                IdUser = x.IdUser,
+                UserName = x.UserName,
+                Password = x.Password,
+                RoleId = x.RoleId,
+                FamilyName = x.FamilyName == null ? string.Empty : x.FamilyName,
+                Name = x.Name ?? string.Empty,
+                PatronymicName = x.PatronymicName==null ? string.Empty : x.PatronymicName,
+                DateBirth = x.DateBirth,
+                Telephone = x.Telephone,
+                Role = x.Role,
+                Friends = x.Friends,
+                Groupsusers = x.Groupsusers,
+                numberFriends = x.numberFriends
+            }), "IdUser", "FamilyName", friend.UserId);
             return View(friend);
         }
 

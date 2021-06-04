@@ -11,6 +11,7 @@
     }
 }
 
+
 <h1>Create</h1>
 
 <h4>Friend</h4>
@@ -59,7 +60,7 @@
             </div>*@
             <div id="divHouse" class="form-group">
                 <label asp-for="HouseId" class="control-label"></label>
-                <select class="selectСhoice" id="HouseId" asp-for="HouseId" class="form-control" asp-items="ViewBag.GetHouses"></select>
+                <select class="selectСhoice" id="HouseId" asp-for="HouseId" asp-items="ViewBag.GetHouses" style="width:100%"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Building" class="control-label"></label>
@@ -139,8 +140,6 @@
 
 <environment include="Development">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </environment>
 
 @section Scripts {
@@ -182,9 +181,6 @@
                     success: function (data) {
 
                         dataFilling(data, 'idStreet', 'name', '#StreetId', '<option/>');
-                    //    for (var i = 0; i < data.length; i++) {
-                    //        $streets.append('<option value = ' + data[i].idStreet + '>' + data[i].name + '</option>');
-                    //    }
                     },
                     error: function (result, status, er) {
                         alert("error: " + result + " status: " + status + " er:" + er);
@@ -276,22 +272,6 @@
         }
 
         $(document).ready(function () {
-        //    //Получение всех элементов требуемого html объекта  select
-        //    var houses = $("#HouseId>option").map(function () { return $(this).val(); }).get();
-
-        //    //Преобразуем строку c элементами в массив
-        //    //var houses = strHouses.split(',');
-
-        //    // Поиск в массиве
-        //    $('#HouseId').autocomplete({
-        //        source: houses,
-        //    //    select: function (event, ui) {
-        //    //        $('#HouseId').val(data[ui.item.value]);
-        //    //    }
-        //    })
-        });
-
-        $(document).ready(function () {
             $('.selectСhoice').select2({
                 dropdownParent: $('#divHouse'),
                 placeholder: "Выберите дом",
@@ -300,8 +280,8 @@
                 language: "ru"
             });
         });
-
     </script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     @{

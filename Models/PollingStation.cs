@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,14 +21,19 @@ namespace voteCollector.Models
         [Key]
         [Column("Id_Polling_station")]
         public int IdPollingStation { get; set; }
+        [DisplayName("Участок")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
+        [DisplayName("Населен. п-т")]
         [Column("City_id")]
         public int? CityId { get; set; }
+        [DisplayName("Улица")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
+        [DisplayName("Микрорайон")]
         [Column("MicroDistrict_id")]
         public int? MicroDistrictId { get; set; }
+        [DisplayName("Дом")]
         [Column("House_id")]
         public int? HouseId { get; set; }
 

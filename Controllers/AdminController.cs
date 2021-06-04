@@ -171,7 +171,7 @@ namespace CollectVoters.Controllers
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "IdMicroDistrict", friend.MicroDistrictId);
             ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "IdPollingStation", friend.PollingStationId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "IdStreet", friend.StreetId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", friend.UserId);
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
             return View(friend);
         }
 
