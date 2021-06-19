@@ -38,6 +38,20 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
+        [HttpPost("searchHouse")]
+        [ValidateAntiForgeryToken]
+        public IActionResult SearchHouse(StreetDTO streetSelected)
+        {
+            List<House> houses = _context.House.Where(h => h.StreetId == streetSelected.IdStreet).ToList<House>();
+
+            if (houses.Any())
+            {
+                List<HouseDTO> housesDTO = houses.Select(h => new HouseDTO { IdHouse = h.IdHouse, Name = h.Name }).ToList();
+                return Ok(housesDTO);
+            }
+            return NoContent();
+        }
+
         [HttpPost("searchPollingStations/street")]
         [ValidateAntiForgeryToken]
         public IActionResult SearchPollingStationsStreet(StreetDTO street)
@@ -65,8 +79,6 @@ namespace voteCollector.Controllers
             }
             return NoContent();
         }
-
-
 
     }
 }

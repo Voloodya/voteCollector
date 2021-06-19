@@ -129,15 +129,15 @@ namespace voteCollector.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                ViewData["CityId"] = new SelectList(_context.City, "IdCity", "IdCity", friend.CityId);
-                ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "IdDistrict", friend.DistrictId);
-                ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "IdFieldActivity", friend.FieldActivityId);
-                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", friend.GroupUId);
-                ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "IdHouse", friend.HouseId);
-                ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "IdMicroDistrict", friend.MicroDistrictId);
-                ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "IdPollingStation", friend.PollingStationId);
-                ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "IdStreet", friend.StreetId);
-                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", friend.UserId);
+                ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+                ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name", friend.DistrictId);
+                ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", friend.GroupUId);
+                ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
+                ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
+                ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
+                ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
+                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName", friend.UserId);
                 return View(friend);
             }
             else return Content("Данный пользователь уже был внесен в списки ранее!");
