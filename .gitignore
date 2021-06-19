@@ -3,13 +3,13 @@
 # 3.0 templates should be even less
 # wwwroot/lib/
 # When wwwroot/lib/ is commented out, excluse .min and .map files
-*.min.css
-*.min.js
-*.map
+#*.min.css
+#*.min.js
+#*.map
 
 _build/
 _site/
-Properties/
+#Properties/
 
 
 Project_Readme.html
@@ -37,8 +37,8 @@ x64/
 x86/
 build/
 bld/
-[Bb]in/
-[Oo]bj/
+#[Bb]in/
+#[Oo]bj/
 
 # Visual Studo 2015 cache/options directory
 .vs/
@@ -60,8 +60,8 @@ dlldata.c
 *_p.c
 *_i.h
 *.ilk
-*.meta
-*.obj
+#*.meta
+#*.obj
 *.pch
 *.pdb
 *.pgc
@@ -79,7 +79,7 @@ dlldata.c
 .builds
 *.pidb
 *.svclog
-*.scc
+#*.scc
 
 # Chutzpah Test files
 _Chutzpah*
@@ -153,7 +153,7 @@ publish/
 *.publishproj
 
 # NuGet Packages
-*.nupkg
+#*.nupkg
 # The packages folder can be ignored because of Package Restore
 **/packages/*
 # except build/, which is used as an MSBuild target.
@@ -178,7 +178,7 @@ ClientBin/
 *.dbproj.schemaview
 *.pfx
 *.publishsettings
-node_modules/
+#node_modules/
 bower_components/
 
 # RIA/Silverlight projects
