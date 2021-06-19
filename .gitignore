@@ -9,7 +9,7 @@
 
 _build/
 _site/
-Properties/
+#Properties/
 
 
 Project_Readme.html
