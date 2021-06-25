@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using voteCollector.Controllers;
 
 namespace CollectVoters.Controllers
 {
@@ -19,18 +19,20 @@ namespace CollectVoters.Controllers
     {
         private readonly ILogger<AdminController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceUser _serviceUser;
 
         public AdminController(VoterCollectorContext context, ILogger<AdminController> logger)
         {
             _context = context;
             _logger = logger;
+            _serviceUser = new ServiceUser(context);
         }
 
         // GET: Friends
         [HttpGet]
         public async Task<IActionResult> Index()
         {            
-            List<Groupu> groupsUser = GetGroupsUser(User.Identity.Name);
+            List<Groupu> groupsUser =_serviceUser.GetGroupsUser(User.Identity.Name);
             Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
             if (groupsUser.Contains(mainGroup))
@@ -52,7 +54,7 @@ namespace CollectVoters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index([Bind("UserName", "Password", "ReturnUrl")] LoginModel loginViewModel)
         {
-            List<Groupu> groupsUser = GetGroupsUser(User.Identity.Name);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
             Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
             if (groupsUser.Contains(mainGroup))
@@ -102,10 +104,23 @@ namespace CollectVoters.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name");
+            int selectedIndexCity = 1;
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+            }
+            else
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu.Where(g => groupsUser.Contains(g)), "IdGroup", "Name");
+            }
+
+            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name");
@@ -136,15 +151,27 @@ namespace CollectVoters.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                ViewData["CityId"] = new SelectList(_context.City, "IdCity", "IdCity", friend.CityId);
-                ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "IdDistrict", friend.DistrictId);
-                ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "IdFieldActivity", friend.FieldActivityId);
-                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", friend.GroupUId);
-                ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "IdHouse", friend.HouseId);
-                ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "IdMicroDistrict", friend.MicroDistrictId);
-                ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "IdPollingStation", friend.PollingStationId);
-                ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "IdStreet", friend.StreetId);
-                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Password", friend.UserId);
+
+                List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+                Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+                if (groupsUser.Contains(mainGroup))
+                {
+                    ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", friend.GroupUId);
+                }
+                else
+                {
+                    ViewData["GroupUId"] = new SelectList(_context.Groupu.Where(g => groupsUser.Contains(g)), "IdGroup", "Name", friend.GroupUId);
+                }
+
+                ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+                ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name", friend.DistrictId);
+                ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+                ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
+                ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
+                ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
+                ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
+                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
                 return View(friend);
             }
             else return Content("Данный пользователь уже был внесен в списки ранее!");
@@ -163,15 +190,28 @@ namespace CollectVoters.Controllers
             {
                 return NotFound();
             }
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "IdCity", friend.CityId);
-            ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "IdDistrict", friend.DistrictId);
-            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "IdFieldActivity", friend.FieldActivityId);
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "IdGroup", friend.GroupUId);
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "IdHouse", friend.HouseId);
-            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "IdMicroDistrict", friend.MicroDistrictId);
-            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "IdPollingStation", friend.PollingStationId);
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "IdStreet", friend.StreetId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", friend.GroupUId);
+            }
+            else
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu.Where(g => groupsUser.Contains(g)), "IdGroup", "Name", friend.GroupUId);
+            }
+
+
+            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name", friend.DistrictId);
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
+            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
+            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
+            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
             return View(friend);
         }
 
@@ -223,10 +263,21 @@ namespace CollectVoters.Controllers
                 }
                 else return Content("Не все обязательные поля были заполнены!");
             }
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", friend.GroupUId);
+            }
+            else
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu.Where(g => groupsUser.Contains(g)), "IdGroup", "Name", friend.GroupUId);
+            }
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name", friend.DistrictId);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", friend.GroupUId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
             ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
@@ -282,14 +333,6 @@ namespace CollectVoters.Controllers
         public IActionResult About()
         {
             return Content("Вход только для администратора");
-        }
-
-        private List<Groupu> GetGroupsUser(string userName)
-        {
-            User userSave = _context.User.Where(u => u.UserName.Equals(userName)).FirstOrDefault();
-            List<Groupsusers> groupsUsers = _context.Groupsusers.Include(gr => gr.GroupU).Where(gr => gr.UserId == userSave.IdUser).ToList();
-            return groupsUsers.Select(g => g.GroupU).ToList();
-        }
-
+        }                
     }
 }

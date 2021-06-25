@@ -4,10 +4,8 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Friend</h4>
+<div class="form-row">
+    <h4>Избиратель</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -150,7 +148,12 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.IdFriend">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<div class="form-row">
+    <div class="form-group col-md-2">
+        <a asp-action="Edit" asp-route-id="@Model.IdFriend" class="btn btn-primary btn-block">Править</a>
+        </div>
+        <div class="form-group col-md-2">
+            <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+        </div>
+ </div>
