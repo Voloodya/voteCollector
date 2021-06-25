@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include=".config\dotnet-tools.json" />
     <Content Include="node_modules\select2\dist\css\select2.css" />
     <Content Include="node_modules\select2\dist\css\select2.min.css" />
     <Content Include="node_modules\select2\dist\js\i18n\build.txt" />

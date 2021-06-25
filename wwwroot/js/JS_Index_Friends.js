@@ -55,3 +55,96 @@ $(document).ready(function () {
         }
     });
 });
+
+let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
+document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
+
+$('friendTable').ready(countVoters('friendTable',11));
+$('friendTable').change(countVoters('friendTable',11));
+
+function countVoters(idObjectCount, numberColumn) {
+    var table = document.getElementById(idObjectCount);
+    var rows = table.tBodies[0].rows;
+    var total = 0;
+    // Assume first row is headers, adjust as required
+    // Assume last row is footer, addjust as required
+    for (var i = 0, iLen = rows.length - 1; i <= iLen; i++) {
+        var checked_ = rows[i].cells[numberColumn].getElementsByTagName('input')[0].checked;
+        if (checked_ == true) {
+            total += 1;
+        }
+    }
+    document.getElementById('totalVoter').innerHTML = total.toFixed(0);
+}
+
+function deleteSelected(idObject, number) {
+
+    var table = document.getElementById(idObject);
+    var rows = table.tBodies[0].rows;
+    var jsonMasId = [];
+    // Assume first row is headers, adjust as required
+    // Assume last row is footer, addjust as required
+    for (let i = 0, iLen = rows.length - 1; i <= iLen; i++) {
+        var checked_ = rows[i].cells[number].getElementsByTagName('input')[0].checked;
+        if (checked_ == true) {
+
+            var idFriend = table.rows[i].cells[1].innerHTML;
+            idFriend = idFriend.trim(); //Удаляем пробелы в начале и в конце
+            //var url_ = "http://localhost:48329/api/APIFriends/DeleteFriend/" + idFriend;
+
+            ////fetch(url_, {
+            ////    method: 'DELETE',
+            //////    body: JSON.stringify(data) // body data type must match "Content-Type" header
+            ////});
+            //$.ajax({
+            //    url: url_,
+            //    type: 'DELETE',
+            //    success: function (response) {
+            //        alert('Пользователи удалены');
+            //        console.log(response);
+            //    },
+            //    error: function (result, status, er) {
+            //        alert("error: " + result + " status: " + status + " er:" + er);
+            //    }
+            //});
+            jsonMasId.push(Number.parseInt(idFriend));
+        }
+    }
+    if (jsonMasId.length > 0) {
+        $.ajax({
+            url: 'http://localhost:48329/api/APIFriends/DeleteFriends/',
+            type: 'POST',
+            data: JSON.stringify(jsonMasId),
+            contentType: "application/json;charset=utf-8",
+            success: function (response) {
+                console.log(response);
+                deleteTrTableBody(idObject, jsonMasId);
+                updatingFields(idObject, 'numberRecords');
+            },
+            error: function (result, status, er) {
+                alert("error: " + result + " status: " + status + " er:" + er);
+            }
+        });
+    }
+}
+
+function deleteTrTableBody(idObject, jsonMasId) {
+
+    var table = document.getElementById(idObject);
+    var rows = table.rows;
+
+    for (let i = 1; i <= (rows.length - 1); i++) {
+
+        var idFriend = table.rows[i].cells[1].innerHTML;
+        if (jsonMasId.indexOf(Number.parseInt(idFriend)) != -1) {
+
+            table.rows[i].remove();
+            i--;
+        }
+    }
+}
+
+function updatingFields(idObjectSelect, idObjectUpdate) {
+    let nrows = document.getElementById(idObjectSelect).tBodies[0].rows.length;
+    document.getElementById(idObjectUpdate).innerHTML = "Количество избирателей: " + (nrows);
+}

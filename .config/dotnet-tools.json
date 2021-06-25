@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {}
+}
+
+//установка. Командная строка.NET: dotnet tool restore
