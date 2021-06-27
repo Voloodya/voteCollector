@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using voteCollector.Data;
 using voteCollector.Models;
 
@@ -14,18 +15,34 @@ namespace voteCollector.Controllers
     [Authorize(Roles = "admin")]
     public class GroupsusersController : Controller
     {
+        private readonly ILogger<GroupsusersController> _logger;
         private readonly VoterCollectorContext _context;
-
-        public GroupsusersController(VoterCollectorContext context)
+        private ServiceUser _serviceUser;
+        public GroupsusersController(VoterCollectorContext context, ILogger<GroupsusersController> logger)
         {
             _context = context;
+            _logger = logger;
+            _serviceUser = new ServiceUser(context);
         }
 
         // GET: Groupsusers
         public async Task<IActionResult> Index()
         {
-            var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User);
-            return View(await voterCollectorContext.ToListAsync());
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User);
+                return View(await voterCollectorContext.ToListAsync());
+            }
+            else
+            {
+                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User).
+                    Where(g => groupsUser.Contains(g.GroupU));
+                return View(await voterCollectorContext.ToListAsync());
+            }
+            
         }
 
         // GET: Groupsusers/Details/5

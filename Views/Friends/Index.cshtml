@@ -61,7 +61,7 @@ else
 
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
-    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',24)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
+    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',21)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
 </p>
 
 <p>
@@ -82,19 +82,34 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.DateBirth)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.District)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.House)
+            </th>
             <th style="display:none">
                 @Html.DisplayNameFor(model => model.Building)
             </th>
             <th style="display:none">
                 @Html.DisplayNameFor(model => model.Apartment)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.Telephone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldActivity)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Organization)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
             </th>
             <th>
@@ -106,42 +121,18 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Voter)
             </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Adress)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Qrcode)
+            <th>
+                @Html.DisplayNameFor(model => model.PollingStation)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.District)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FieldActivity)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.House)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MicroDistrict)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PollingStation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Street)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.User)
-            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.MicroDistrict)
+        </th>*@
             <th>
                 Удалить
             </th>
@@ -149,24 +140,6 @@ else
         </tr>
     </thead>
     <tbody>
-        @*<tr>
-                <td><input type="text" id="filter0" /></td>
-                <td><input type="text" id="filter1" /></td>
-                <td><input type="text" id="filter2" /></td>
-                <td><input type="text" id="filter3" /></td>
-                <td><input type="text" id="filter4" /></td>
-                <td><input type="text" id="filter5" /></td>
-                <td><input type="text" id="filter6" /></td>
-                <td><input type="text" id="filter7" /></td>
-                <td><input type="text" id="filter8" /></td>
-                <td><input type="text" id="filter9" /></td>
-                <td><input type="text" id="filter10" /></td>
-                <td><input type="text" id="filter11" /></td>
-                <td><input type="text" id="filter12" /></td>
-                <td><input type="text" id="filter13" /></td>
-                <td><input type="text" id="filter14" /></td>
-                <td><input type="text" id="filter15" /></td>
-            </tr>*@
         @foreach (var item in Model)
         {
         <tr>
@@ -182,19 +155,34 @@ else
             <td class="colFilter">
                 @Html.DisplayFor(modelItem => item.DateBirth)
             </td>
+            <td class="colFilter">
+                @Html.DisplayFor(modelItem => item.City.Name)
+            </td>
+            <td style="display:none">
+                @Html.DisplayFor(modelItem => item.District.Name)
+            </td>
+            <td class="colFilter">
+                @Html.DisplayFor(modelItem => item.Street.Name)
+            </td>
+            <td style="display:none">
+                @Html.DisplayFor(modelItem => item.House.Name)
+            </td>
             <td style="display:none">
                 @Html.DisplayFor(modelItem => item.Building)
             </td>
             <td style="display:none">
                 @Html.DisplayFor(modelItem => item.Apartment)
             </td>
-            <td>
+            <td style="display:none">
                 @Html.DisplayFor(modelItem => item.Telephone)
+            </td>
+            <td class="colFilter">
+                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
             </td>
             <td class="colFilter">
                 @Html.DisplayFor(modelItem => item.Organization)
             </td>
-            <td>
+            <td style="display:none">
                 @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
             </td>
             <td class="colFilter">
@@ -206,42 +194,19 @@ else
             <td class="colFilter">
                 @Html.DisplayFor(modelItem => item.Voter)
             </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Adress)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Qrcode)
+            <td class="colFilter">
+                @Html.DisplayFor(modelItem => item.PollingStation.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.City.Name)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.District.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
-            </td>
-            <td class="colFilter">
                 @Html.DisplayFor(modelItem => item.GroupU.Name)
             </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.House.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.PollingStation.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Street.Name)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.User.FamilyName)
-            </td>
+
+            @*<td class="colFilter">
+            @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
+        </td>*@
             <td>
                 <input type="checkbox">
             </td>
@@ -267,19 +232,34 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.DateBirth)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.District)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.House)
+            </th>
             <th style="display:none">
                 @Html.DisplayNameFor(model => model.Building)
             </th>
             <th style="display:none">
                 @Html.DisplayNameFor(model => model.Apartment)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.Telephone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldActivity)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Organization)
             </th>
-            <th>
+            <th style="display:none">
                 @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
             </th>
             <th>
@@ -291,41 +271,19 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Voter)
             </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Adress)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Qrcode)
+            <th>
+                @Html.DisplayNameFor(model => model.PollingStation)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.District)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FieldActivity)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.House)
-            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.MicroDistrict)
+        </th>*@
             <th>
-                @Html.DisplayNameFor(model => model.MicroDistrict)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PollingStation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Street)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.User)
             </th>
             <th>Действия</th>
         </tr>

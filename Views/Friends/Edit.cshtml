@@ -3,6 +3,14 @@
 @{
     ViewData["Title"] = "Edit";
 }
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
 
 <h4>Избиратель</h4>
 <hr />
@@ -46,20 +54,20 @@
                     <span asp-validation-for="StreetId" class="text-danger"></span>
                 </div>
                 @*<div class="form-group">
-                <label asp-for="MicroDistrictId" class="control-label"></label>
-                <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
-                <span asp-validation-for="MicroDistrictId" class="text-danger"></span>
-            </div>*@
-            <div class="form-group col-md-6">
-                <label asp-for="HouseId" class="control-label"></label>
-                <select id="HouseId" asp-for="HouseId" asp-items="ViewBag.GetHouses" style="width:100%"></select>
-                <span asp-validation-for="HouseId" class="text-danger"></span>
-            </div>
+                        <label asp-for="MicroDistrictId" class="control-label"></label>
+                        <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
+                        <span asp-validation-for="MicroDistrictId" class="text-danger"></span>
+                    </div>*@
+                <div class="form-group col-md-6">
+                    <label asp-for="HouseId" class="control-label"></label>
+                    <select id="HouseId" asp-for="HouseId" class="form-control" asp-items="ViewBag.HouseId"></select>
+                    <span asp-validation-for="HouseId" class="text-danger"></span>
+                </div>
                 @*<div class="form-group">
-                <label asp-for="Building" class="control-label"></label>
-                <input asp-for="Building" class="form-control" />
-                <span asp-validation-for="Building" class="text-danger"></span>
-            </div>*@
+                        <label asp-for="Building" class="control-label"></label>
+                        <input asp-for="Building" class="form-control" />
+                        <span asp-validation-for="Building" class="text-danger"></span>
+                    </div>*@
                 <div class="form-group col-md-6">
                     <label asp-for="Apartment" class="control-label"></label>
                     <input asp-for="Apartment" class="form-control" />
@@ -121,37 +129,37 @@
                     <input id="boolVoter" asp-for="Voter" class="form-control" onchange="setDate('boolVoter','dateVoting');" />
                     <span asp-validation-for="Voter" class="text-danger"></span>
                 </div>
-                </div>
+            </div>
 
-                    @*<div class="form-group">
-                        <label asp-for="Qrcode" class="control-label"></label>
-                        <input asp-for="Qrcode" class="form-control" />
-                        <span asp-validation-for="Qrcode" class="text-danger"></span>
-                    </div>*@
-                    <div class="form-group">
-                        <label asp-for="Description" class="control-label"></label>
-                        <input asp-for="Description" class="form-control" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                    <!--<div class="form-group">
-                        <label asp-for="UserId" class="control-label"></label>
-                        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>-->
-                        @*<span asp-validation-for="UserId" class="text-danger"></span>*@
-                    <!--</div>-->
-                    <div class="form-group">
-                        <label asp-for="GroupUId" class="control-label"></label>
-                        <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
-                        <span asp-validation-for="GroupUId" class="text-danger"></span>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <input type="submit" value="Сохранить" class="btn btn-primary btn-block" />
-                        </div>
-                        <div class="form-group col-md-6">
-                            <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
-                        </div>
-                    </div>
-</form>
+            @*<div class="form-group">
+                    <label asp-for="Qrcode" class="control-label"></label>
+                    <input asp-for="Qrcode" class="form-control" />
+                    <span asp-validation-for="Qrcode" class="text-danger"></span>
+                </div>*@
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <!--<div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>-->
+            @*<span asp-validation-for="UserId" class="text-danger"></span>*@
+            <!--</div>-->
+            <div class="form-group">
+                <label asp-for="GroupUId" class="control-label"></label>
+                <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
+                <span asp-validation-for="GroupUId" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="submit" value="Сохранить" class="btn btn-primary btn-block" />
+                </div>
+                <div class="form-group col-md-6">
+                    <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -160,6 +168,5 @@
 @section Scripts {
 
     <script type="text/javascript" src="~/js/JS_Edit_Friend.js"></script>
-    
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

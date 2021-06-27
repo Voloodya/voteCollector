@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using voteCollector.Data;
 using voteCollector.Models;
 
@@ -14,18 +15,34 @@ namespace voteCollector.Controllers
     [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
+        private readonly ILogger<UsersController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceUser _serviceUser;
 
-        public UsersController(VoterCollectorContext context)
+        public UsersController(VoterCollectorContext context, ILogger<UsersController> logger)
         {
             _context = context;
+            _logger = logger;
+            _serviceUser = new ServiceUser(context);
         }
 
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var voterCollectorContext = _context.User.Include(u => u.Role);
-            return View(await voterCollectorContext.ToListAsync());
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                var voterCollectorContext = _context.User.Include(u => u.Role);
+                return View(await voterCollectorContext.ToListAsync());
+
+            }
+            else
+            {
+                var voterCollectorContext = _context.User.Include(u => u.Role).Where(u => groupsUser.Intersect(_serviceUser.GetGroupsUser(u.UserName)).Count()!=0);
+                return View(await voterCollectorContext.ToListAsync());
+            }
         }
 
         // GET: Users/Details/5

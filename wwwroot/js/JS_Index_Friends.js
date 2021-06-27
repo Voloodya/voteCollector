@@ -26,7 +26,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([0, 3, 7, 9, 10, 11, 14, 15, 16, 17, 18, 19]).every(function () {
+            this.api().columns([4,6,11,12,17,19]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -59,8 +59,8 @@ $(document).ready(function () {
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
 
-$('friendTable').ready(countVoters('friendTable',11));
-$('friendTable').change(countVoters('friendTable',11));
+$('friendTable').ready(countVoters('friendTable',16));
+$('friendTable').change(countVoters('friendTable',16));
 
 function countVoters(idObjectCount, numberColumn) {
     var table = document.getElementById(idObjectCount);

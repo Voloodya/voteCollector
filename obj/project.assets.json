@@ -9238,11 +9238,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\C#\\voteCollector\\voteCollector.csproj",
+      "projectUniqueName": "E:\\C#\\voteCollector_\\voteCollector.csproj",
       "projectName": "voteCollector",
-      "projectPath": "E:\\C#\\voteCollector\\voteCollector.csproj",
+      "projectPath": "E:\\C#\\voteCollector_\\voteCollector.csproj",
       "packagesPath": "C:\\Users\\Vladimir\\.nuget\\packages\\",
-      "outputPath": "E:\\C#\\voteCollector\\obj\\",
+      "outputPath": "E:\\C#\\voteCollector_\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Vladimir\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using voteCollector.Data;
 using voteCollector.Models;
 
@@ -14,17 +15,31 @@ namespace voteCollector.Controllers
     [Authorize(Roles = "admin")]
     public class GroupusController : Controller
     {
+        private readonly ILogger<GroupusController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceUser _serviceUser;
 
-        public GroupusController(VoterCollectorContext context)
+        public GroupusController(VoterCollectorContext context, ILogger<GroupusController> logger)
         {
             _context = context;
+            _logger = logger;
+            _serviceUser = new ServiceUser(context);
         }
 
         // GET: Groupus
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Groupu.ToListAsync());
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                return View(await _context.Groupu.ToListAsync());
+            }
+            else
+            {
+                return View(await _context.Groupu.Where(g => groupsUser.Contains(g)).ToListAsync());                
+            }            
         }
 
         // GET: Groupus/Details/5
