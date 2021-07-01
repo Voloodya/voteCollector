@@ -4,17 +4,23 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div>
+    <a asp-action="RedirectTo">Вернуться на главную</a>
+</div>
+
+<br />
+
+<h1>Группы пользователей</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Name)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
@@ -27,19 +33,18 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.Name)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.GroupU.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.UserName)
+                @Html.DisplayFor(modelItem => item.User.FamilyName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdGroupsUsers">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
             </td>
         </tr>
 }

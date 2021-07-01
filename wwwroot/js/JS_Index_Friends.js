@@ -26,7 +26,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([4,6,11,12,17,19]).every(function () {
+            this.api().columns([6,8,13,14,19,21]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -59,8 +59,8 @@ $(document).ready(function () {
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
 
-$('friendTable').ready(countVoters('friendTable',16));
-$('friendTable').change(countVoters('friendTable',16));
+$('friendTable').ready(countVoters('friendTable',18));
+$('friendTable').change(countVoters('friendTable',18));
 
 function countVoters(idObjectCount, numberColumn) {
     var table = document.getElementById(idObjectCount);
@@ -77,7 +77,7 @@ function countVoters(idObjectCount, numberColumn) {
     document.getElementById('totalVoter').innerHTML = total.toFixed(0);
 }
 
-function deleteSelected(idObject, number) {
+function deleteSelected(idObject, numberColumn) {
 
     var table = document.getElementById(idObject);
     var rows = table.tBodies[0].rows;
@@ -85,10 +85,10 @@ function deleteSelected(idObject, number) {
     // Assume first row is headers, adjust as required
     // Assume last row is footer, addjust as required
     for (let i = 0, iLen = rows.length - 1; i <= iLen; i++) {
-        var checked_ = rows[i].cells[number].getElementsByTagName('input')[0].checked;
+        var checked_ = rows[i].cells[numberColumn].getElementsByTagName('input')[0].checked;
         if (checked_ == true) {
 
-            var idFriend = table.rows[i].cells[1].innerHTML;
+            var idFriend = rows[i].cells[1].innerHTML;
             idFriend = idFriend.trim(); //Удаляем пробелы в начале и в конце
             //var url_ = "http://localhost:48329/api/APIFriends/DeleteFriend/" + idFriend;
 
@@ -112,7 +112,7 @@ function deleteSelected(idObject, number) {
     }
     if (jsonMasId.length > 0) {
         $.ajax({
-            url: 'http://localhost:48329/api/APIFriends/DeleteFriends/',
+            url: 'http://localhost:18246/api/APIFriends/DeleteFriends/',
             type: 'POST',
             data: JSON.stringify(jsonMasId),
             contentType: "application/json;charset=utf-8",

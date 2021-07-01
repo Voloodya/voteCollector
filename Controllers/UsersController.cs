@@ -45,25 +45,6 @@ namespace voteCollector.Controllers
             }
         }
 
-        // GET: Users/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.User
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(m => m.IdUser == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
         // GET: Users/Create
         public IActionResult Create()
         {
@@ -72,8 +53,6 @@ namespace voteCollector.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdUser,UserName,Password,RoleId,FamilyName,Name,PatronymicName,DateBirth,Telephone")] User user)
@@ -106,8 +85,6 @@ namespace voteCollector.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("IdUser,UserName,Password,RoleId,FamilyName,Name,PatronymicName,DateBirth,Telephone")] User user)
@@ -182,5 +159,12 @@ namespace voteCollector.Controllers
             List<Groupsusers> groupsUsers = userSave.Groupsusers.ToList();
             return groupsUsers.Select(g => g.GroupU).ToList();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectTo()
+        {
+               return RedirectToAction("Index", "Admin");
+        }
+
     }
 }

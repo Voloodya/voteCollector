@@ -4,10 +4,8 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Friend</h4>
+<div class="form-row">
+    <h4>Избиратель</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -83,12 +81,6 @@
             @Html.DisplayFor(model => model.Voter)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Adress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Adress)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Qrcode)
         </dt>
         <dd class = "col-sm-10">
@@ -104,59 +96,64 @@
             @Html.DisplayNameFor(model => model.City)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City.IdCity)
+            @Html.DisplayFor(model => model.City.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.District)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.District.IdDistrict)
+            @Html.DisplayFor(model => model.District.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FieldActivity)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FieldActivity.IdFieldActivity)
+            @Html.DisplayFor(model => model.FieldActivity.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.GroupU)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GroupU.IdGroup)
+            @Html.DisplayFor(model => model.GroupU.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.House)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.House.IdHouse)
+            @Html.DisplayFor(model => model.House.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.MicroDistrict)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MicroDistrict.IdMicroDistrict)
+            @Html.DisplayFor(model => model.MicroDistrict.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PollingStation)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PollingStation.IdPollingStation)
+            @Html.DisplayFor(model => model.PollingStation.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Street)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Street.IdStreet)
+            @Html.DisplayFor(model => model.Street.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Password)
+            @Html.DisplayFor(model => model.User.FamilyName)
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.IdFriend">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<div class="form-row">
+    <div class="form-group col-md-2">
+        <a asp-action="Edit" asp-route-id="@Model.IdFriend" class="btn btn-primary btn-block">Править</a>
+        </div>
+        <div class="form-group col-md-2">
+            <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+        </div>
+ </div>

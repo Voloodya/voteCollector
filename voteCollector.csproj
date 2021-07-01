@@ -213,7 +213,6 @@
     <None Include="node_modules\select2\src\scss\_multiple.scss" />
     <None Include="node_modules\select2\src\scss\_single.scss" />
     <None Include="voteCollector.sln" />
-    <None Include="wwwroot\js\JS_Edit_Friend.js" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,6 +12,7 @@ namespace CollectVoters.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class APIFriendsController : ControllerBase
     {
         private readonly VoterCollectorContext _context;
@@ -102,7 +103,7 @@ namespace CollectVoters.Controllers
             return friend;
         }
 
-        // POST: api/APIFriends/DeleteFriend/
+        // POST: api/APIFriends/DeleteFriends/
         [HttpPost("DeleteFriends")]
         public async Task<ActionResult<List<Friend>>> DeleteFriends([ModelBinder] long [] idFriends)
         {
