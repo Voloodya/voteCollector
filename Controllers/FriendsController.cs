@@ -103,10 +103,19 @@ namespace voteCollector.Controllers
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
-            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");           
-            ViewData["StreetId"] = new SelectList(_context.Street.Where(s => s.CityId==1), "IdStreet", "Name");
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
-            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name");
+            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
+            IQueryable<Street> selectStreets =_context.Street.Where(s => s.CityId == 1);
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
+            List<Street> listStreets = selectStreets.ToList();
+            IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == listStreets[0].IdStreet);
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
+
+            var polingStations = _context.PollingStation.Where(p => p.CityId == 1).GroupBy(p => p.Name).ToList().Select(grp => grp.FirstOrDefault());
+
+            //IQueryable <PolingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
+            //var polingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
+            ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name");
+
             ViewData["UserId"] = new SelectList(_context.User.Select(x => 
             new { IdUser = x.IdUser, UserName=x.UserName, Password=x.Password, RoleId=x.RoleId, FamilyName = x.FamilyName ?? string.Empty, Name=x.Name ?? string.Empty, PatronymicName=x.PatronymicName ?? string.Empty, DateBirth=x.DateBirth, Telephone=x.Telephone,
                 Role=x.Role, Friends=x.Friends, Groupsusers=x.Groupsusers, numberFriends=x.numberFriends
@@ -123,7 +132,6 @@ namespace voteCollector.Controllers
 
             if (searchFriend.Count == 0)
             {
-
                 if (ModelState.IsValid)
                 {
                     User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -150,10 +158,10 @@ namespace voteCollector.Controllers
                 ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
                 ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name", friend.DistrictId);
                 ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+                ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
                 ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
                 ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
                 ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
-                ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
                 ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName", friend.UserId);
                 return View(friend);
             }

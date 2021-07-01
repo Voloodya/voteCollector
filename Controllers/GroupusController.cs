@@ -42,24 +42,6 @@ namespace voteCollector.Controllers
             }            
         }
 
-        // GET: Groupus/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var groupu = await _context.Groupu
-                .FirstOrDefaultAsync(m => m.IdGroup == id);
-            if (groupu == null)
-            {
-                return NotFound();
-            }
-
-            return View(groupu);
-        }
-
         // GET: Groupus/Create
         public IActionResult Create()
         {
@@ -67,8 +49,6 @@ namespace voteCollector.Controllers
         }
 
         // POST: Groupus/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdGroup,Name")] Groupu groupu)
@@ -99,8 +79,6 @@ namespace voteCollector.Controllers
         }
 
         // POST: Groupus/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name")] Groupu groupu)
@@ -165,6 +143,12 @@ namespace voteCollector.Controllers
         private bool GroupuExists(int id)
         {
             return _context.Groupu.Any(e => e.IdGroup == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectTo()
+        {
+            return RedirectToAction("Index", "Admin");
         }
     }
 }

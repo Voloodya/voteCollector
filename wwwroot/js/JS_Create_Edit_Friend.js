@@ -16,6 +16,16 @@ function setDate(sourseidObj, idObject) {
     }
 }
 
+//Установка текущей даты
+function stateDate(idObject) {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById(idObject).value = today;
+}
+
 // Обновление списка улиц после выбора города
 $(function () {
     $("#CityId").change(function () {
@@ -58,7 +68,7 @@ $(function () {
 //        });
 //    });
 //});
-
+// Обновление списка домов после выбора улицы
 $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
@@ -83,7 +93,6 @@ $(function () {
         });
     });
 });
-
 
 // Обновление списка участков после выбора улицы
 $(function () {

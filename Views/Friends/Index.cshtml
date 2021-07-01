@@ -61,15 +61,16 @@ else
 
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
-    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',21)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
+    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',22)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
 </p>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table" id="friendTable">
     <thead>
         <tr>
+            <th></th>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.IdFriend)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.FamilyName)
             </th>
@@ -143,6 +144,10 @@ else
         @foreach (var item in Model)
         {
         <tr>
+            <td align="center"></td>
+            <td style="display:none">
+                @Html.DisplayFor(modelItem => item.IdFriend)
+            </td>
             <td class="colFilter">
                 @Html.DisplayFor(modelItem => item.FamilyName)
             </td>
@@ -220,6 +225,8 @@ else
     </tbody>
     <tfoot>
         <tr>
+            <th>
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.FamilyName)
             </th>

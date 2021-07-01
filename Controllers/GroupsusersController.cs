@@ -41,41 +41,30 @@ namespace voteCollector.Controllers
                 var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User).
                     Where(g => groupsUser.Contains(g.GroupU));
                 return View(await voterCollectorContext.ToListAsync());
-            }
-            
-        }
-
-        // GET: Groupsusers/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var groupsusers = await _context.Groupsusers
-                .Include(g => g.GroupU)
-                .Include(g => g.User)
-                .FirstOrDefaultAsync(m => m.IdGroupsUsers == id);
-            if (groupsusers == null)
-            {
-                return NotFound();
-            }
-
-            return View(groupsusers);
+            }            
         }
 
         // GET: Groupsusers/Create
         public IActionResult Create()
         {
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Contains(mainGroup))
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
+            }
+            else
+            {
+                ViewData["GroupUId"] = new SelectList(_context.Groupu.Where(g => groupsUser.Contains(g)), "IdGroup", "Name");
+                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
+            }           
+           
             return View();
         }
 
         // POST: Groupsusers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdGroupsUsers,GroupUId,Name,UserId")] Groupsusers groupsusers)
@@ -110,8 +99,6 @@ namespace voteCollector.Controllers
         }
 
         // POST: Groupsusers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("IdGroupsUsers,GroupUId,Name,UserId")] Groupsusers groupsusers)
@@ -180,6 +167,12 @@ namespace voteCollector.Controllers
         private bool GroupsusersExists(long id)
         {
             return _context.Groupsusers.Any(e => e.IdGroupsUsers == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectTo()
+        {
+            return RedirectToAction("Index", "Admin");
         }
     }
 }

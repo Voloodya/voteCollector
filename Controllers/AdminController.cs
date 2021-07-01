@@ -121,10 +121,18 @@ namespace CollectVoters.Controllers
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
-            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name");
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name");
+            IQueryable<Street> selectStreets = _context.Street.Where(s => s.CityId == 1);
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
+            List<Street> listStreets = selectStreets.ToList();
+            IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == listStreets[0].IdStreet);
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
+
+            //IQueryable<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == 1).GroupBy(p => p.Name).Select(grp => grp.First());
+            IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
+            var pollingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
+            ViewData["PollingStationId"] = new SelectList(pollingStations, "IdPollingStation", "Name");
+
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName");
             return View();
         }

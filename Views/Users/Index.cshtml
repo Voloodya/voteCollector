@@ -4,11 +4,14 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div>
+    <a asp-action="RedirectTo">Вернуться на главную</a>
+</div>
+
+<br />
 
 <p>
-    <a asp-action="Create">Create New</a>
-</p>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить пользователя</a></p>
 <table class="table">
     <thead>
         <tr>
@@ -67,11 +70,12 @@
                 @Html.DisplayFor(modelItem => item.Role.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdUser">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdUser">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdUser">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.IdUser">Править</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdUser">Удалить</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+
