@@ -15,7 +15,6 @@ function setDate(sourseidObj, idObject) {
         document.getElementById(idObject).value = null;
     }
 }
-
 //Установка текущей даты
 function stateDate(idObject) {
     var today = new Date();
