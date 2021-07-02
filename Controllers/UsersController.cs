@@ -40,8 +40,9 @@ namespace voteCollector.Controllers
             }
             else
             {
-                var voterCollectorContext = _context.User.Include(u => u.Role).Where(u => groupsUser.Intersect(_serviceUser.GetGroupsUser(u.UserName)).Count()!=0);
-                return View(await voterCollectorContext.ToListAsync());
+                List<User> voterCollectorContext = await _context.User.Include(u => u.Role).ToListAsync();
+                List<User> voterCollector = voterCollectorContext.Where(u => groupsUser.Intersect(_serviceUser.GetGroupsUser(u.UserName)).Count() != 0).ToList();
+                return View(voterCollector);
             }
         }
 
