@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj": {}
+    "E:\\C#\\voteCollector_\\voteCollector.csproj": {}
   },
   "projects": {
-    "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj": {
+    "E:\\C#\\voteCollector_\\voteCollector.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj",
+        "projectUniqueName": "E:\\C#\\voteCollector_\\voteCollector.csproj",
         "projectName": "voteCollector",
-        "projectPath": "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj",
-        "packagesPath": "C:\\Users\\lucenkovlse\\.nuget\\packages\\",
-        "outputPath": "D:\\My_PROGRAMS\\voteCollector_\\obj\\",
+        "projectPath": "E:\\C#\\voteCollector_\\voteCollector.csproj",
+        "packagesPath": "C:\\Users\\Vladimir\\.nuget\\packages\\",
+        "outputPath": "E:\\C#\\voteCollector_\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lucenkovlse\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Vladimir\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -51,6 +51,12 @@
             "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
               "target": "Package",
               "version": "[3.1.12, )"
+            },
+            "Microsoft.CodeAnalysis.Analyzers": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.9.4, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -97,7 +103,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }
