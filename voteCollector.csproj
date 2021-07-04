@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\UploadFiles\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include=".config\dotnet-tools.json" />
     <Content Include="node_modules\select2\dist\css\select2.css" />
     <Content Include="node_modules\select2\dist\css\select2.min.css" />
@@ -212,6 +216,7 @@
     <None Include="node_modules\select2\src\scss\_dropdown.scss" />
     <None Include="node_modules\select2\src\scss\_multiple.scss" />
     <None Include="node_modules\select2\src\scss\_single.scss" />
+    <None Include="Views\UploadFiles\Index.cshtml" />
     <None Include="voteCollector.sln" />
   </ItemGroup>
 

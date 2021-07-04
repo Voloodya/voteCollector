@@ -18,6 +18,7 @@ namespace voteCollector.Controllers
         private readonly ILogger<GroupsusersController> _logger;
         private readonly VoterCollectorContext _context;
         private ServiceUser _serviceUser;
+
         public GroupsusersController(VoterCollectorContext context, ILogger<GroupsusersController> logger)
         {
             _context = context;
@@ -28,39 +29,17 @@ namespace voteCollector.Controllers
         // GET: Groupsusers
         public async Task<IActionResult> Index()
         {
-            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
-            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
-
-            if (groupsUser.Contains(mainGroup))
-            {
-                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User);
-                return View(await voterCollectorContext.ToListAsync());
-            }
-            else
-            {
-                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User).
-                    Where(g => groupsUser.Contains(g.GroupU));
-                return View(await voterCollectorContext.ToListAsync());
-            }            
+            return View(await _serviceUser.FilterGroupsUsers(_serviceUser.GetGroupsUser(User.Identity.Name)).ToListAsync());
         }
 
         // GET: Groupsusers/Create
         public IActionResult Create()
         {
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
-            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-            if (groupsUser.Contains(mainGroup))
-            {
-                ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
-                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
-            }
-            else
-            {
-                ViewData["GroupUId"] = new SelectList(_context.Groupu.Where(g => groupsUser.Contains(g)), "IdGroup", "Name");
-                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
-            }           
-           
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
+
             return View();
         }
 
@@ -75,7 +54,9 @@ namespace voteCollector.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
             return View(groupsusers);
         }
@@ -93,7 +74,9 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", groupsusers.GroupUId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
             return View(groupsusers);
         }
@@ -128,7 +111,9 @@ namespace voteCollector.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
             return View(groupsusers);
         }

@@ -49,7 +49,13 @@ $(function () {
                 alert("error: " + result + " status: " + status + " er:" + er);
             }
         });
-    });
+
+        // Генерация события для элемента Select
+        let elemSelectHouse = document.querySelector('#StreetId')
+        elemSelectHouse.selectedIndex = 0;
+        const event = new Event("change");
+        elemSelectHouse.dispatchEvent(event);
+    });    
 });
 
 // Обновление списка домов после выбора улицы
