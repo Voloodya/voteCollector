@@ -95,10 +95,9 @@ namespace voteCollector.Controllers
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
-            IQueryable<Street> selectStreets =_context.Street.Where(s => s.CityId == 1);
+            List<Street> selectStreets =_context.Street.Where(s => s.CityId == 1).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
-            List<Street> listStreets = selectStreets.ToList();
-            IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == listStreets[0].IdStreet);
+            IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
             var polingStations = _context.PollingStation.Where(p => p.CityId == 1).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
@@ -180,9 +179,9 @@ namespace voteCollector.Controllers
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
             List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == friend.CityId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
             ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
-            List<Street> listStreets = _context.Street.Where(s => s.CityId==friend.CityId).ToList();
-            ViewData["StreetId"] = new SelectList(listStreets, "IdStreet", "Name", friend.StreetId);            
-            List<House> selectHouse = _context.House.Where(h => h.StreetId == listStreets[0].IdStreet).ToList();
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId==friend.CityId).ToList();
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);            
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
             ViewData["UserId"] = new SelectList(_context.User.Select(x =>
             new User {

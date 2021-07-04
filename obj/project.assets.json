@@ -9228,7 +9228,10 @@
       "Microsoft.EntityFrameworkCore >= 3.1.13",
       "Microsoft.EntityFrameworkCore.SqlServer >= 3.1.13",
       "Microsoft.EntityFrameworkCore.Tools >= 3.1.13",
+      "Microsoft.VisualStudio.Web.CodeGeneration >= 3.1.5",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 3.1.5",
+      "Microsoft.VisualStudio.Web.CodeGeneration.Utils >= 3.1.5",
+      "Microsoft.VisualStudio.Web.CodeGenerators.Mvc >= 3.1.5",
       "Pomelo.EntityFrameworkCore.MySql >= 3.2.4",
       "bootstrap >= 4.6.0"
     ]
@@ -9304,7 +9307,19 @@
             "target": "Package",
             "version": "[3.1.13, )"
           },
+          "Microsoft.VisualStudio.Web.CodeGeneration": {
+            "target": "Package",
+            "version": "[3.1.5, )"
+          },
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+            "target": "Package",
+            "version": "[3.1.5, )"
+          },
+          "Microsoft.VisualStudio.Web.CodeGeneration.Utils": {
+            "target": "Package",
+            "version": "[3.1.5, )"
+          },
+          "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": {
             "target": "Package",
             "version": "[3.1.5, )"
           },

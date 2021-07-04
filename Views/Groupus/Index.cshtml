@@ -3,6 +3,41 @@
 @{
     ViewData["Title"] = "Index";
 }
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    #grupsTable {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
+
+        #grupsTable thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /*            word-break: break-all;
+    */
+        }
+
+        #grupsTable tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        #grupsTable tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
 
 <div>
     <a asp-action="RedirectTo">Вернуться на главную</a>
@@ -13,7 +48,7 @@
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить</a>
 </p>
-<table class="table">
+<table class="table" id="grupsTable">
     <thead>
         <tr>
             <th>

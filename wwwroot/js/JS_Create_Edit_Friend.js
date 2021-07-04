@@ -44,17 +44,18 @@ $(function () {
             success: function (data) {
 
                 dataFilling(data, 'idStreet', 'name', '#StreetId', '<option/>');
+
+                // Генерация события для элемента Select
+                let elemSelectHouse = document.querySelector('#StreetId')
+                elemSelectHouse.selectedIndex = 0;
+                const event = new Event("change");
+                elemSelectHouse.dispatchEvent(event);
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
             }
         });
 
-        // Генерация события для элемента Select
-        let elemSelectHouse = document.querySelector('#StreetId')
-        elemSelectHouse.selectedIndex = 0;
-        const event = new Event("change");
-        elemSelectHouse.dispatchEvent(event);
     });    
 });
 

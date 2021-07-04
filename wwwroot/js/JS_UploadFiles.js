@@ -1,19 +1,23 @@
 ﻿
 
 async function UploadExcelToWebService(fileSource) {
-    var data = await ExcelToJSON('AccrualsPaymentsSocialRent', fileSource);
-    data = await removePropertysJsonObjects(data, ["oIDobject", "ACC_PU", "idAccrual", "SALDOB", "SALDOE"]);
+    var data = await ExcelToJSON('Freinds', fileSource);
+    data = await removePropertysJsonObjects(data, ['FamilyName','Name','PatronymicName','DateBirth','CityName','Street','House','Apartment','Telephone','DistrictName','PollingStationName','Organization','FieldActivityName','PhoneNumberResponsible','DateRegistrationSite','VotingDate','Vote','Description','Group']);
 
     $.ajax({
         type: "POST",
         //url: "http://10.1.48.66:80/uploadinmeta/api/FileApi/uploadDataSocContract",
-        url: "http://localhost:18246/api/FileApi/api/FileApi/uploadDataFromFile",
-        contentType: "application/json;charset=utf-8",
+        url: "http://localhost:18246/api/FileApi/uploadDataFromFile",
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
         processData: false,
         data: JSON.stringify(data),
         success: function (response) {
-            alert(response);
-            console.log(response);
+            dataFilling(response, '#Records');
         },
         error: function (result, status, er) {
             alert("error: " + result + " status: " + status + " er:" + er);
@@ -72,4 +76,19 @@ function removePropertysJsonObjects(jsonObjects, neededProperties) {
         );
         resolve(result);
     });
+}
+
+//Заполнение объекта html данными из json массива
+function dataFilling(data, idObject) {
+
+    var objectHtml = $(idObject);
+    objectHtml.empty();
+
+    for (var i = 0; i < data.length; i++) {
+        var opt = options[i];
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        objectHtml.appendChild(el);
+    }
 }
