@@ -216,6 +216,10 @@
     <None Include="node_modules\select2\src\scss\_dropdown.scss" />
     <None Include="node_modules\select2\src\scss\_multiple.scss" />
     <None Include="node_modules\select2\src\scss\_single.scss" />
+    <None Include="Views\PollingStations\Create.cshtml" />
+    <None Include="Views\PollingStations\Delete.cshtml" />
+    <None Include="Views\PollingStations\Edit.cshtml" />
+    <None Include="Views\PollingStations\Index.cshtml" />
     <None Include="Views\UploadFiles\Index.cshtml" />
     <None Include="voteCollector.sln" />
   </ItemGroup>
@@ -236,7 +240,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration" Version="3.1.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Core" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Templating" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Utils" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGenerators.Mvc" Version="3.1.5" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.4" />

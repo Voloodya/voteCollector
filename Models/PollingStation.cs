@@ -39,15 +39,19 @@ namespace voteCollector.Models
 
         [ForeignKey(nameof(CityId))]
         [InverseProperty("PollingStations")]
+        [DisplayName("Насел. п-т")]
         public virtual City City { get; set; }
         [ForeignKey(nameof(HouseId))]
         [InverseProperty("PollingStations")]
+        [DisplayName("Дом")]
         public virtual House House { get; set; }
         [ForeignKey(nameof(MicroDistrictId))]
         [InverseProperty(nameof(Microdistrict.PollingStations))]
+        [DisplayName("Микро р-н")]
         public virtual Microdistrict MicroDistrict { get; set; }
         [ForeignKey(nameof(StreetId))]
         [InverseProperty("PollingStations")]
+        [DisplayName("Улица")]
         public virtual Street Street { get; set; }
         [InverseProperty("PollingStation")]
         public virtual ICollection<Friend> Friends { get; set; }

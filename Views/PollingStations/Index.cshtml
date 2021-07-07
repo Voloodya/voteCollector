@@ -1,0 +1,100 @@
+﻿@model IEnumerable<voteCollector.Models.PollingStation>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    #stationsTable {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
+
+        #stationsTable thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /*            word-break: break-all;
+    */
+        }
+
+        #stationsTable tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        #stationsTable tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
+
+<h1>Избирательные участки</h1>
+
+<div>
+    <a asp-action="RedirectTo">Вернуться на главную</a>
+</div>
+
+<br />
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить участок</a>
+</p>
+<table class="table" id="stationsTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.House)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MicroDistrict)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.House.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Street.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdPollingStation">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
