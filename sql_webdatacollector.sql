@@ -138,25 +138,26 @@ INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');
 
 INSERT INTO GroupU (Name) VALUES ('Main');
-INSERT INTO GroupU (Name) VALUES ('UIS');
-INSERT INTO GroupU (Name) VALUES ('FinUp');
+INSERT INTO GroupU (Name) VALUES ('Отдел ЦТМУ УИС');
+INSERT INTO GroupU (Name) VALUES ('Отдел ЦИиЗИ УИС');
+INSERT INTO GroupU (Name) VALUES ('Отдел Инф. обеспеч. ДГЗО');
+INSERT INTO GroupU (Name) VALUES ('Отдел земельных правоотношений ДГЗО');
+INSERT INTO GroupU (Name) VALUES ('Отдел реестра земель ДГЗО');
 
 INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_name, Date_birth, Telephone) VALUES ('vldmr@ya.ru','qwerty321','1',
-                     'Луценко','Владимир','Serg','1987.01.01','+79292822101');
-INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_name, Date_birth, Telephone) VALUES ('alex@ya.ru','qwerty654','1',
+                     'Луценко','Владимир','Сергеевич','1987.01.01','+79292822101');
+INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_name, Date_birth, Telephone) VALUES ('alex@ya.ru','qwerty321','1',
                      'Синцев','Алексей','Алексеевич','1987.01.01','+00000000000');
-INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_name, Date_birth, Telephone) VALUES ('poligraf@ya.ru','2','2',
+INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_name, Date_birth, Telephone) VALUES ('poligraf@ya.ru','qwerty321','2',
                      'Полиграф','Полиграфович','Шариков','1987.01.01','+00000000000');
+INSERT INTO User (UserName, Password, Role_id, Family_name, Name_, Patronymic_name, Date_birth, Telephone) VALUES ('poligraf@ya.ru','qwerty321','2',
+                     'Гунин','Алексанр','Павлович','1987.01.01','+79235653981');
                      
 Insert into GroupsUsers(GroupU_id, User_id) values(1,1);
-Insert into GroupsUsers(GroupU_id, User_id) values(3,1);
-Insert into GroupsUsers(GroupU_id, User_id) values(1,2);
-Insert into GroupsUsers(GroupU_id, User_id) values(2,1);
-Insert into GroupsUsers(GroupU_id, User_id) values(1,3);
-
-INSERT INTO City (Name) VALUES ('Оренбург');
-INSERT INTO City (Name) VALUES ('Ростоши');
-INSERT INTO City (Name) VALUES ('Кушкуль');
+Insert into GroupsUsers(GroupU_id, User_id) values(2,4);
+Insert into GroupsUsers(GroupU_id, User_id) values(3,4);
+Insert into GroupsUsers(GroupU_id, User_id) values(2,2);
+Insert into GroupsUsers(GroupU_id, User_id) values(4,3);
 
 INSERT INTO District (Name, City_id) VALUES ('Северный',1);
 INSERT INTO District (Name, City_id) VALUES ('Южный',1);
@@ -168,27 +169,40 @@ INSERT INTO Street (Name, City_id) VALUES ('Советская',1);
 INSERT INTO Street (Name, City_id) VALUES ('Пр-т Победы',1);
 INSERT INTO Street (Name, City_id) VALUES ('Ногина',1);
 
-INSERT INTO House (Name, Street_id) VALUES ('10',1);
+INSERT INTO Street (Name, City_id) VALUES ('Подмоячная',2);
+INSERT INTO Street (Name, City_id) VALUES ('Маячная',2);
+INSERT INTO Street (Name, City_id) VALUES ('1 Мая',2);
+
+INSERT INTO Street (Name, City_id) VALUES ('Сакмарская',3);
+INSERT INTO Street (Name, City_id) VALUES ('1 Мая',3);
+INSERT INTO Street (Name, City_id) VALUES ('Советская',3);
+
+INSERT INTO House (Name, Street_id) VALUES ('1',1);
+INSERT INTO House (Name, Street_id) VALUES ('11',1);
 INSERT INTO House (Name, Street_id) VALUES ('15',1);
-INSERT INTO House (Name, Street_id) VALUES ('10',2);
-INSERT INTO House (Name, Street_id) VALUES ('15',3);
+INSERT INTO House (Name, Street_id) VALUES ('2',2);
+INSERT INTO House (Name, Street_id) VALUES ('22',2);
+INSERT INTO House (Name, Street_id) VALUES ('25',2);
+INSERT INTO House (Name, Street_id) VALUES ('4',4);
+INSERT INTO House (Name, Street_id) VALUES ('44',4);
 
-INSERT INTO Polling_station (Name,City_id,Street_id,MicroDistrict_id,House_id) VALUES ('1009',1,1,1,1);
-INSERT INTO Polling_station (Name,City_id,Street_id,MicroDistrict_id,House_id) VALUES ('1009',1,1,1,2);
-INSERT INTO Polling_station (Name,City_id,Street_id,MicroDistrict_id,House_id) VALUES ('1009',1,1,1,3);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1009',1,1,1);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1009',1,1,2);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1009',1,1,3);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1010',1,2,1);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1011',1,2,2);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1012',1,2,3);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1010',2,1,1);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1011',2,2,1);
+INSERT INTO Polling_station (Name,City_id,Street_id,House_id) VALUES ('1012',3,1,1);
                                     
-INSERT INTO FieldActivity (Name) VALUES ('Промышленность');
-INSERT INTO FieldActivity (Name) VALUES ('Образование');
-INSERT INTO FieldActivity (Name) VALUES ('Торговля');
-
-
 
 INSERT INTO Friend (Family_name, Name_, Patronymic_name, Date_birth, City_id, Street_id, House_id, Apartment, Telephone, Polling_station_id, District_id, Organization, FieldActivity_id, Phone_number_responsible, Date_registration_site, Voting_date,  Description,  User_id,GroupU_id) VALUES
-				('Vladimir','Volodya','Serg','1995.01.01',1,1,1,'','+79292822102',1,1,'ПО СТрела',1,'+79225353971','2021.04.01','2021.04.20','',1,1);
+				('Шариков','Полиграф','Полиграфович','1925.01.01',1,1,1,'','+79200002102',1,2,'ПО СТрела',1,'+79225353971','2021.04.01','2021.04.20','',1,1);
 INSERT INTO Friend (Family_name, Name_, Patronymic_name, Date_birth, City_id, Street_id, House_id, Apartment, Telephone, Polling_station_id, District_id, Organization, FieldActivity_id, Phone_number_responsible, Date_registration_site, Voting_date,  Description,  User_id,GroupU_id) VALUES
-				('Иванов','Иван','Иванович','1991.01.01',2,2,2,'5','+79292822102',2,2,'ОГУ',2,'+79225353971','2021.04.01','2021.04.20','',1,2);
+				('Иванов','Иван','Иванович','1991.01.01',2,2,2,'5','+79200022102',2,2,'ОГУ',2,'+79225353971','2021.04.01','2021.04.20','',1,2);
 INSERT INTO Friend (Family_name, Name_, Patronymic_name, Date_birth, City_id, Street_id, House_id, Apartment, Telephone, Polling_station_id, District_id, Organization, FieldActivity_id, Phone_number_responsible, Date_registration_site, Voting_date,  Description,  User_id,GroupU_id) VALUES
-				('Петров','Петр','Петрович','1991.01.01',1,3,1,'5','+79292822102',3,2,'АО Ромашка',3,'+79225353971','2021.04.01','2021.04.20','',2,1);
+				('Петров','Петр','Петрович','1991.01.01',1,3,1,'5','+79292000102',3,3,'АО Ромашка',3,'+79225353971','2021.04.01','2021.04.20','',2,1);
                 
 Drop table Friend;
 Drop table House;
