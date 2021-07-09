@@ -32,7 +32,6 @@ $(function () {
         var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
         $.ajax({
             url: "http://localhost:18246/api/API/searchStreets",
-            url: "http://localhost:18246/api/API/searchStreets",
             headers:
             {
                 'Accept': 'application/json',

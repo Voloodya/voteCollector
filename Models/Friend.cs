@@ -144,5 +144,8 @@ namespace voteCollector.Models
         [ForeignKey(nameof(UserId))]
         [InverseProperty("Friends")]
         public virtual User User { get; set; }
+
+        [NotMapped]
+        public Byte[] QRcodeBytes { get; set; }
     }
 }

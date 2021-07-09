@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "voteCollector", "voteCollector.csproj", "{1C2B72CC-80DE-4A5A-92FD-022848B8F0CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "voteCollector", "voteCollector.csproj", "{1C2B72CC-80DE-4A5A-92FD-022848B8F0CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
