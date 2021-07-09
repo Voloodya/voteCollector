@@ -7,7 +7,7 @@ async function UploadExcelToWebService(fileSource) {
     $.ajax({
         type: "POST",
         //url: "http://10.1.48.66:80/uploadinmeta/api/FileApi/uploadDataSocContract",
-        url: "http://localhost:18246/api/FileApi/uploadDataFromFile",
+        url: "/api/FileApi/uploadDataFromFile",
         headers:
         {
             'Accept': 'application/json',

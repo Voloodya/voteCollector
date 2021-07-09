@@ -31,7 +31,8 @@ $(function () {
     $("#CityId").change(function () {
         var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
         $.ajax({
-            url: "http://localhost:18246/api/API/searchStreets",
+           // url: "http://localhost:18246/api/API/searchStreets",
+            url: "/api/API/searchStreets",
             headers:
             {
                 'Accept': 'application/json',
@@ -80,7 +81,7 @@ $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
         $.ajax({
-            url: "http://localhost:18246/api/API/searchHouse",
+            url: "/api/API/searchHouse",
             headers:
             {
                 'Accept': 'application/json',
@@ -106,7 +107,7 @@ $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
         $.ajax({
-            url: "http://localhost:18246/api/API/searchPollingStations/street",
+            url: "/api/API/searchPollingStations/street",
             headers:
             {
                 'Accept': 'application/json',
@@ -131,7 +132,7 @@ $(function () {
     $('#HouseId').change(function () {
         var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text() };
         $.ajax({
-            url: "http://localhost:18246/api/API/searchPollingStations/house",
+            url: "/api/API/searchPollingStations/house",
             headers:
             {
                 'Accept': 'application/json',
