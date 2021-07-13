@@ -2,12 +2,12 @@
 
 async function UploadExcelToWebService(fileSource) {
     var data = await ExcelToJSON('Freinds', fileSource);
-    data = await removePropertysJsonObjects(data, ['FamilyName','Name','PatronymicName','DateBirth','CityName','Street','House','Apartment','Telephone','DistrictName','PollingStationName','Organization','FieldActivityName','PhoneNumberResponsible','DateRegistrationSite','VotingDate','Vote','Description','Group']);
+    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'CityName', 'Street', 'House', 'Apartment', 'Telephone', 'DistrictName', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode','Email','Description','Group']);
 
     $.ajax({
         type: "POST",
-        //url: "http://10.1.48.66:80/uploadinmeta/api/FileApi/uploadDataSocContract",
         url: "/api/FileApi/uploadDataFromFile",
+        //url: "/CollectVoters/api/FileApi/uploadDataFromFile",
         headers:
         {
             'Accept': 'application/json',

@@ -15,6 +15,7 @@ namespace voteCollector.Controllers
         {
             _logger = logger;
         }
+
         public IActionResult Index()
         {
             try{

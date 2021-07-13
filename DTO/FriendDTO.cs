@@ -26,6 +26,8 @@ namespace CollectVoters.DTO
         public string DateRegistrationSite { get; set; }
         public string VotingDate { get; set; }
         public string Vote { get; set; }
+        public string TextQRcode { get; set; }
+        public string Email { get; set; }
         public string Description { get; set; }
         public string Group { get; set; }
         public long? UserId { get; set; }

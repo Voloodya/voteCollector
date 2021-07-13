@@ -90,29 +90,13 @@ function deleteSelected(idObject, numberColumn) {
 
             var idFriend = rows[i].cells[1].innerHTML;
             idFriend = idFriend.trim(); //Удаляем пробелы в начале и в конце
-            //var url_ = "http://localhost:48329/api/APIFriends/DeleteFriend/" + idFriend;
-
-            ////fetch(url_, {
-            ////    method: 'DELETE',
-            //////    body: JSON.stringify(data) // body data type must match "Content-Type" header
-            ////});
-            //$.ajax({
-            //    url: url_,
-            //    type: 'DELETE',
-            //    success: function (response) {
-            //        alert('Пользователи удалены');
-            //        console.log(response);
-            //    },
-            //    error: function (result, status, er) {
-            //        alert("error: " + result + " status: " + status + " er:" + er);
-            //    }
-            //});
             jsonMasId.push(Number.parseInt(idFriend));
         }
     }
     if (jsonMasId.length > 0) {
         $.ajax({
-            url: '/api/APIFriends/DeleteFriends/',
+           // url: '/api/APIFriends/DeleteFriends/',
+            url: '/CollectVoters/api/APIFriends/DeleteFriends/',
             type: 'POST',
             data: JSON.stringify(jsonMasId),
             contentType: "application/json;charset=utf-8",

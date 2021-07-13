@@ -95,9 +95,16 @@ namespace voteCollector.Models
         [DisplayName("Адресс")]
         [Column(TypeName = "varchar(500)")]
         public string Adress { get; set; }
+        [DisplayName("QR текст")]
+        [Column("TextQRcode", TypeName = "varchar(256)")]
+        public string TextQRcode { get; set; }
         [DisplayName("QRcode")]
         [Column("QRcode", TypeName = "varchar(4500)")]
         public string Qrcode { get; set; }
+        [DisplayName("Email")]
+        [Column("Email", TypeName = "varchar(256)")]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
         [DisplayName("Примечание")]
         [Column(TypeName = "varchar(256)")]
         public string Description { get; set; }
