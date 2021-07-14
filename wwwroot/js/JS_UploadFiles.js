@@ -6,8 +6,8 @@ async function UploadExcelToWebService(fileSource) {
 
     $.ajax({
         type: "POST",
-        url: "/api/FileApi/uploadDataFromFile",
-        //url: "/CollectVoters/api/FileApi/uploadDataFromFile",
+        //url: "/api/FileApi/uploadDataFromFile",
+        url: "/CollectVoters/api/FileApi/uploadDataFromFile",
         headers:
         {
             'Accept': 'application/json',
@@ -17,7 +17,11 @@ async function UploadExcelToWebService(fileSource) {
         processData: false,
         data: JSON.stringify(data),
         success: function (response) {
-            dataFilling(response, '#Records');
+
+            if (response != undefined) {
+                response.sort();
+            }
+            dataFilling(response, '#Records', '<option/>');
         },
         error: function (result, status, er) {
             alert("error: " + result + " status: " + status + " er:" + er);
@@ -79,16 +83,42 @@ function removePropertysJsonObjects(jsonObjects, neededProperties) {
 }
 
 //Заполнение объекта html данными из json массива
-function dataFilling(data, idObject) {
+function dataFilling(data, idObject, propertyHtml) {
 
     var objectHtml = $(idObject);
     objectHtml.empty();
 
     for (var i = 0; i < data.length; i++) {
-        var opt = data[i];
-        var el = document.createElement("option");
-        el.textContent = opt;
-        el.value = opt;
-        objectHtml.appendChild(el);
+        objectHtml.append($(propertyHtml,
+            {
+                value: data[i],
+                text: data[i]
+            }));
     }
 }
+
+function RequestUploadImage(fileSource) {
+    var data = new FormData();
+    var files = $('#' + fileSource).get(0).files;
+    // Add the uploaded image content to the form data collection
+    if (files.length > 0) {
+        data.append("UploadedFile", files[0]);
+    }
+
+    data.append("infoFile","No info");  //Other data
+    $.ajax({
+        type: "POST",
+        //url: "/api/FileApi/uploadFileQRCode",
+        url: "/CollectVoters/api/FileApi/uploadDataFromFile",
+        contentType: false,
+        processData: false,
+        data: data,
+        success: function (response) {
+            alert('File uploaded');
+            console.log(response);
+        },
+        error: function (result, status, er) {
+            alert("error: " + result + " status: " + status + " er:" + er);
+        }
+    });
+};

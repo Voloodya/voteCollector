@@ -16,9 +16,11 @@ namespace voteCollector.Controllers
     public class AccountController : Controller
     {
         private VoterCollectorContext db_context;
+        private ServiceUser _serviceUser;
         public AccountController(VoterCollectorContext context)
         {
             db_context = context;
+            _serviceUser = new ServiceUser(context);
         }
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
@@ -30,6 +32,7 @@ namespace voteCollector.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
         {
+
             if (ModelState.IsValid)
             {
                 User user = await db_context.User
@@ -39,11 +42,21 @@ namespace voteCollector.Controllers
                 {
                     await Authenticate(user); // аутентификация
 
+                    // Загрузка групп авторизовавшегося пользователя
+                    List<Groupu> groupsUser = _serviceUser.GetGroupsUser(user.UserName);
+                    // Получение группы "Волонтеры"
+                    Groupu volunteerGroup = db_context.Groupu.Where(g => g.Name.Equals("Волонтеры")).FirstOrDefault();
+
+                    // Если пользователь состоит только в группе "Волонтеры"
+                    if (groupsUser.Count == 1 && volunteerGroup != null && groupsUser.Contains(volunteerGroup))
+                    {
+                        return RedirectToAction("Index", "QRcode");
+                    }
                     // проверяем, принадлежит ли URL приложению
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    else if(!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         return Redirect(model.ReturnUrl);
-                    }
+                    }                    
                     else
                     {
                         return RedirectToAction("Index", "Friends");

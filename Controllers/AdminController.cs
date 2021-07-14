@@ -36,7 +36,7 @@ namespace CollectVoters.Controllers
             List<Groupu> groupsUser =_serviceUser.GetGroupsUser(User.Identity.Name);
             Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-            if (groupsUser.Contains(mainGroup))
+            if (mainGroup!=null && groupsUser.Contains(mainGroup))
             {
                 var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.District).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User);
 

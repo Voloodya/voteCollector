@@ -55,8 +55,8 @@
     <thead>
         <tr>
             @*<th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>*@
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
@@ -67,22 +67,48 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.GroupU.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.FamilyName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.GroupU.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.FamilyName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Index_GroupsUsers.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

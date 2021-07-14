@@ -62,6 +62,30 @@ namespace voteCollector.Controllers
             }            
         }
 
+        [HttpPost("uploadFileQRCode")]
+        public async Task<IActionResult> UploadFileQRCode(List<IFormFile> files)
+        {
+            if (HttpContext.Request.Form.Files.Count > 0)
+            {
+                try
+                {
+                    foreach (var file in HttpContext.Request.Form.Files)
+                    {
+                        if (file != null)
+                        {
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            return Ok("");
+        }
+
         public Friend CreateFreand(FriendDTO friendDTO)
         {
             Friend newFriend= new Friend();

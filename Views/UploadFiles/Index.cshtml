@@ -1,7 +1,5 @@
-﻿@model voteCollector.Models.FileModel
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@model voteCollector.DTO.FileExcel
+
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions {
     public string GetAntiXsrfRequestToken()
@@ -9,24 +7,27 @@
         return Xsrf.GetAndStoreTokens(Context).RequestToken;
     }
 }
-<div class="row">
-    <input type="hidden" id="RequestVerificationToken"
-           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <input type="file" id="uploadFileFriends" name="uploadFileFriends" accept=".xls, .xlsx" /><br /><br />
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <input type="button" id="btnUploadFriends" value="Загрузить в сервис" onclick="UploadExcelToWebService('uploadFileFriends');" />
-        </div>
-    </div>
-</div>
-<br />
 
+<h4>Загрузка файла</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <input type="hidden" id="RequestVerificationToken"
+               name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <input type="file" id="uploadFileFriends" name="uploadFileFriends" accept=".xls, .xlsx" /><br /><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="button" id="btnUploadFriends" value="Загрузить в сервис" onclick="UploadExcelToWebService('uploadFileFriends');" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <h4>Незагруженные строки</h4>
 <hr />
 <div class="row">

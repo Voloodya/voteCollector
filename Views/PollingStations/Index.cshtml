@@ -60,41 +60,67 @@
                 @Html.DisplayNameFor(model => model.City)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.House)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MicroDistrict)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Street)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.House)
+            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.MicroDistrict)
+        </th>*@
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.City.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.House.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Street.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdPollingStation">Удалить</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Street.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.House.Name)
+            </td>
+            @*<td>
+            @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
+        </td>*@
+
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdPollingStation">Удалить</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Index_PollingStations.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

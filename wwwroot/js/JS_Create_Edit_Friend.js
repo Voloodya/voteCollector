@@ -32,8 +32,8 @@ $(function () {
         var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
         $.ajax({
            // url: "http://localhost:18246/api/API/searchStreets",
-           // url: "/api/API/searchStreets",
-            url: "/CollectVoters/api/API/searchStreets",
+            url: "/api/API/searchStreets",
+            //url: "/CollectVoters/api/API/searchStreets",
             headers:
             {
                 'Accept': 'application/json',
@@ -45,7 +45,12 @@ $(function () {
             data: JSON.stringify(formData),
             success: function (data) {
 
-                dataFilling(data, 'idStreet', 'name', '#StreetId', '<option/>');
+                if (data != undefined) {
+                    var dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    });
+                }
+                dataFilling(dataSort, 'idStreet', 'name', '#StreetId', '<option/>');
 
                 // Генерация события для элемента Select
                 let elemSelectHouse = document.querySelector('#StreetId')
@@ -82,8 +87,8 @@ $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
         $.ajax({
-           // url: "/api/API/searchHouse",
-            url: "/CollectVoters/api/API/searchHouse",
+            url: "/api/API/searchHouse",
+           // url: "/CollectVoters/api/API/searchHouse",
             headers:
             {
                 'Accept': 'application/json',
@@ -95,7 +100,12 @@ $(function () {
             data: JSON.stringify(formData),
             success: function (data) {
 
-                dataFilling(data, 'idHouse', 'name', '#HouseId', '<option/>');
+                if (data != undefined) {
+                    var dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    });
+                }
+                dataFilling(dataSort, 'idHouse', 'name', '#HouseId', '<option/>');
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
@@ -109,8 +119,8 @@ $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
         $.ajax({
-           // url: "/api/API/searchPollingStations/street",
-            url: "/CollectVoters/api/API/searchPollingStations/street",
+            url: "/api/API/searchPollingStations/street",
+           // url: "/CollectVoters/api/API/searchPollingStations/street",
             headers:
             {
                 'Accept': 'application/json',
@@ -121,7 +131,13 @@ $(function () {
             dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
-                dataFilling(data, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+
+                if (data != undefined) {
+                    var dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    });
+                }
+                dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
@@ -135,8 +151,8 @@ $(function () {
     $('#HouseId').change(function () {
         var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text() };
         $.ajax({
-           // url: "/api/API/searchPollingStations/house",
-            url: "/CollectVoters/api/API/searchPollingStations/house",
+            url: "/api/API/searchPollingStations/house",
+            //url: "/CollectVoters/api/API/searchPollingStations/house",
             headers:
             {
                 'Accept': 'application/json',
@@ -147,7 +163,13 @@ $(function () {
             dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
-                dataFilling(data, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+
+                if (data != undefined) {
+                    var dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    });
+                }
+                dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
