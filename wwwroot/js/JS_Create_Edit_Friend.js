@@ -1,4 +1,8 @@
 ﻿
+let partMyURL = "/CollectVoters";
+if (window.location.href.substring(0, 16) == "http://localhost") {
+    partMyURL = "";
+}
 
 //Автоматич установка даты голосования
 function setDate(sourseidObj, idObject) {
@@ -32,7 +36,7 @@ $(function () {
         var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
         $.ajax({
            // url: "http://localhost:18246/api/API/searchStreets",
-            url: "/api/API/searchStreets",
+            url: partMyURL+"/api/API/searchStreets",
             //url: "/CollectVoters/api/API/searchStreets",
             headers:
             {
@@ -87,7 +91,7 @@ $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
         $.ajax({
-            url: "/api/API/searchHouse",
+            url: partMyURL + "/api/API/searchHouse",
            // url: "/CollectVoters/api/API/searchHouse",
             headers:
             {
@@ -114,13 +118,13 @@ $(function () {
     });
 });
 
-// Обновление списка участков после выбора улицы
+// Обновление списка участков после выбора населенного пункта
 $(function () {
-    $("#StreetId").change(function () {
-        var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
+    $("#CityId").change(function () {
+        var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
         $.ajax({
-            url: "/api/API/searchPollingStations/street",
-           // url: "/CollectVoters/api/API/searchPollingStations/street",
+            url: partMyURL + "/api/API/searchPollingStations/city",
+            // url: "/CollectVoters/api/API/searchPollingStations/city",
             headers:
             {
                 'Accept': 'application/json',
@@ -146,35 +150,76 @@ $(function () {
     });
 });
 
+// Обновление списка участков после выбора улицы
+$(function () {
+    $("#StreetId").change(function () {
+        var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
+        let select = document.getElementById('StreetId');
+        const valueSelect = select.value;
+        if ($('#StreetId').has('option').length != 0) {
+            $.ajax({
+                url: partMyURL + "/api/API/searchPollingStations/street",
+                // url: "/CollectVoters/api/API/searchPollingStations/street",
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'POST',
+                dataType: "json",
+                data: JSON.stringify(formData),
+                success: function (data) {
+
+                    if (data != undefined) {
+                        var dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
+                }
+            });
+        }
+    });
+});
+
 // Обновление списка участков после выбора номера дома
 $(function () {
     $('#HouseId').change(function () {
         var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text() };
-        $.ajax({
-            url: "/api/API/searchPollingStations/house",
-            //url: "/CollectVoters/api/API/searchPollingStations/house",
-            headers:
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            type: 'POST',
-            dataType: "json",
-            data: JSON.stringify(formData),
-            success: function (data) {
+        let select = document.getElementById('HouseId')
+        if ($('#HouseId').has('option').length != 0) {
+            $.ajax({
+                url: partMyURL + "/api/API/searchPollingStations/house",
+                //url: "/CollectVoters/api/API/searchPollingStations/house",
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'POST',
+                dataType: "json",
+                data: JSON.stringify(formData),
+                success: function (data) {
 
-                if (data != undefined) {
-                    var dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                    });
+                    if (data != undefined) {
+                        var dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
                 }
-                dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
-            },
-            error: function (result, status, er) {
-                alert("error: " + result + " status: " + status + " er:" + er);
-            }
-        });
+            });
+        }
     });
 });
 
@@ -191,6 +236,12 @@ function dataFilling(data, nameProperty1, nameProperty2, idObject, propertyHtml)
                 text: dataInstance[nameProperty2]
             }));
     });
+}
+
+// Взятие из SElect option, который выбран
+function GetSelectedOption(select) {
+    const option = select.querySelector(`option[value="${select.value}"]`)
+    return option;
 }
 
         //$(document).ready(function () {

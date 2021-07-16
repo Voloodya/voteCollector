@@ -20,12 +20,19 @@ namespace voteCollector.Controllers
     {
         private readonly ILogger<FriendsController> _logger;
         private readonly VoterCollectorContext _context;
+        private string NameServer;
+        private string WayController;
+        private string NameQRcodeParametrs;
         private ServiceUser _serviceUser;
+
 
         public FriendsController(VoterCollectorContext context, ILogger<FriendsController> logger)
         {
             _logger = logger;
             _context = context;
+            NameServer = "http://195.226.209.40";
+            WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
+            NameQRcodeParametrs = "qrText";
             _serviceUser = new ServiceUser(context);
         }
 
@@ -104,7 +111,7 @@ namespace voteCollector.Controllers
             ViewData["DistrictId"] = new SelectList(_context.District, "IdDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
-            List<Street> selectStreets =_context.Street.Where(s => s.CityId == 1).ToList();
+            List<Street> selectStreets =_context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
             IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
@@ -135,7 +142,7 @@ namespace voteCollector.Controllers
                     User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                     friend.UserId = userSave.IdUser;
                     //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                    string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode,"png");
+                    string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer+WayController+'?'+NameQRcodeParametrs+'=' + friend.TextQRcode,"png");
                     friend.Qrcode = fileNameQRcode;
 
                     _context.Add(friend);
@@ -237,7 +244,7 @@ namespace voteCollector.Controllers
                         User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                         friend.UserId = userSave.IdUser;
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                        string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"),friend.TextQRcode, "jpeg");
+                        string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png");
                         friend.Qrcode = fileNameQRcode;
 
                         try

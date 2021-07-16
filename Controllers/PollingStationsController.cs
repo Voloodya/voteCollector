@@ -34,10 +34,14 @@ namespace Generater.Controllers
         // GET: PollingStations/Create
         public IActionResult Create()
         {
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name");
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name");
+            int selectedIndexCity = 1;
+
+            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name");
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
+            IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
             return View();
         }
 
@@ -53,9 +57,11 @@ namespace Generater.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", pollingStation.StreetId);
+            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
+
             return View(pollingStation);
         }
 
@@ -73,9 +79,11 @@ namespace Generater.Controllers
                 return NotFound();
             }
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", pollingStation.StreetId);
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", pollingStation.StreetId);
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", pollingStation.HouseId);
             return View(pollingStation);
         }
 

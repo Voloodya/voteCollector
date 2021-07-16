@@ -265,6 +265,9 @@ namespace voteCollector.Data
                 entity.HasKey(e => e.IdHouse)
                     .HasName("PRIMARY");
 
+                entity.HasIndex(e => e.CityId)
+                   .HasName("FK_House_City_idx");
+
                 entity.HasIndex(e => e.MicroDistrictId)
                     .HasName("FK_House_MicroDistrict");
 
@@ -274,6 +277,11 @@ namespace voteCollector.Data
                 entity.Property(e => e.Name)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasOne(d => d.City)
+                    .WithMany(p => p.Houses)
+                    .HasForeignKey(d => d.CityId)
+                    .HasConstraintName("FK_House_City");
 
                 entity.HasOne(d => d.MicroDistrict)
                     .WithMany(p => p.Houses)

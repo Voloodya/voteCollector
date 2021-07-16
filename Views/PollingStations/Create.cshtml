@@ -3,10 +3,18 @@
 @{
     ViewData["Title"] = "Create";
 }
-
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
 <h4>Участок</h4>
 <hr />
 <div class="row">
+    <input type="hidden" id="RequestVerificationToken"
+           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -17,19 +25,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="CityId" class="control-label"></label>
-                <select asp-for="CityId" class ="form-control" asp-items="ViewBag.CityId"></select>
+                <select asp-for="CityId" id="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="StreetId" class="control-label"></label>
-                <select asp-for="StreetId" class ="form-control" asp-items="ViewBag.StreetId"></select>
+                <select asp-for="StreetId" id="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="MicroDistrictId" class="control-label"></label>
-                <select asp-for="MicroDistrictId" class ="form-control" asp-items="ViewBag.MicroDistrictId"></select>
-            </div>
+            @*<div class="form-group">
+                    <label asp-for="MicroDistrictId" class="control-label"></label>
+                    <select asp-for="MicroDistrictId" class ="form-control" asp-items="ViewBag.MicroDistrictId"></select>
+                </div>*@
             <div class="form-group">
                 <label asp-for="HouseId" class="control-label"></label>
-                <select asp-for="HouseId" class ="form-control" asp-items="ViewBag.HouseId"></select>
+                <select asp-for="HouseId" id="HouseId" class="form-control" asp-items="ViewBag.HouseId"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Создать" class="btn btn-primary" />
@@ -42,6 +50,27 @@
     <a asp-action="Index">Вернуться к списку</a>
 </div>
 
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
 @section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Create_Edit_Friend.js"></script>
+
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
 }

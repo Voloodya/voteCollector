@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using voteCollector.Data;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
@@ -63,7 +65,7 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost("uploadFileQRCode")]
-        public async Task<IActionResult> UploadFileQRCode(List<IFormFile> files)
+        public async Task<IActionResult> UploadFileQRCode()
         {
             if (HttpContext.Request.Form.Files.Count > 0)
             {
@@ -73,7 +75,9 @@ namespace voteCollector.Controllers
                     {
                         if (file != null)
                         {
-
+                            //Image imageFromFile=file.OpenReadStream;
+                            //Bitmap bitmap = new Bitmap(imageFromFile);
+                            //QRcodeServices.DecoderFromImage(bitmap);
                         }
                     }
                 }

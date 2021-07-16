@@ -1,13 +1,17 @@
 ﻿
+let partMyURL = '/CollectVoters';
+if (window.location.href.substring(0, 16) == "http://localhost") {
+    partMyURL = '';
+}
 
 async function UploadExcelToWebService(fileSource) {
     var data = await ExcelToJSON('Freinds', fileSource);
     data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'CityName', 'Street', 'House', 'Apartment', 'Telephone', 'DistrictName', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode','Email','Description','Group']);
 
     $.ajax({
-        type: "POST",
-        //url: "/api/FileApi/uploadDataFromFile",
-        url: "/CollectVoters/api/FileApi/uploadDataFromFile",
+        type: 'POST',
+        url: partMyURL+ '/api/FileApi/uploadDataFromFile',
+        //url: "/CollectVoters/api/FileApi/uploadDataFromFile",
         headers:
         {
             'Accept': 'application/json',
@@ -24,7 +28,7 @@ async function UploadExcelToWebService(fileSource) {
             dataFilling(response, '#Records', '<option/>');
         },
         error: function (result, status, er) {
-            alert("error: " + result + " status: " + status + " er:" + er);
+            alert('error: ' + result + ' status: ' + status + ' er:' + er);
         }
     });
 }
@@ -107,9 +111,9 @@ function RequestUploadImage(fileSource) {
 
     data.append("infoFile","No info");  //Other data
     $.ajax({
-        type: "POST",
-        //url: "/api/FileApi/uploadFileQRCode",
-        url: "/CollectVoters/api/FileApi/uploadDataFromFile",
+        type: 'POST',
+        url: partMyURL+ '/api/FileApi/uploadFileQRCode',
+        //url: "/CollectVoters/api/FileApi/uploadDataFromFile",
         contentType: false,
         processData: false,
         data: data,
@@ -118,7 +122,7 @@ function RequestUploadImage(fileSource) {
             console.log(response);
         },
         error: function (result, status, er) {
-            alert("error: " + result + " status: " + status + " er:" + er);
+            alert('error: ' + result + ' status: ' + status + ' er:' + er);
         }
     });
 };

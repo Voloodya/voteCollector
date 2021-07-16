@@ -1,4 +1,9 @@
 ﻿
+let partMyURL = "/CollectVoters";
+if (window.location.href.substring(0, 16) == "http://localhost") {
+    partMyURL = "";
+}
+
 // Define a custom selector icontains instead of overriding the existing expression contains
 // A global js asset file will be a good place to put this code
 //$.expr[':'].icontains = function(a, i, m) {
@@ -95,8 +100,8 @@ function deleteSelected(idObject, numberColumn) {
     }
     if (jsonMasId.length > 0) {
         $.ajax({
-           // url: '/api/APIFriends/DeleteFriends/',
-            url: '/CollectVoters/api/APIFriends/DeleteFriends/',
+            url: partMyURL+'/api/APIFriends/DeleteFriends/',
+            //url: '/CollectVoters/api/APIFriends/DeleteFriends/',
             type: 'POST',
             data: JSON.stringify(jsonMasId),
             contentType: "application/json;charset=utf-8",

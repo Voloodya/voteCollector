@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,11 +23,23 @@ namespace voteCollector.Models
         [Column("Id_House")]
         public int IdHouse { get; set; }
         [Column(TypeName = "varchar(256)")]
+        [Required(ErrorMessage = "Не указан номер дома")]
+        [DisplayName("Номер дома")]
         public string Name { get; set; }
         [Column("Street_id")]
+        [Required(ErrorMessage = "Не указана улица")]
+        [DisplayName("Улица")]
         public int? StreetId { get; set; }
         [Column("MicroDistrict_id")]
+        [DisplayName("Микрорайон")]
         public int? MicroDistrictId { get; set; }
+        [Column("City_id")]
+        [DisplayName("Населенный пункт")]
+        public int? CityId { get; set; }
+
+        [ForeignKey(nameof(CityId))]
+        [InverseProperty("Houses")]
+        public virtual City City { get; set; }
 
         [ForeignKey(nameof(MicroDistrictId))]
         [InverseProperty(nameof(Microdistrict.Houses))]

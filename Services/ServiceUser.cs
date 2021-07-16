@@ -54,5 +54,6 @@ namespace voteCollector.Controllers
                 return _context.Groupu.Where(g => groupsUser.Contains(g));
             }
         }
+        
     }
 }

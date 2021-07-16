@@ -20,6 +20,7 @@ namespace voteCollector.Models
             Microdistricts = new HashSet<Microdistrict>();
             PollingStations = new HashSet<PollingStation>();
             Streets = new HashSet<Street>();
+            Houses = new HashSet<House>();
         }
 
         [Key]
@@ -33,6 +34,8 @@ namespace voteCollector.Models
         public virtual ICollection<District> Districts { get; set; }
         [InverseProperty("City")]
         public virtual ICollection<Friend> Friends { get; set; }
+        [InverseProperty("City")]
+        public virtual ICollection<House> Houses { get; set; }
         [InverseProperty("City")]
         public virtual ICollection<Microdistrict> Microdistricts { get; set; }
         [InverseProperty("City")]

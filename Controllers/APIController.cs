@@ -48,6 +48,20 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
+        [HttpPost("searchPollingStations/city")]
+        [ValidateAntiForgeryToken]
+        public IActionResult SearchPollingStationsCity(StreetDTO street)
+        {
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.StreetId == street.IdStreet).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+
+            if (pollingStations.Any())
+            {
+                List<PollingStationDTO> pollingStationsDTO = pollingStations.Select(p => new PollingStationDTO { IdPollingStation = p.IdPollingStation, Name = p.Name }).ToList();
+                return Ok(pollingStationsDTO);
+            }
+            return NoContent();
+        }
+
         [HttpPost("searchPollingStations/street")]
         [ValidateAntiForgeryToken]
         public IActionResult SearchPollingStationsStreet(StreetDTO street)

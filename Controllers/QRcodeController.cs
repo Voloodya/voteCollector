@@ -17,11 +17,6 @@ namespace voteCollector.Controllers
             return View();
         }
 
-        // GET: QRcodeController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
         // GET: QRcodeController/Create
         public ActionResult Create()
