@@ -86,6 +86,7 @@ $(function () {
 //        });
 //    });
 //});
+
 // Обновление списка домов после выбора улицы
 $(function () {
     $("#StreetId").change(function () {
@@ -244,17 +245,18 @@ function GetSelectedOption(select) {
     return option;
 }
 
-        //$(document).ready(function () {
-        //    $('.selectСhoice').select2({
-        //        placeholder: "Выберите улицу",
-        //        minimumInputLength: 1, // only start searching when the user has input 3 or more characters
-        //        maximumInputLength: 15, // only allow terms up to 20 characters long
-        //        language: "ru"
-        //    });
-        //});
+        $(document).ready(function () {
+            $('#StreetId').select2({
+                dropdownParent: $('#divStreet'),
+                placeholder: "Выберите улицу",
+                minimumInputLength: 3, // only start searching when the user has input 3 or more characters
+                maximumInputLength: 15, // only allow terms up to 15 characters long
+                language: "ru"
+            });
+        });
 
         //$(document).ready(function () {
-        //    $('.selectСhoice').select2({
+        //    $('#HouseId').select2({
         //        dropdownParent: $('#divHouse'),
         //        placeholder: "Выберите дом",
         //        minimumInputLength: 1, // only start searching when the user has input 3 or more characters
