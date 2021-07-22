@@ -7,7 +7,7 @@ using voteCollector.Models;
 
 namespace voteCollector.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     [Produces("application/json")]
     public class APIController : ControllerBase

@@ -40,16 +40,16 @@ namespace voteCollector.Controllers
                 try
                 {
                     await serviceFriends.SaveFriends(friendUpdate);
-                    return Ok(friendUpdate.Name + ", поздравляем, вы зарегистрированы как участник розыгрыша!");
+                    return Ok("<h4>"+ friendUpdate.Name+" "+friendUpdate.PatronymicName + ", поздравляем, Вы зарегистрированы как участник розыгрыша!" + "</h4>");
                 }
                 catch(Exception ex)
                 {
-                    return Ok("Не удалось сохранить данные. Обратитесь к администратору!" + " "+ex.ToString());
+                    return Ok("<h4>Не удалось сохранить данные. Обратитесь к администратору!</h4>" + " "+ex.ToString());
                 }
             }
             else
             {
-                return Ok("Ошибка QR-кода. QR-код не содержет индификатора пользователя.");
+                return Ok("<h4>Ошибка QR-кода. QR-код не содержет индификатора пользователя.</h4>");
             }
             
         }

@@ -15,7 +15,7 @@ using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     [Produces("application/json")]
     [Authorize(Roles = "admin, user")]

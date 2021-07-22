@@ -139,6 +139,8 @@ namespace voteCollector.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    string host = this.HttpContext.Request.Host.ToString();
+                    string path = this.HttpContext.Request.Host.ToString();
                     User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                     friend.UserId = userSave.IdUser;
                     //friend.GroupUId = userSave.Groupsusers.First().GroupUId;

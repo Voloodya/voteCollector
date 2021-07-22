@@ -25,7 +25,7 @@ async function UploadExcelToWebService(fileSource) {
             if (response != undefined) {
                 response.sort();
             }
-            dataFilling(response, '#Records', '<option/>');
+            DataFillingDiv(response, 'outText');
         },
         error: function (result, status, er) {
             alert('error: ' + result + ' status: ' + status + ' er:' + er);
@@ -87,7 +87,7 @@ function removePropertysJsonObjects(jsonObjects, neededProperties) {
 }
 
 //Заполнение объекта html данными из json массива
-function dataFilling(data, idObject, propertyHtml) {
+function DataFillingSelect(data, idObject, propertyHtml) {
 
     var objectHtml = $(idObject);
     objectHtml.empty();
@@ -99,6 +99,12 @@ function dataFilling(data, idObject, propertyHtml) {
                 text: data[i]
             }));
     }
+}
+
+function DataFillingDiv(data, idObject) {
+
+    var divhtml = document.getElementById(idObject);
+    divhtml.innerHTML = JSON.stringify(data);
 }
 
 function RequestUploadImage(fileSource) {

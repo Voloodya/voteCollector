@@ -10,7 +10,7 @@ using voteCollector.Models;
 
 namespace CollectVoters.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     [Produces("application/json")]
     public class APIFriendsController : ControllerBase
