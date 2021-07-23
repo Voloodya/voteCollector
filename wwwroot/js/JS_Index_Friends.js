@@ -100,7 +100,7 @@ function deleteSelected(idObject, numberColumn) {
     }
     if (jsonMasId.length > 0) {
         $.ajax({
-            url: partMyURL+'/api/APIFriends/DeleteFriends/',
+            url: partMyURL +'/api/APIFriends/DeleteFriends/',
             //url: '/CollectVoters/api/APIFriends/DeleteFriends/',
             type: 'POST',
             data: JSON.stringify(jsonMasId),

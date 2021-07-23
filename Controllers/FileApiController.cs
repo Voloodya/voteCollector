@@ -15,7 +15,7 @@ using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
-    [Route("/api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
     [Authorize(Roles = "admin, user")]
@@ -75,6 +75,9 @@ namespace voteCollector.Controllers
                     {
                         if (file != null)
                         {
+                            //Преобразовать файл в поток или байт массив
+
+
                             //Image imageFromFile=file.OpenReadStream;
                             //Bitmap bitmap = new Bitmap(imageFromFile);
                             //QRcodeServices.DecoderFromImage(bitmap);

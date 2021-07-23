@@ -118,7 +118,7 @@ function RequestUploadImage(fileSource) {
     data.append("infoFile","No info");  //Other data
     $.ajax({
         type: 'POST',
-        url: partMyURL+ '/api/FileApi/uploadFileQRCode',
+        url: partMyURL + '/api/FileApi/uploadFileQRCode',
         //url: "/CollectVoters/api/FileApi/uploadDataFromFile",
         contentType: false,
         processData: false,

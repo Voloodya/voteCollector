@@ -34,6 +34,7 @@ namespace voteCollector.Models
         [DisplayName("Микрорайон")]
         public int? MicroDistrictId { get; set; }
         [Column("City_id")]
+        [Required(ErrorMessage = "Не указан населен. п-т")]
         [DisplayName("Населенный пункт")]
         public int? CityId { get; set; }
 

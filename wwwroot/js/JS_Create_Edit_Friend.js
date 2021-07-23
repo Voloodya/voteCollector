@@ -249,7 +249,7 @@ function GetSelectedOption(select) {
             $('#StreetId').select2({
                 dropdownParent: $('#divStreet'),
                 placeholder: "Выберите улицу",
-                minimumInputLength: 3, // only start searching when the user has input 3 or more characters
+                minimumInputLength: 2, // only start searching when the user has input 2 or more characters
                 maximumInputLength: 15, // only allow terms up to 15 characters long
                 language: "ru"
             });

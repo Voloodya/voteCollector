@@ -1,4 +1,9 @@
 ﻿
+let partMyURL = "/CollectVoters";
+if (window.location.href.substring(0, 16) == "http://localhost") {
+    partMyURL = "";
+}
+
 $(document).ready(function () {
     $('#stationsTable').DataTable({
 
@@ -39,3 +44,101 @@ $(document).ready(function () {
         }
     });
 });
+
+// Загрузка населенных пунктов
+$(document).ready(function () {
+
+    $.ajax({
+            // url: "http://localhost:18246/api/API/getSities",
+            url: partMyURL + "/api/API/getSities",
+            //url: "/CollectVoters/api/API/getSities",
+            headers:
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            type: 'GET',
+            dataType: "json",
+            success: function (data) {
+
+                if (data != undefined) {
+                    var dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    });
+                }
+                dataFilling(dataSort, 'idCity', 'name', '#SelectCityId', '<option/>');
+
+                // Генерация события для элемента SelectCityId
+                let elemSelectHouse = document.querySelector('#SelectCityId')
+                elemSelectHouse.selectedIndex = 0;
+                const event = new Event("change");
+                elemSelectHouse.dispatchEvent(event);
+            },
+            error: function (result, status, er) {
+                alert("error: " + result + " status: " + status + " er:" + er);
+            }
+        });
+
+    });
+
+// Обновление списка улиц после выбора города
+$(function () {
+    $("#SelectCityId").change(function () {
+        var formData = { 'IdCity': Number.parseInt($('#SelectCityId').val()), 'Name': $('#SelectCityId>option:selected').text() };
+        $.ajax({
+            // url: "http://localhost:18246/api/API/searchStreets",
+            url: partMyURL + "/api/API/searchStreets",
+            //url: "/CollectVoters/api/API/searchStreets",
+            headers:
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            type: 'POST',
+            dataType: "json",
+            data: JSON.stringify(formData),
+            success: function (data) {
+
+                if (data != undefined) {
+                    var dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    });
+                }
+                dataFilling(dataSort, 'idStreet', 'name', '#SelictStreetId', '<option/>');
+
+                // Генерация события для элемента Select
+                let elemSelectHouse = document.querySelector('#SelictStreetId')
+                elemSelectHouse.selectedIndex = 0;
+                const event = new Event("change");
+                elemSelectHouse.dispatchEvent(event);
+            },
+            error: function (result, status, er) {
+                alert("error: " + result + " status: " + status + " er:" + er);
+            }
+        });
+
+    });
+});
+
+function RequestUpdateUIK(idSelectCity, idSelectStreet) {
+
+}
+
+//Заполнение объекта html данными из json массива
+function dataFilling(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
+
+    var objectHtml = $(idObject);
+    objectHtml.empty();
+
+    $.each(data, function (index, dataInstance) {
+        objectHtml.append($(propertyHtml,
+            {
+                value: dataInstance[nameProperty1],
+                text: dataInstance[nameProperty2]
+            }));
+    });
+}
+
+

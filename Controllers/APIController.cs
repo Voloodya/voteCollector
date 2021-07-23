@@ -7,7 +7,7 @@ using voteCollector.Models;
 
 namespace voteCollector.Controllers
 {
-    [Route("/api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
     public class APIController : ControllerBase
@@ -19,12 +19,25 @@ namespace voteCollector.Controllers
             _context = context;
         }
 
+        [HttpGet("getSities")]
+        [ValidateAntiForgeryToken]
+        public IActionResult GetSities()
+        {
+            List<City> Cities = _context.City.ToList();
+
+            if (Cities.Any())
+            {
+                List<CityDTO> citiesDTO = Cities.Select(s => new CityDTO { IdCity = s.IdCity, Name = s.Name }).ToList();
+                return Ok(citiesDTO);
+            }
+            return NoContent();
+        }
 
         [HttpPost("searchStreets")]
         [ValidateAntiForgeryToken]
         public IActionResult SearchStreets(CityDTO citySelected)
         {
-            List<Street> streets =  _context.Street.Where(s => s.CityId == citySelected.CityId).ToList<Street>();
+            List<Street> streets =  _context.Street.Where(s => s.CityId == citySelected.IdCity).ToList<Street>();
             
             if (streets.Any())
             {

@@ -7,7 +7,7 @@ namespace voteCollector.DTO
 {
     public class CityDTO
     {
-        public int CityId { get; set; }
+        public int IdCity { get; set; }
         public string Name { get; set; }
     }
 }
