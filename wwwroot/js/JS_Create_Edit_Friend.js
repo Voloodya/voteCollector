@@ -33,11 +33,11 @@ function stateDate(idObject) {
 // Обновление списка улиц после выбора города
 $(function () {
     $("#CityId").change(function () {
-        var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
+        var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
         $.ajax({
            // url: "http://localhost:18246/api/API/searchStreets",
             url: partMyURL+"/api/API/searchStreets",
-            //url: "/CollectVoters/api/API/searchStreets",
+           // url: "/CollectVoters/api/API/searchStreets",
             headers:
             {
                 'Accept': 'application/json',
@@ -57,10 +57,10 @@ $(function () {
                 dataFilling(dataSort, 'idStreet', 'name', '#StreetId', '<option/>');
 
                 // Генерация события для элемента Select
-                let elemSelectHouse = document.querySelector('#StreetId')
-                elemSelectHouse.selectedIndex = 0;
+                let elemSelectStreet = document.querySelector('#StreetId')
+                elemSelectStreet.selectedIndex = 0;
                 const event = new Event("change");
-                elemSelectHouse.dispatchEvent(event);
+                elemSelectStreet.dispatchEvent(event);
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
@@ -93,7 +93,7 @@ $(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
         $.ajax({
             url: partMyURL + "/api/API/searchHouse",
-           // url: "/CollectVoters/api/API/searchHouse",
+            //url: "/CollectVoters/api/API/searchHouse",
             headers:
             {
                 'Accept': 'application/json',
@@ -122,10 +122,10 @@ $(function () {
 // Обновление списка участков после выбора населенного пункта
 $(function () {
     $("#CityId").change(function () {
-        var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
+        var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
         $.ajax({
             url: partMyURL + "/api/API/searchPollingStations/city",
-            // url: "/CollectVoters/api/API/searchPollingStations/city",
+           // url: "/CollectVoters/api/API/searchPollingStations/city",
             headers:
             {
                 'Accept': 'application/json',
@@ -160,7 +160,7 @@ $(function () {
         if ($('#StreetId').has('option').length != 0) {
             $.ajax({
                 url: partMyURL + "/api/API/searchPollingStations/street",
-                // url: "/CollectVoters/api/API/searchPollingStations/street",
+                //url: "/CollectVoters/api/API/searchPollingStations/street",
                 headers:
                 {
                     'Accept': 'application/json',

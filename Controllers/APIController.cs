@@ -44,7 +44,7 @@ namespace voteCollector.Controllers
                 List<StreetDTO> streetsDTO = streets.Select(s => new StreetDTO { IdStreet = s.IdStreet, Name = s.Name }).ToList();
                 return Ok(streetsDTO);                
             }
-            return NoContent();
+            return NotFound("Улицы для выбранного населенного пункта не найдены");
         }
 
         [HttpPost("searchHouse")]
