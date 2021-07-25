@@ -48,10 +48,10 @@ $(function () {
             dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
-
+                var dataSort = [];
                 if (data != undefined) {
-                    var dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                     });
                 }
                 dataFilling(dataSort, 'idStreet', 'name', '#StreetId', '<option/>');
@@ -104,10 +104,10 @@ $(function () {
             dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
-
+                var dataSort = [];
                 if (data != undefined) {
-                    var dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                     });
                 }
                 dataFilling(dataSort, 'idHouse', 'name', '#HouseId', '<option/>');
@@ -136,10 +136,10 @@ $(function () {
             dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
-
+                var dataSort = [];
                 if (data != undefined) {
-                    var dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                    dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                     });
                 }
                 dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
@@ -172,9 +172,10 @@ $(function () {
                 data: JSON.stringify(formData),
                 success: function (data) {
 
+                    var dataSort = [];
                     if (data != undefined) {
-                        var dataSort = data.sort(function (a, b) {
-                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                          dataSort = data.sort(function (a, b) {
+                          return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                         });
                     }
                     dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
@@ -207,10 +208,10 @@ $(function () {
                 dataType: "json",
                 data: JSON.stringify(formData),
                 success: function (data) {
-
+                    var dataSort = [];
                     if (data != undefined) {
-                        var dataSort = data.sort(function (a, b) {
-                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        dataSort = data.sort(function (a, b) {
+                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                         });
                     }
                     dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
