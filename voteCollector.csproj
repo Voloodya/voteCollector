@@ -217,6 +217,10 @@
     <None Include="Views\PollingStations\Delete.cshtml" />
     <None Include="Views\PollingStations\Edit.cshtml" />
     <None Include="Views\PollingStations\Index.cshtml" />
+    <None Include="Views\Stations\Create.cshtml" />
+    <None Include="Views\Stations\Delete.cshtml" />
+    <None Include="Views\Stations\Edit.cshtml" />
+    <None Include="Views\Stations\Index.cshtml" />
     <None Include="voteCollector.sln" />
   </ItemGroup>
 

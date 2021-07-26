@@ -32,6 +32,8 @@ namespace voteCollector.Data
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Street> Street { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Station> Station { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -313,10 +315,24 @@ namespace voteCollector.Data
                     .HasConstraintName("FK_MicroDistrict_City");
             });
 
+            modelBuilder.Entity<Station>(entity =>
+            {
+                entity.HasKey(e => e.IdStation)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.Name)
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+            });
+
             modelBuilder.Entity<PollingStation>(entity =>
             {
                 entity.HasKey(e => e.IdPollingStation)
                     .HasName("PRIMARY");
+
+                entity.HasIndex(e => e.StationId)
+                    .HasName("FK_PollingStation_Station");
+
 
                 entity.HasIndex(e => e.CityId)
                     .HasName("FK_PollingStation_City");

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj": {}
+    "D:\\My_PROGRAMS\\voteCollector\\voteCollector.csproj": {}
   },
   "projects": {
-    "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj": {
+    "D:\\My_PROGRAMS\\voteCollector\\voteCollector.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj",
+        "projectUniqueName": "D:\\My_PROGRAMS\\voteCollector\\voteCollector.csproj",
         "projectName": "voteCollector",
-        "projectPath": "D:\\My_PROGRAMS\\voteCollector_\\voteCollector.csproj",
+        "projectPath": "D:\\My_PROGRAMS\\voteCollector\\voteCollector.csproj",
         "packagesPath": "C:\\Users\\lucenkovlse\\.nuget\\packages\\",
-        "outputPath": "D:\\My_PROGRAMS\\voteCollector_\\obj\\",
+        "outputPath": "D:\\My_PROGRAMS\\voteCollector\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\lucenkovlse\\AppData\\Roaming\\NuGet\\NuGet.Config",

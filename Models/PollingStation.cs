@@ -25,6 +25,10 @@ namespace voteCollector.Models
         [Required(ErrorMessage = "Не указана номер участка")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
+        [DisplayName("Номер участка")]
+        [Column("Station_id")]
+        public int? StationId { get; set; }
+
         [DisplayName("Населен. п-т")]
         [Required(ErrorMessage = "Не указан населен. п-т")]
         [Column("City_id")]
@@ -38,6 +42,11 @@ namespace voteCollector.Models
         [DisplayName("Дом")]
         [Column("House_id")]
         public int? HouseId { get; set; }
+
+        [ForeignKey(nameof(StationId))]
+        [InverseProperty("PollingStations")]
+        [DisplayName("Номер участка")]
+        public virtual Station Station { get; set; }
 
         [ForeignKey(nameof(CityId))]
         [InverseProperty("PollingStations")]

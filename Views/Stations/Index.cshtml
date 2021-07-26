@@ -1,0 +1,76 @@
+﻿@model IEnumerable<voteCollector.Models.Station>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    #stationsTable {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
+
+        #stationsTable thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /*            word-break: break-all;
+    */
+        }
+
+        #stationsTable tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        #stationsTable tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
+
+<div>
+    <a asp-action="RedirectTo">Вернуться на главную</a>
+</div>
+
+<br />
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить</a>
+</p>
+
+<table class="table" id="stationsTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdStation">Править</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdStation">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

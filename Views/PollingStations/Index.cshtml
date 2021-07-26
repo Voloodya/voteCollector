@@ -77,7 +77,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.StationId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.City)
@@ -99,7 +99,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.Station.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.City.Name)

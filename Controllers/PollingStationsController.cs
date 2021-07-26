@@ -27,7 +27,7 @@ namespace Generater.Controllers
         // GET: PollingStations
         public async Task<IActionResult> Index()
         {
-            var voterCollectorContext = _context.PollingStation.Include(p => p.City).Include(p => p.House).Include(p => p.MicroDistrict).Include(p => p.Street);
+            var voterCollectorContext = _context.PollingStation.Include(s => s.Station).Include(p => p.City).Include(p => p.House).Include(p => p.MicroDistrict).Include(p => p.Street);
             return View(await voterCollectorContext.ToListAsync());
         }
 
@@ -36,6 +36,8 @@ namespace Generater.Controllers
         {
             int selectedIndexCity = 1;
 
+            List<Station> stations = _context.Station.ToList();
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
@@ -48,7 +50,7 @@ namespace Generater.Controllers
         // POST: PollingStations/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPollingStation,Name,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
+        public async Task<IActionResult> Create([Bind("IdPollingStation,Name,IdStation,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
         {
             if (ModelState.IsValid)
             {
@@ -56,6 +58,7 @@ namespace Generater.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
@@ -78,6 +81,7 @@ namespace Generater.Controllers
             {
                 return NotFound();
             }
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name",pollingStation.StationId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
@@ -90,7 +94,7 @@ namespace Generater.Controllers
         // POST: PollingStations/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPollingStation,Name,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
+        public async Task<IActionResult> Edit(int id, [Bind("IdPollingStation,Name,IdStation,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
         {
             if (id != pollingStation.IdPollingStation)
             {
@@ -117,6 +121,7 @@ namespace Generater.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", pollingStation.StationId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
@@ -133,6 +138,7 @@ namespace Generater.Controllers
             }
 
             var pollingStation = await _context.PollingStation
+                .Include(p => p.StationId)
                 .Include(p => p.City)
                 .Include(p => p.House)
                 .Include(p => p.MicroDistrict)
