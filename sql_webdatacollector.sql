@@ -73,6 +73,18 @@ create table House(
 					  CONSTRAINT FK_House_MicroDistrict FOREIGN KEY (MicroDistrict_id) REFERENCES MicroDistrict (Id_MicroDistrict)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `votercollector`.`house` 
+ADD COLUMN `City_id` INT NULL DEFAULT NULL AFTER `MicroDistrict_id`,
+ADD INDEX `FK_House_City_idx` (`City_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`house` 
+ADD CONSTRAINT `FK_House_City`
+  FOREIGN KEY (`City_id`)
+  REFERENCES `votercollector`.`city` (`Id_City`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
 create table Polling_station(
                       Id_Polling_station INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       Name VARCHAR(256) NULL,
@@ -88,6 +100,22 @@ create table Polling_station(
 					  CONSTRAINT FK_PollingStation_House FOREIGN KEY (House_id) REFERENCES House (Id_House)
                       ON delete set null on update restrict
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+create table Station(
+					 Id_Station INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					 Name VARCHAR(256) NULL  
+  )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `votercollector`.`polling_station` 
+ADD COLUMN `Station_id` INT NULL DEFAULT NULL AFTER `Id_Polling_station`,
+ADD INDEX `FK_PollingStation_Station_idx` (`Station_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`polling_station` 
+ADD CONSTRAINT `FK_PollingStation_Station`
+  FOREIGN KEY (`Station_id`)
+  REFERENCES `votercollector`.`station` (`Id_Station`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
 
 create table FieldActivity(
                       Id_FieldActivity INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
