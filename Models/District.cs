@@ -13,10 +13,6 @@ namespace voteCollector.Models
     [Table("district")]
     public partial class District
     {
-        public District()
-        {
-            Friends = new HashSet<Friend>();
-        }
 
         [Key]
         [Column("Id_District")]
@@ -25,8 +21,10 @@ namespace voteCollector.Models
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
         [Column("Electoral_District_id")]
+        [DisplayName("Избирательный округ")]
         public int? ElectoralDistrictId { get; set; }
         [Column("Station_id")]
+        [DisplayName("Избират. участок")]
         public int? StationId { get; set; }
         [Column("City_id")]
         public int? CityId { get; set; }
@@ -35,17 +33,16 @@ namespace voteCollector.Models
 
         [ForeignKey(nameof(ElectoralDistrictId))]
         [InverseProperty("Districts")]
+        [DisplayName("Избирательный округ")]
         public virtual ElectoralDistrict ElectoralDistrict { get; set; }
         [ForeignKey(nameof(StationId))]
         [InverseProperty("Districts")]
+        [DisplayName("Избират. участок")]
         public virtual Station Station { get; set; }
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Districts")]
         public virtual City City { get; set; }
         [InverseProperty("Districts")]
         public virtual Street Street { get; set; }
-
-        [InverseProperty("District")]
-        public virtual ICollection<Friend> Friends { get; set; }
     }
 }

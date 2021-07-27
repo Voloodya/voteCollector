@@ -16,6 +16,7 @@ namespace voteCollector.Models
         public ElectoralDistrict()
         {
             Districts = new HashSet<District>();
+            Friends = new HashSet<Friend>();
         }
 
         [Key]
@@ -27,5 +28,7 @@ namespace voteCollector.Models
 
         [InverseProperty("ElectoralDistrict")]
         public virtual ICollection<District> Districts { get; set; }
+        [InverseProperty("ElectoralDistrict")]
+        public virtual ICollection<Friend> Friends { get; set; }
     }
 }

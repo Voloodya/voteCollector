@@ -191,6 +191,48 @@ create table Friend(
 					CONSTRAINT FK_Friend_GroupU FOREIGN KEY (GroupU_id) REFERENCES GroupU (Id_Group)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+//////////////////////////////////////////////////////////////////////////////
+ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `Electoral_district_id` INT NULL DEFAULT NULL AFTER `City_id`;
+
+ALTER TABLE `votercollector`.`friend` 
+ADD INDEX `FK_Friend_ElectoralDistrict` (`Electoral_district_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`friend` 
+ADD CONSTRAINT `FK_Friend_ElectoralDistrict`
+  FOREIGN KEY (`Electoral_district_id`)
+  REFERENCES `votercollector`.`electoral_district` (`Id_ElectoralDistrict`)
+  ON DELETE set null
+  ON UPDATE restrict;
+  
+  
+  
+  ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `Station_id` INT NULL DEFAULT NULL AFTER `Telephone`;
+
+ALTER TABLE `votercollector`.`friend` 
+ADD INDEX `FK_Friend_Station_idx` (`Station_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`friend` 
+ADD CONSTRAINT `FK_Friend_Station`
+  FOREIGN KEY (`Station_id`)
+  REFERENCES `votercollector`.`station` (`Id_Station`)
+  ON DELETE set null
+  ON UPDATE NO ACTION;
+  
+  
+  ALTER TABLE `votercollector`.`friend` 
+DROP FOREIGN KEY `FK_Friend_District`;
+ALTER TABLE `votercollector`.`friend` 
+DROP INDEX `FK_Friend_District` ;
+;
+
+ALTER TABLE `votercollector`.`friend` 
+DROP COLUMN `District_id`;
+
+////////////////////////////////////////////////////////
+
 INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');
 

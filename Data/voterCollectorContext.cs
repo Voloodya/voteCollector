@@ -130,8 +130,8 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.CityId)
                     .HasName("FK_Friend_City");
 
-                entity.HasIndex(e => e.DistrictId)
-                    .HasName("FK_Friend_District");
+                entity.HasIndex(e => e.ElectoralDistrictId)
+                    .HasName("FK_Friend_ElectoralDistrict");
 
                 entity.HasIndex(e => e.FieldActivityId)
                     .HasName("FK_Friend_FieldActivity");
@@ -147,6 +147,9 @@ namespace voteCollector.Data
 
                 entity.HasIndex(e => e.PollingStationId)
                     .HasName("FK_Friend_Polling_station");
+
+                entity.HasIndex(e => e.StationId)
+                   .HasName("FK_Friend_Station");
 
                 entity.HasIndex(e => e.StreetId)
                     .HasName("FK_Friend_Street");
@@ -214,11 +217,11 @@ namespace voteCollector.Data
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Friend_City");
 
-                entity.HasOne(d => d.District)
+                entity.HasOne(d => d.ElectoralDistrict)
                     .WithMany(p => p.Friends)
-                    .HasForeignKey(d => d.DistrictId)
+                    .HasForeignKey(d => d.ElectoralDistrictId)
                     .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_Friend_District");
+                    .HasConstraintName("FK_Friend_ElectoralDistrict");
 
                 entity.HasOne(d => d.FieldActivity)
                     .WithMany(p => p.Friends)
@@ -248,6 +251,12 @@ namespace voteCollector.Data
                     .HasForeignKey(d => d.PollingStationId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Friend_Polling_station");
+
+                entity.HasOne(d => d.Station)
+                    .WithMany(p => p.Friends)
+                    .HasForeignKey(d => d.StationId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK_Friend_Station");
 
                 entity.HasOne(d => d.Street)
                     .WithMany(p => p.Friends)
