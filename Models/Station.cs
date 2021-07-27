@@ -12,6 +12,7 @@ namespace voteCollector.Models
     {
         public Station()
         {
+            Districts = new HashSet<District>();
             PollingStations = new HashSet<PollingStation>();
         }
 
@@ -21,6 +22,9 @@ namespace voteCollector.Models
         [Column(TypeName = "varchar(256)")]
         [DisplayName("Участок")]
         public string Name { get; set; }
+
+        [InverseProperty("Station")]
+        public virtual ICollection<District> Districts { get; set; }
 
         [InverseProperty("Station")]
         public virtual ICollection<PollingStation> PollingStations { get; set; }

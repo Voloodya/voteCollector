@@ -10,7 +10,6 @@
         return Xsrf.GetAndStoreTokens(Context).RequestToken;
     }
 }
-<h4>Участок</h4>
 <hr />
 <div class="row">
     <input type="hidden" id="RequestVerificationToken"
@@ -31,9 +30,9 @@
                 <label asp-for="CityId" class="control-label"></label>
                 <select asp-for="CityId" id="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
             </div>
-            <div class="form-group">
+            <div id="divStreet" class="form-group">
                 <label asp-for="StreetId" class="control-label"></label>
-                <select asp-for="StreetId" id="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
+                <select asp-for="StreetId" id="StreetId" class="form-control" asp-items="ViewBag.StreetId" style="width:100%"></select>
             </div>
             @*<div class="form-group">
             <label asp-for="MicroDistrictId" class="control-label"></label>

@@ -33,6 +33,7 @@ namespace voteCollector.Data
         public virtual DbSet<Street> Street { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Station> Station { get; set; }
+        public virtual DbSet<ElectoralDistrict> ElectoralDistrict { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -61,19 +62,55 @@ namespace voteCollector.Data
                 entity.HasKey(e => e.IdDistrict)
                     .HasName("PRIMARY");
 
+                entity.HasIndex(e => e.ElectoralDistrictId)
+                    .HasName("FK_District_Electoral_District");
+
+                entity.HasIndex(e => e.StationId)
+                    .HasName("FK_District_Station");
+
                 entity.HasIndex(e => e.CityId)
                     .HasName("FK_District_City");
+
+                entity.HasIndex(e => e.StreetId)
+                    .HasName("FK_District_Street");
 
                 entity.Property(e => e.Name)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasOne(d => d.ElectoralDistrict)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.ElectoralDistrictId)
+                    .HasConstraintName("FK_District_Electoral_District");
+
+                entity.HasOne(d => d.Station)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.StationId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK_District_Station");
 
                 entity.HasOne(d => d.City)
                     .WithMany(p => p.Districts)
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_District_City");
+
+                entity.HasOne(d => d.Street)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.StreetId)
+                    .HasConstraintName("FK_District_Street");
             });
+
+            modelBuilder.Entity<ElectoralDistrict>(entity =>
+            {
+                entity.HasKey(e => e.IdElectoralDistrict)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.Name)
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+            });
+
 
             modelBuilder.Entity<Fieldactivity>(entity =>
             {
@@ -333,7 +370,6 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.StationId)
                     .HasName("FK_PollingStation_Station");
 
-
                 entity.HasIndex(e => e.CityId)
                     .HasName("FK_PollingStation_City");
 
@@ -349,6 +385,11 @@ namespace voteCollector.Data
                 entity.Property(e => e.Name)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasOne(d => d.Station)
+                    .WithMany(p => p.PollingStations)
+                    .HasForeignKey(d => d.StationId)
+                    .HasConstraintName("FK_PollingStation_Station");
 
                 entity.HasOne(d => d.City)
                     .WithMany(p => p.PollingStations)

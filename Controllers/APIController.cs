@@ -33,6 +33,21 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
+        [HttpGet("getElectoralDistrict")]
+        [ValidateAntiForgeryToken]
+        public IActionResult GetgetElectoralDistrict()
+        {
+            List<ElectoralDistrict> electoralDistricts = _context.ElectoralDistrict.ToList();
+
+            if (electoralDistricts.Any())
+            {
+                List<ElectoralDistrictDTO> electoralDistrictsDTO = electoralDistricts.Select(s => new ElectoralDistrictDTO { IdElectoralDistrict = s.IdElectoralDistrict, Name = s.Name }).ToList();
+                return Ok(electoralDistrictsDTO);
+            }
+            return NoContent();
+        }
+
+
         [HttpPost("searchStreets")]
         [ValidateAntiForgeryToken]
         public IActionResult SearchStreets(CityDTO citySelected)

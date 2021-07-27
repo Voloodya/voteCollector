@@ -54,7 +54,7 @@
 
 <br />
 <hr />
-<div class="row">
+@*<div class="row">
     <input type="hidden" id="RequestVerificationToken"
            name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
     <div class="col-md-4">
@@ -67,8 +67,19 @@
             <select id="SelictStreetId" class="form-control"></select>
         </div>
     </div>
-    <input class="btn btn-primary btn-block" type="submit" value="Загрузить QRcode" onclick="RequestUpdateUIK('SelectCityId','SelictStreetId');" />
+</div>*@
+
+<div class="row">
+    <input type="hidden" id="RequestVerificationToken"
+           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="control-label"></label>
+            <select id="SelectElectoralDistrictId" class="form-control"></select>
+        </div>
+    </div>
 </div>
+
 
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить участок</a>
@@ -77,7 +88,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StationId)
+                @Html.DisplayNameFor(model => model.Station)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.City)

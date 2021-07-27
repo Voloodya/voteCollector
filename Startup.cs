@@ -57,6 +57,8 @@ namespace voteCollector
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;
+
+                
             });
 
             //Add
@@ -97,6 +99,8 @@ namespace voteCollector
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            //app.UseCors();
         }
     }
 }

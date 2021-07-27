@@ -113,6 +113,7 @@ namespace voteCollector.Controllers
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets =_context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
+            // ???
             IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
@@ -201,7 +202,7 @@ namespace voteCollector.Controllers
             ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
             List<Street> selectStreets = _context.Street.Where(s => s.CityId==friend.CityId).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);            
-            List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == friend.StreetId).ToList();
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
             ViewData["UserId"] = new SelectList(_context.User.Select(x =>
             new User {

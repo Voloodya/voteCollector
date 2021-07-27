@@ -40,6 +40,11 @@ create table City(
                       Name VARCHAR(256) NULL                      
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+create table Electoral_District(
+					Id_ElectoralDistrict INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					Name VARCHAR(256) NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 create table District(
 					Id_District INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					Name VARCHAR(256) NULL,
@@ -48,6 +53,45 @@ create table District(
                     ON delete set null on update restrict
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `votercollector`.`district` 
+ADD COLUMN `Electoral_District_id` INT NULL DEFAULT NULL AFTER `Id_District`;
+
+ALTER TABLE `votercollector`.`district` 
+ADD INDEX `FK_District_Electoral_District` (`Electoral_District_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`district` 
+ADD CONSTRAINT `FK_District_Electoral_District`
+  FOREIGN KEY (`Electoral_District_id`)
+  REFERENCES `votercollector`.`electoral_district` (`Id_ElectoralDistrict`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+  ALTER TABLE `votercollector`.`district` 
+ADD COLUMN `Street_id` INT NULL DEFAULT NULL AFTER `City_id`;
+
+ALTER TABLE `votercollector`.`district` 
+ADD INDEX `FK_District_Street` (`Street_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`district` 
+ADD CONSTRAINT `FK_District_Street`
+  FOREIGN KEY (`Street_id`)
+  REFERENCES `votercollector`.`street` (`Id_Street`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+  ALTER TABLE `votercollector`.`district` 
+ADD COLUMN `Station_id` INT NULL DEFAULT NULL AFTER `Electoral_District_id`;
+
+ALTER TABLE `votercollector`.`district` 
+ADD INDEX `FK_District_Station` (`Station_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`district` 
+ADD CONSTRAINT `FK_District_Station`
+  FOREIGN KEY (`Station_id`)
+  REFERENCES `votercollector`.`station` (`Id_Station`)
+  ON DELETE set null
+  ON UPDATE restrict;
+  
 create table MicroDistrict(
 					Id_MicroDistrict INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					Name VARCHAR(256) NULL,

@@ -36,7 +36,6 @@ namespace Generater.Controllers
         {
             int selectedIndexCity = 1;
 
-            List<Station> stations = _context.Station.ToList();
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
@@ -50,10 +49,12 @@ namespace Generater.Controllers
         // POST: PollingStations/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPollingStation,Name,IdStation,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
+        public async Task<IActionResult> Create([Bind("IdPollingStation,Name,StationId,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
         {
             if (ModelState.IsValid)
             {
+                Station stationFind = _context.Station.Where(s => s.IdStation == pollingStation.StationId).FirstOrDefault();
+                pollingStation.Name = stationFind.Name;
                 _context.Add(pollingStation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +87,7 @@ namespace Generater.Controllers
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", pollingStation.StreetId);
-            List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == pollingStation.StreetId).ToList();
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", pollingStation.HouseId);
             return View(pollingStation);
         }
@@ -94,7 +95,7 @@ namespace Generater.Controllers
         // POST: PollingStations/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPollingStation,Name,IdStation,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
+        public async Task<IActionResult> Edit(int id, [Bind("IdPollingStation,Name,StationId,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
         {
             if (id != pollingStation.IdPollingStation)
             {
@@ -105,6 +106,8 @@ namespace Generater.Controllers
             {
                 try
                 {
+                    Station stationFind = _context.Station.Where(s => s.IdStation == pollingStation.StationId).FirstOrDefault();
+                    pollingStation.Name = stationFind.Name;
                     _context.Update(pollingStation);
                     await _context.SaveChangesAsync();
                 }

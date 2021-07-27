@@ -6772,6 +6772,218 @@
 							"headQualifiersCompartment": {
 								"$ref": "AAAAAAF42bDga3m8jcw="
 							}
+						},
+						{
+							"_type": "UMLClassView",
+							"_id": "AAAAAAF657JFktwQ7bQ=",
+							"_parent": {
+								"$ref": "AAAAAAF41SE+CyWaUzc="
+							},
+							"model": {
+								"$ref": "AAAAAAF657JFkdwO+FI="
+							},
+							"subViews": [
+								{
+									"_type": "UMLNameCompartmentView",
+									"_id": "AAAAAAF657JFktwRvB8=",
+									"_parent": {
+										"$ref": "AAAAAAF657JFktwQ7bQ="
+									},
+									"model": {
+										"$ref": "AAAAAAF657JFkdwO+FI="
+									},
+									"subViews": [
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAF657JFktwSkO0=",
+											"_parent": {
+												"$ref": "AAAAAAF657JFktwRvB8="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"left": 2336,
+											"top": 400,
+											"height": 13
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAF657JFktwT1BM=",
+											"_parent": {
+												"$ref": "AAAAAAF657JFktwRvB8="
+											},
+											"font": "Arial;13;1",
+											"left": 1173,
+											"top": 207,
+											"width": 99.70263671875,
+											"height": 13,
+											"text": "ElectoralDistrict"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAF657JFktwUR9k=",
+											"_parent": {
+												"$ref": "AAAAAAF657JFktwRvB8="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"left": 2336,
+											"top": 400,
+											"width": 73.67724609375,
+											"height": 13,
+											"text": "(from Model)"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAF657JFktwV+08=",
+											"_parent": {
+												"$ref": "AAAAAAF657JFktwRvB8="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"left": 2336,
+											"top": 400,
+											"height": 13,
+											"horizontalAlignment": 1
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 1168,
+									"top": 200,
+									"width": 109.70263671875,
+									"height": 25,
+									"stereotypeLabel": {
+										"$ref": "AAAAAAF657JFktwSkO0="
+									},
+									"nameLabel": {
+										"$ref": "AAAAAAF657JFktwT1BM="
+									},
+									"namespaceLabel": {
+										"$ref": "AAAAAAF657JFktwUR9k="
+									},
+									"propertyLabel": {
+										"$ref": "AAAAAAF657JFktwV+08="
+									}
+								},
+								{
+									"_type": "UMLAttributeCompartmentView",
+									"_id": "AAAAAAF657JFktwWghA=",
+									"_parent": {
+										"$ref": "AAAAAAF657JFktwQ7bQ="
+									},
+									"model": {
+										"$ref": "AAAAAAF657JFkdwO+FI="
+									},
+									"subViews": [
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAF657KGl93Huns=",
+											"_parent": {
+												"$ref": "AAAAAAF657JFktwWghA="
+											},
+											"model": {
+												"$ref": "AAAAAAF657KGiN2ga0k="
+											},
+											"font": "Arial;13;0",
+											"left": 1173,
+											"top": 230,
+											"width": 99.70263671875,
+											"height": 13,
+											"text": "+Id: int",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAF657LbHN82aI0=",
+											"_parent": {
+												"$ref": "AAAAAAF657JFktwWghA="
+											},
+											"model": {
+												"$ref": "AAAAAAF657LbEN8Pcyk="
+											},
+											"font": "Arial;13;0",
+											"left": 1173,
+											"top": 245,
+											"width": 99.70263671875,
+											"height": 13,
+											"text": "+Name: string",
+											"horizontalAlignment": 0
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 1168,
+									"top": 225,
+									"width": 109.70263671875,
+									"height": 38
+								},
+								{
+									"_type": "UMLOperationCompartmentView",
+									"_id": "AAAAAAF657JFktwXyvQ=",
+									"_parent": {
+										"$ref": "AAAAAAF657JFktwQ7bQ="
+									},
+									"model": {
+										"$ref": "AAAAAAF657JFkdwO+FI="
+									},
+									"font": "Arial;13;0",
+									"left": 1168,
+									"top": 263,
+									"width": 109.70263671875,
+									"height": 10
+								},
+								{
+									"_type": "UMLReceptionCompartmentView",
+									"_id": "AAAAAAF657JFktwYT1w=",
+									"_parent": {
+										"$ref": "AAAAAAF657JFktwQ7bQ="
+									},
+									"model": {
+										"$ref": "AAAAAAF657JFkdwO+FI="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"left": 1168,
+									"top": 200,
+									"width": 10,
+									"height": 10
+								},
+								{
+									"_type": "UMLTemplateParameterCompartmentView",
+									"_id": "AAAAAAF657JFktwZBcs=",
+									"_parent": {
+										"$ref": "AAAAAAF657JFktwQ7bQ="
+									},
+									"model": {
+										"$ref": "AAAAAAF657JFkdwO+FI="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"left": 1168,
+									"top": 200,
+									"width": 10,
+									"height": 10
+								}
+							],
+							"font": "Arial;13;0",
+							"containerChangeable": true,
+							"left": 1168,
+							"top": 200,
+							"width": 109.70263671875,
+							"height": 73,
+							"nameCompartment": {
+								"$ref": "AAAAAAF657JFktwRvB8="
+							},
+							"attributeCompartment": {
+								"$ref": "AAAAAAF657JFktwWghA="
+							},
+							"operationCompartment": {
+								"$ref": "AAAAAAF657JFktwXyvQ="
+							},
+							"receptionCompartment": {
+								"$ref": "AAAAAAF657JFktwYT1w="
+							},
+							"templateParameterCompartment": {
+								"$ref": "AAAAAAF657JFktwZBcs="
+							}
 						}
 					]
 				},
@@ -8030,6 +8242,34 @@
 							"_id": "AAAAAAF42bBnQ3YHs5g=",
 							"_parent": {
 								"$ref": "AAAAAAF42a+8OW34LMg="
+							},
+							"name": "Name",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"_type": "UMLClass",
+					"_id": "AAAAAAF657JFkdwO+FI=",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "ElectoralDistrict",
+					"attributes": [
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAF657KGiN2ga0k=",
+							"_parent": {
+								"$ref": "AAAAAAF657JFkdwO+FI="
+							},
+							"name": "Id",
+							"type": "int"
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAF657LbEN8Pcyk=",
+							"_parent": {
+								"$ref": "AAAAAAF657JFkdwO+FI="
 							},
 							"name": "Name",
 							"type": "string"
