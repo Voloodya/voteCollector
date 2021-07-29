@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using voteCollector.Data;
+using voteCollector.DTO;
 using voteCollector.Models;
 
 namespace Generater.Controllers
@@ -165,6 +166,24 @@ namespace Generater.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult GetPolingStationsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
+        {
+            List<District> districts = _context.District.Where(d => d.ElectoralDistrictId == electoralDistrictDTO.IdElectoralDistrict).ToList();
+            List<int> selectStationsId = districts.Select(d => d.StationId ?? 0).ToList();
+
+            List<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.City).Include(p => p.Street).Include(p => p.House)
+                .Where(p => selectStationsId.Contains(p.StationId ?? 0)).ToList();
+
+            var jsonPolingStations = Json(pollingStations);
+
+            return jsonPolingStations;
+
+            //return PartialView(pollingStations);
+        }
+
 
         private bool PollingStationExists(int id)
         {

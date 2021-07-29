@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CollectVoters.DTO
+namespace voteCollector.DTO
 {
     public class FriendDTO
     {
@@ -18,7 +18,7 @@ namespace CollectVoters.DTO
         public string House { get; set; }
         public string Apartment { get; set; }
         public string Telephone { get; set; }
-        public string DistrictName { get; set; }
+        public string ElectiralDistrict { get; set; }
         public string PollingStationName { get; set; }
         public string Organization { get; set; }
         public string FieldActivityName { get; set; }
@@ -31,6 +31,7 @@ namespace CollectVoters.DTO
         public string Description { get; set; }
         public string Group { get; set; }
         public long? UserId { get; set; }
+        public string UserName { get; set; }
 
     }
 }

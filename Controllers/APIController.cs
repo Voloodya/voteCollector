@@ -20,7 +20,6 @@ namespace voteCollector.Controllers
         }
 
         [HttpGet("getSities")]
-        [ValidateAntiForgeryToken]
         public IActionResult GetSities()
         {
             List<City> Cities = _context.City.ToList();
@@ -34,7 +33,6 @@ namespace voteCollector.Controllers
         }
 
         [HttpGet("getElectoralDistrict")]
-        [ValidateAntiForgeryToken]
         public IActionResult GetgetElectoralDistrict()
         {
             List<ElectoralDistrict> electoralDistricts = _context.ElectoralDistrict.ToList();
@@ -49,7 +47,6 @@ namespace voteCollector.Controllers
 
 
         [HttpPost("searchStreets")]
-        [ValidateAntiForgeryToken]
         public IActionResult SearchStreets(CityDTO citySelected)
         {
             List<Street> streets =  _context.Street.Where(s => s.CityId == citySelected.IdCity).ToList<Street>();
@@ -59,11 +56,10 @@ namespace voteCollector.Controllers
                 List<StreetDTO> streetsDTO = streets.Select(s => new StreetDTO { IdStreet = s.IdStreet, Name = s.Name }).ToList();
                 return Ok(streetsDTO);                
             }
-            return NotFound("Улицы для выбранного населенного пункта не найдены");
+            return NoContent();
         }
 
         [HttpPost("searchHouse")]
-        [ValidateAntiForgeryToken]
         public IActionResult SearchHouse(StreetDTO streetSelected)
         {
             List<House> houses = _context.House.Where(h => h.StreetId == streetSelected.IdStreet).ToList<House>();
@@ -77,7 +73,6 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost("searchPollingStations/city")]
-        [ValidateAntiForgeryToken]
         public IActionResult SearchPollingStationsCity(StreetDTO street)
         {
             List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.StreetId == street.IdStreet).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
@@ -91,7 +86,6 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost("searchPollingStations/street")]
-        [ValidateAntiForgeryToken]
         public IActionResult SearchPollingStationsStreet(StreetDTO street)
         {
             List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.StreetId == street.IdStreet).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
@@ -105,7 +99,6 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost("searchPollingStations/house")]
-        [ValidateAntiForgeryToken]
         public IActionResult SearchPollingStationsHouse(HouseDTO house)
         {
             var pollingStations = _context.PollingStation.Where(ps => ps.HouseId == house.IdHouse);

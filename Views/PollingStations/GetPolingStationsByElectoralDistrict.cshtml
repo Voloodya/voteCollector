@@ -1,0 +1,29 @@
+﻿@model IEnumerable<voteCollector.Models.PollingStation>;
+@{
+    ViewData["Title"] = "GetPolingStationsByElectoralDistrict";
+}
+
+<tbody id="tableBodyPollingStation">
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td></td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Station.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Street.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.House.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdPollingStation">Удалить</a>
+            </td>
+        </tr>
+    }
+</tbody>

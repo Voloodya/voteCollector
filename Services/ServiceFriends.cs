@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using voteCollector.Data;
+using voteCollector.DTO;
 using voteCollector.Models;
 
 namespace voteCollector.Services
@@ -49,5 +50,41 @@ namespace voteCollector.Services
                 return ex.ToString();
             }
         }
+
+        public List<Friend> SearchFriendsByElectoralDistrict(ElectoralDistrictDTO electoralDistrict)
+        {
+            List<Friend> friends = _context.Friend.Where(frnd => frnd.ElectoralDistrictId == electoralDistrict.IdElectoralDistrict).ToList();
+
+            return friends;
+        }
+
+        public List<Friend> SearchFriendsByIds(long[] idFriends)
+        {
+            List<Friend> friends = new List<Friend>();
+            foreach (long id in idFriends)
+            {
+                Friend friend = _context.Friend.Find(id);
+
+                if (friend != null)
+                {
+                    friends.Add(friend);
+                }
+                else { friends.Add(null); }
+            }
+            return friends;
+        }
+
+        public void RemoveFriends(List<Friend> friends)
+        {
+            foreach (Friend friend in friends)
+            {
+                if (friend != null)
+                {
+                    _context.Friend.Remove(friend);
+                    _context.SaveChanges();
+                }
+            }
+        }
+
     }
 }

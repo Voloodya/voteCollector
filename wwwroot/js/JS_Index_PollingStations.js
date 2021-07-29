@@ -5,7 +5,7 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
 }
 
 $(document).ready(function () {
-    $('#stationsTable').DataTable({
+    $('#pollingStationsTable').DataTable({
 
         retrieve: true,
         paging: false,
@@ -15,7 +15,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([0,1,2]).every(function () {
+            this.api().columns([1,2,3]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -67,13 +67,13 @@ $(document).ready(function () {
                     return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                 });
             }
-            dataFilling(dataSort, 'idElectoralDistrict', 'name', '#SelectElectoralDistrictId', '<option/>');
+            DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', 'SelectElectoralDistrictId', '<option/>');
 
-            // Генерация события для элемента SelectElectoralDistrictId
-            let elemSelectHouse = document.querySelector('#SelectElectoralDistrictId')
-            elemSelectHouse.selectedIndex = 0;
-            const event = new Event("change");
-            elemSelectHouse.dispatchEvent(event);
+        //    // Генерация события для элемента SelectElectoralDistrictId
+        //    let elemSelectHouse = document.querySelector('#SelectElectoralDistrictId')
+        //    elemSelectHouse.selectedIndex = 0;
+        //    const event = new Event("change");
+        //    elemSelectHouse.dispatchEvent(event);
         },
         error: function (result, status, er) {
             alert("error: " + result + " status: " + status + " er:" + er);
@@ -82,51 +82,14 @@ $(document).ready(function () {
 
 });
 
-// Загрузка населенных пунктов
-//$(document).ready(function () {
-
-//    $.ajax({
-//            // url: "http://localhost:18246/api/API/getSities",
-//            url: partMyURL + "/api/API/getSities",
-//            //url: "/CollectVoters/api/API/getSities",
-//            headers:
-//            {
-//                'Accept': 'application/json',
-//                'Content-Type': 'application/json',
-//                'RequestVerificationToken': $('#RequestVerificationToken').val()
-//            },
-//            type: 'GET',
-//            dataType: "json",
-//            success: function (data) {
-
-//                if (data != undefined) {
-//                    var dataSort = data.sort(function (a, b) {
-//                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-//                    });
-//                }
-//                dataFilling(dataSort, 'idCity', 'name', '#SelectCityId', '<option/>');
-
-//                // Генерация события для элемента SelectCityId
-//                let elemSelectHouse = document.querySelector('#SelectCityId')
-//                elemSelectHouse.selectedIndex = 0;
-//                const event = new Event("change");
-//                elemSelectHouse.dispatchEvent(event);
-//            },
-//            error: function (result, status, er) {
-//                alert("error: " + result + " status: " + status + " er:" + er);
-//            }
-//        });
-
-//    });
-
-//// Обновление списка улиц после выбора города
+//// Обновление списка участков
 //$(function () {
-//    $("#SelectCityId").change(function () {
-//        var formData = { 'IdCity': Number.parseInt($('#SelectCityId').val()), 'Name': $('#SelectCityId>option:selected').text() };
+//    $("#SelectElectoralDistrictId").change(function () {
+//        var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
 //        $.ajax({
-//            // url: "http://localhost:18246/api/API/searchStreets",
-//            url: partMyURL + "/api/API/searchStreets",
-//            //url: "/CollectVoters/api/API/searchStreets",
+//            // url: "http://localhost:18246/api/APIPollingStations/searchStreets",
+//            url: partMyURL + "/api/APIPollingStations/SearchPolingStationsByElectoralDistrict",
+//            //url: "/CollectVoters/api/APIPollingStations/SearchPolingStationsByElectoralDistrict",
 //            headers:
 //            {
 //                'Accept': 'application/json',
@@ -138,18 +101,14 @@ $(document).ready(function () {
 //            data: JSON.stringify(formData),
 //            success: function (data) {
 
+//                dataSort = [];
 //                if (data != undefined) {
-//                    var dataSort = data.sort(function (a, b) {
+//                        dataSort = data.sort(function (a, b) {
 //                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
 //                    });
 //                }
-//                dataFilling(dataSort, 'idStreet', 'name', '#SelictStreetId', '<option/>');
+//                dataFillingTableBody(dataSort, 'pollingStationsTable');
 
-//                // Генерация события для элемента Select
-//                let elemSelectHouse = document.querySelector('#SelictStreetId')
-//                elemSelectHouse.selectedIndex = 0;
-//                const event = new Event("change");
-//                elemSelectHouse.dispatchEvent(event);
 //            },
 //            error: function (result, status, er) {
 //                alert("error: " + result + " status: " + status + " er:" + er);
@@ -159,16 +118,92 @@ $(document).ready(function () {
 //    });
 //});
 
+// Обновление списка участков
+$(function () {
+    $("#SelectElectoralDistrictId").change(function () {
+        var formData = {'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
 
+        $('#' + idObjectTable + ' tbody > tr').remove();
+
+        $.ajax({
+            type: 'POST',
+        //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
+            url: 'PollingStations/GetPolingStationsByElectoralDistrict/',
+            headers:
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            dataType: "json",
+            data: JSON.stringify(formData),
+            success: function (data) {
+
+                $('#tableBodyPollingStation').replaceWith(data);
+
+            },
+            error: function (result, status, er) {
+                alert("error: " + result + " status: " + status + " er:" + er);
+            }
+        });
+    });
+
+});
+
+
+function deleteTrTableBody(idObject, jsonMas) {
+
+    var table = document.getElementById(idObject);
+    var rows = table.rows;
+
+    for (let i = 1; i <= (rows.length - 1); i++) {
+
+        var idFriend = table.rows[i].cells[1].innerHTML;
+        if (jsonMas.indexOf(Number.parseInt(idFriend)) != -1) {
+
+            table.rows[i].remove();
+            i--;
+        }
+    }
+}
+
+function dataFillingTableBody(data, idObjectTable) {
+
+    //var table = document.getElementById(idObjectTable);
+    var bodyTable = $(`#${idObjectTable} tbody`);
+    //var table = $(idObjectTable);
+    //$(idObjectTable + ' tbody').empty();
+    $('#'+idObjectTable + ' tbody > tr').remove();
+
+    for (let i = 0; i < data.length; i++) {
+
+        bodyTable.append(createRow(data[i]));
+    }
+
+}
+
+function createRow(data) {
+
+    var trElement = '<tr>';
+
+    for (key in data) {
+
+        trElement += '<td>' + data[key] + '</td>';
+    }
+
+    trElement += '</tr>';
+
+    return trElement;
+}
 
 function RequestUpdateUIK(idSelectCity, idSelectStreet) {
 
 }
 
 //Заполнение объекта html данными из json массива
-function dataFilling(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
+function DataFillingSelect(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
 
-    var objectHtml = $(idObject);
+    var objectHtml = $('#'+idObject);
     objectHtml.empty();
 
     $.each(data, function (index, dataInstance) {

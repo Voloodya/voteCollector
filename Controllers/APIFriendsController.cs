@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using voteCollector.Data;
+using voteCollector.DTO;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace CollectVoters.Controllers
 {
@@ -16,10 +18,12 @@ namespace CollectVoters.Controllers
     public class APIFriendsController : ControllerBase
     {
         private readonly VoterCollectorContext _context;
+        private ServiceFriends _serviceFriends;
 
         public APIFriendsController(VoterCollectorContext context)
         {
             _context = context;
+            _serviceFriends = new ServiceFriends();
         }
 
         // GET: api/APIFriends
@@ -105,42 +109,60 @@ namespace CollectVoters.Controllers
 
         // POST: api/APIFriends/DeleteFriends/
         [HttpPost("DeleteFriends")]
-        public async Task<ActionResult<List<Friend>>> DeleteFriends([ModelBinder] long [] idFriends)
+        public async Task<IActionResult> DeleteFriends([ModelBinder] long [] idFriends)
         {
             List<Friend> friends = new List<Friend>();
 
-            await Task.Run(() => RemoveFriends(SearchFriends(idFriends)));
-
-            return friends;
-        }
-
-        private List<Friend> SearchFriends(long[] idFriends)
-        {
-            List<Friend> friends = new List<Friend>();
-            foreach (long id in idFriends)
+            try
             {
-                Friend friend = _context.Friend.Find(id);
+                await Task.Run(() => _serviceFriends.RemoveFriends(_serviceFriends.SearchFriendsByIds(idFriends)));
 
-                if (friend != null)
-                {
-                    friends.Add(friend);
-                }
-                else { friends.Add(null);}
+                return Ok();
             }
-            return friends;
+            catch (Exception ex)
+            {
+                return NotFound(ex.ToString());
+            }
+            
         }
 
-        private void RemoveFriends(List<Friend> friends)
+        [HttpPost("SearchFriendsByElectoralDistrict")]
+        public async Task<List<FriendDTO>> SearchFriendsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
         {
-            foreach(Friend friend in friends)
+            List<Friend> friends = _serviceFriends.SearchFriendsByElectoralDistrict(electoralDistrictDTO);
+
+            List<FriendDTO> friendDTOs = friends.Select(frnd => new FriendDTO
             {
-                if (friend != null)
-                {
-                    _context.Friend.Remove(friend);
-                    _context.SaveChanges();
-                }
-            }                       
+                IdFriend = frnd.IdFriend,
+                FamilyName = frnd.FamilyName,
+                Name = frnd.Name,
+                PatronymicName = frnd.PatronymicName,
+                DateBirth = frnd.DateBirth.ToString(),
+                CityName = frnd.City.Name,
+                Street = frnd.Street.Name,
+                Microdistrict = frnd.MicroDistrict.Name,
+                House = frnd.House.Name,
+                Apartment = frnd.Apartment,
+                Telephone = frnd.Telephone,
+                ElectiralDistrict = frnd.ElectoralDistrict.Name,
+                PollingStationName = frnd.PollingStation.Name,
+                Organization = frnd.Organization,
+                FieldActivityName = frnd.FieldActivity.Name,
+                PhoneNumberResponsible = frnd.PhoneNumberResponsible,
+                DateRegistrationSite = frnd.DateRegistrationSite.ToString(),
+                VotingDate = frnd.VotingDate.ToString(),
+                Vote = frnd.Voter.ToString(),
+                TextQRcode = frnd.TextQRcode,
+                Email = frnd.Email,
+                Description = frnd.Description,
+                Group = frnd.GroupU.Name,
+                UserId = frnd.UserId,
+                UserName = frnd.User.UserName
+            }).ToList();
+
+            return friendDTOs;
         }
+
 
         private bool FriendExists(long id)
         {

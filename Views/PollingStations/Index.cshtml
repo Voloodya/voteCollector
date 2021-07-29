@@ -21,24 +21,24 @@
         display: block;
     }
 
-    #stationsTable {
+    #pollingStationsTable {
         counter-reset: rowNumber;
         font-size: 14px;
     }
 
-        #stationsTable thead {
+        #pollingStationsTable thead {
             background: Gainsboro;
             word-wrap: break-word;
             /*            word-break: break-all;
     */
         }
 
-        #stationsTable tbody tr {
+        #pollingStationsTable tbody tr {
             counter-increment: rowNumber;
             font-size: 14px;
         }
 
-        #stationsTable tr td:first-child::before {
+        #pollingStationsTable tr td:first-child::before {
             content: counter(rowNumber);
             min-width: 1em;
             margin-right: 0.5em;
@@ -55,19 +55,24 @@
 <br />
 <hr />
 @*<div class="row">
-    <input type="hidden" id="RequestVerificationToken"
-           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label class="control-label"></label>
-            <select id="SelectCityId" class="form-control"></select>
+        <input type="hidden" id="RequestVerificationToken"
+               name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"></label>
+                <select id="SelectCityId" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <select id="SelictStreetId" class="form-control"></select>
+            </div>
         </div>
-        <div class="form-group">
-            <label class="control-label"></label>
-            <select id="SelictStreetId" class="form-control"></select>
-        </div>
-    </div>
-</div>*@
+    </div>*@
+
+
+<p>
+   <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Связать адрес с участком</a>
+</p>
 
 <div class="row">
     <input type="hidden" id="RequestVerificationToken"
@@ -80,13 +85,10 @@
     </div>
 </div>
 
-
-<p>
-    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить участок</a>
-</p>
-<table class="table" id="stationsTable">
+<table class="table" id="pollingStationsTable">
     <thead>
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.Station)
             </th>
@@ -99,16 +101,14 @@
             <th>
                 @Html.DisplayNameFor(model => model.House)
             </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.MicroDistrict)
-                </th>*@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="tableBodyPollingStation">
         @foreach (var item in Model)
         {
             <tr>
+                <td></td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Station.Name)
                 </td>
@@ -121,10 +121,6 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.House.Name)
                 </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
-                    </td>*@
-
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a> |
                     <a asp-action="Delete" asp-route-id="@item.IdPollingStation">Удалить</a>

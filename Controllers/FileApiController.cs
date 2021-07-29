@@ -1,5 +1,4 @@
-﻿using CollectVoters.DTO;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using voteCollector.Data;
+using voteCollector.DTO;
 using voteCollector.Models;
 using voteCollector.Services;
 
@@ -112,8 +112,8 @@ namespace voteCollector.Controllers
                 newFriend.DateBirth = datesBirth;
                 int cityId = _context.City.Where(c => c.Name.Equals(friendDTO.CityName.Trim())).FirstOrDefault().IdCity;
                 newFriend.CityId = cityId;
-                if (friendDTO.DistrictName != null && !friendDTO.DistrictName.Trim().Equals("")) {
-                    newFriend.ElectoralDistrictId = _context.ElectoralDistrict.Where(d => d.Name.Equals(friendDTO.DistrictName.Trim())).FirstOrDefault().IdElectoralDistrict;
+                if (friendDTO.ElectiralDistrict != null && !friendDTO.ElectiralDistrict.Trim().Equals("")) {
+                    newFriend.ElectoralDistrictId = _context.ElectoralDistrict.Where(d => d.Name.Equals(friendDTO.ElectiralDistrict.Trim())).FirstOrDefault().IdElectoralDistrict;
                 }
                 int streetId = _context.Street.Where(s => s.Name.Equals(friendDTO.Street.Trim())).FirstOrDefault().IdStreet;
                 newFriend.StreetId = streetId;
@@ -136,10 +136,13 @@ namespace voteCollector.Controllers
                 if (pollingStation != null)
                 {
                     newFriend.PollingStationId = pollingStation.IdPollingStation;
+                    newFriend.StationId = pollingStation.StationId;
                 }
                 else if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Trim().Equals(""))
                 {
-                    newFriend.PollingStationId = _context.PollingStation.Where(p => p.Name.Equals(friendDTO.PollingStationName.Trim())).FirstOrDefault().IdPollingStation;
+                    PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.Name.Equals(friendDTO.PollingStationName.Trim())).FirstOrDefault();
+                    newFriend.PollingStationId = pollingStationSearch.IdPollingStation;
+                    newFriend.StationId = pollingStationSearch.StationId;
                 }
                 newFriend.Organization = friendDTO.Organization.Trim();
                 newFriend.FieldActivityId = _context.Fieldactivity.Where(f => f.Name.Equals(friendDTO.FieldActivityName.Trim())).FirstOrDefault().IdFieldActivity;
