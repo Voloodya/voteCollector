@@ -61,6 +61,39 @@ $(document).ready(function () {
     });
 });
 
+// Загрузка избирательных округов
+$(document).ready(function () {
+
+    $.ajax({
+        // url: "http://localhost:18246/api/API/getElectoralDistrict",
+        url: partMyURL + "/api/API/getElectoralDistrict",
+        //url: "/CollectVoters/api/API/getElectoralDistrict",
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        type: 'GET',
+        dataType: "json",
+        success: function (data) {
+
+            if (data != undefined) {
+                var dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                });
+            }
+            DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', 'SelectElectoralDistrictId', '<option/>');
+
+        },
+        error: function (result, status, er) {
+            alert("error: " + result + " status: " + status + " er:" + er);
+        }
+    });
+
+});
+
+
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
 
@@ -116,6 +149,37 @@ function deleteSelected(idObject, numberColumn) {
         });
     }
 }
+// Обновление списка избирателей
+$(function () {
+    $("#SelectElectoralDistrictId").change(function () {
+        var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
+
+        $('#' + 'friendTable' + ' tbody > tr').remove();
+
+        $.ajax({
+            type: 'POST',
+            //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
+            url: 'Admin/SearchFriendsByElectoralDistrict/',
+            headers:
+            {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            //dataType: "json",
+            data: JSON.stringify(formData),
+            success: function (data) {
+
+                $('#TbodyFriendTable').replaceWith(data);
+                updatingFields('friendTable', 'numberRecords');
+
+            },
+            error: function (result, status, er) {
+                alert('error: ' + result + ' status: ' + status + ' er:' + er);
+            }
+        });
+    });
+
+});
 
 function deleteTrTableBody(idObject, jsonMasId) {
 
@@ -136,4 +200,19 @@ function deleteTrTableBody(idObject, jsonMasId) {
 function updatingFields(idObjectSelect, idObjectUpdate) {
     let nrows = document.getElementById(idObjectSelect).tBodies[0].rows.length;
     document.getElementById(idObjectUpdate).innerHTML = "Количество избирателей: " + (nrows);
+}
+
+//Заполнение объекта html данными из json массива
+function DataFillingSelect(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
+
+    var objectHtml = $('#' + idObject);
+    objectHtml.empty();
+
+    $.each(data, function (index, dataInstance) {
+        objectHtml.append($(propertyHtml,
+            {
+                value: dataInstance[nameProperty1],
+                text: dataInstance[nameProperty2]
+            }));
+    });
 }

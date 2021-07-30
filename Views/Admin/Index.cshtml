@@ -3,6 +3,13 @@
 @{
     ViewData["Title"] = "Index";
 }
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
 <style>
     #buttonsright input {
         font-size: 12px;
@@ -75,6 +82,17 @@ else
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
     <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',22)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
 </p>
+
+<div class="row">
+    <input type="hidden" id="RequestVerificationToken"
+           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="control-label">Избирательный округ</label>
+            <select id="SelectElectoralDistrictId" class="form-control"></select>
+        </div>
+    </div>
+</div>
 
 <table class="table" id="friendTable">
     <thead>
@@ -152,7 +170,7 @@ else
             <th>Действия</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="TbodyFriendTable">
         @foreach (var item in Model)
         {
             <tr>

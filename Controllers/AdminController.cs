@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using voteCollector.Controllers;
 using voteCollector.Services;
+using voteCollector.DTO;
 
 namespace CollectVoters.Controllers
 {
@@ -20,6 +21,7 @@ namespace CollectVoters.Controllers
     {
         private readonly ILogger<AdminController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceFriends _serviceFriends;
         private string NameServer;
         private string WayController;
         private string NameQRcodeParametrs;
@@ -29,6 +31,7 @@ namespace CollectVoters.Controllers
         {
             _context = context;
             _logger = logger;
+            _serviceFriends = new ServiceFriends();
             NameServer = "http://195.226.209.40";
             WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
             NameQRcodeParametrs = "qrText";
@@ -95,6 +98,7 @@ namespace CollectVoters.Controllers
                 .Include(f => f.GroupU)
                 .Include(f => f.House)
                 .Include(f => f.MicroDistrict)
+                .Include(f => f.Station)
                 .Include(f => f.PollingStation)
                 .Include(f => f.Street)
                 .Include(f => f.User)
@@ -129,24 +133,23 @@ namespace CollectVoters.Controllers
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
-            List<Street> selectStreets = _context.Street.Where(s => s.CityId == 1).ToList();
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
             // ???
             IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
             //IQueryable<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == 1).GroupBy(p => p.Name).Select(grp => grp.First());
-            IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
-            var pollingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
+            //IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
+            //var pollingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
+            var pollingStations = _context.PollingStation.Where(p => p.CityId == selectedIndexCity).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
             ViewData["PollingStationId"] = new SelectList(pollingStations, "IdPollingStation", "Name");
-
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+
             return View();
         }
 
         // POST: Friends/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId")] Friend friend)
@@ -163,6 +166,11 @@ namespace CollectVoters.Controllers
                     //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
                     string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png");
                     friend.Qrcode = fileNameQRcode;
+
+                    ////???
+                    PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                    friend.StationId = pollingStationSearch.StationId;
+                    ////???
 
                     _context.Add(friend);
                     await _context.SaveChangesAsync();
@@ -246,6 +254,11 @@ namespace CollectVoters.Controllers
                         string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png");
                         friend.Qrcode = fileNameQRcode;
 
+                        ////???
+                        PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                        friend.StationId = pollingStationSearch.StationId;
+                        ////???
+
                         try
                         {
                             _context.Update(friend);
@@ -299,6 +312,7 @@ namespace CollectVoters.Controllers
                 .Include(f => f.GroupU)
                 .Include(f => f.House)
                 .Include(f => f.MicroDistrict)
+                .Include(f => f.Station)
                 .Include(f => f.PollingStation)
                 .Include(f => f.Street)
                 .Include(f => f.User)
@@ -321,6 +335,16 @@ namespace CollectVoters.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SearchFriendsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
+        {
+            List<Friend> friends = _serviceFriends.SearchFriendsByElectoralDistrict(electoralDistrictDTO);
+
+            return PartialView(friends);
+        }
+
 
         private bool FriendExists(long id)
         {

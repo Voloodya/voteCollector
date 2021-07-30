@@ -216,6 +216,11 @@ $(function () {
                     }
                     dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
 
+                    // Генерация события для элемента Select
+                    let elemSelectPollingStation = document.querySelector('#PollingStationId')
+                    elemSelectPollingStation.selectedIndex = 0;
+                    const event = new Event("change");
+                    elemSelectPollingStation.dispatchEvent(event);
                 },
                 error: function (result, status, er) {
                     alert("error: " + result + " status: " + status + " er:" + er);
@@ -224,6 +229,43 @@ $(function () {
         }
     });
 });
+
+// Обновление списка округов после установления участка
+$(function () {
+    $('#PollingStationId').change(function () {
+        var formData = { 'IdPollingStation': Number.parseInt($('#PollingStationId').val()), 'Name': $('#PollingStationId>option:selected').text() };
+
+        if ($('#PollingStationId').has('option').length != 0) {
+            $.ajax({
+                url: partMyURL + "/api/API/searchElectoraldistrict/pollingstation",
+                //url: "/CollectVoters/api/API/searchPollingStations/house",
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'POST',
+                dataType: "json",
+                data: JSON.stringify(formData),
+                success: function (data) {
+                    var dataSort = [];
+                    if (data != undefined) {
+                        dataSort = data.sort(function (a, b) {
+                            return (a.name - b.name);
+                        });
+                    }
+                    dataFilling(dataSort, 'idElectoralDistrict', 'name', '#ElectoralDistrictId', '<option/>');
+
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
+                }
+            });
+        }
+    });
+});
+
 
 //Заполнение объекта html данными из json массива
 function dataFilling(data, nameProperty1, nameProperty2, idObject, propertyHtml) {

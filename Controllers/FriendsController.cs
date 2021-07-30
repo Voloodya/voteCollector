@@ -78,6 +78,7 @@ namespace voteCollector.Controllers
                 .Include(f => f.GroupU)
                 .Include(f => f.House)
                 .Include(f => f.MicroDistrict)
+                .Include(f => f.Station)
                 .Include(f => f.PollingStation)
                 .Include(f => f.Street)
                 .Include(f => f.User)
@@ -117,7 +118,7 @@ namespace voteCollector.Controllers
             IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
-            var polingStations = _context.PollingStation.Where(p => p.CityId == 1).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
+            var polingStations = _context.PollingStation.Where(p => p.CityId == selectedIndexCity).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
             //IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
             //var polingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
             ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name");
@@ -147,6 +148,11 @@ namespace voteCollector.Controllers
                     //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
                     string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer+WayController+'?'+NameQRcodeParametrs+'=' + friend.TextQRcode,"png");
                     friend.Qrcode = fileNameQRcode;
+
+                    ////???
+                    PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                    friend.StationId = pollingStationSearch.StationId;
+                    ////???
 
                     _context.Add(friend);
                     await _context.SaveChangesAsync();
@@ -248,6 +254,11 @@ namespace voteCollector.Controllers
                         string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png");
                         friend.Qrcode = fileNameQRcode;
 
+                        ////???
+                        PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                        friend.StationId = pollingStationSearch.StationId;
+                        ////???
+
                         try
                         {
                             _context.Update(friend);
@@ -300,6 +311,7 @@ namespace voteCollector.Controllers
                 .Include(f => f.GroupU)
                 .Include(f => f.House)
                 .Include(f => f.MicroDistrict)
+                .Include(f => f.Station)
                 .Include(f => f.PollingStation)
                 .Include(f => f.Street)
                 .Include(f => f.User)
@@ -310,14 +322,6 @@ namespace voteCollector.Controllers
             }
 
             return View(friend);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult SearchFriendsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
-        {
-
-            return PartialView();
         }
 
         // POST: Friends/Delete/5

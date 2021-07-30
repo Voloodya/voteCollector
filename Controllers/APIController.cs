@@ -111,5 +111,31 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
+        [HttpPost("searchElectoraldistrict/pollingstation")]
+        public IActionResult SearchElectoralDistrictByPollingStation(PollingStationDTO pollingStationDTO)
+        {
+            PollingStation pollingStation = _context.PollingStation.Where(ps => ps.Name.Equals(pollingStationDTO.Name)).FirstOrDefault();
+
+            if (pollingStation!=null)
+            {
+                Station station = _context.Station.Where(s => s.IdStation == pollingStation.StationId).FirstOrDefault();
+
+                if (station != null)
+                {
+                    District district = _context.District.Where(d => d.StationId == station.IdStation).FirstOrDefault();
+                    List<ElectoralDistrict> electoralDistrict = _context.ElectoralDistrict.Where(ed => ed.IdElectoralDistrict == district.ElectoralDistrictId).ToList();
+
+                    List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict=ed.IdElectoralDistrict, Name=ed.Name }).ToList();
+
+                    return Ok(electoralDistrictDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            return NoContent();
+        }
+
     }
 }

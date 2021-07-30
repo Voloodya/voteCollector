@@ -53,7 +53,8 @@ namespace voteCollector.Services
 
         public List<Friend> SearchFriendsByElectoralDistrict(ElectoralDistrictDTO electoralDistrict)
         {
-            List<Friend> friends = _context.Friend.Where(frnd => frnd.ElectoralDistrictId == electoralDistrict.IdElectoralDistrict).ToList();
+            List<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.ElectoralDistrictId == electoralDistrict.IdElectoralDistrict).ToList();
 
             return friends;
         }

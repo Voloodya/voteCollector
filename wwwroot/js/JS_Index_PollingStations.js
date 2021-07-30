@@ -69,11 +69,6 @@ $(document).ready(function () {
             }
             DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', 'SelectElectoralDistrictId', '<option/>');
 
-        //    // Генерация события для элемента SelectElectoralDistrictId
-        //    let elemSelectHouse = document.querySelector('#SelectElectoralDistrictId')
-        //    elemSelectHouse.selectedIndex = 0;
-        //    const event = new Event("change");
-        //    elemSelectHouse.dispatchEvent(event);
         },
         error: function (result, status, er) {
             alert("error: " + result + " status: " + status + " er:" + er);
@@ -123,7 +118,7 @@ $(function () {
     $("#SelectElectoralDistrictId").change(function () {
         var formData = {'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
 
-        $('#' + idObjectTable + ' tbody > tr').remove();
+        $('#' + 'pollingStationsTable' + ' tbody > tr').remove();
 
         $.ajax({
             type: 'POST',
@@ -131,11 +126,10 @@ $(function () {
             url: 'PollingStations/GetPolingStationsByElectoralDistrict/',
             headers:
             {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'RequestVerificationToken': $('#RequestVerificationToken').val()
             },
-            dataType: "json",
+            //dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
 

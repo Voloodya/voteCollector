@@ -28,8 +28,15 @@ namespace Generater.Controllers
         // GET: PollingStations
         public async Task<IActionResult> Index()
         {
-            var voterCollectorContext = _context.PollingStation.Include(s => s.Station).Include(p => p.City).Include(p => p.House).Include(p => p.MicroDistrict).Include(p => p.Street);
-            return View(await voterCollectorContext.ToListAsync());
+            List<ElectoralDistrict> electoralDistrict =  _context.ElectoralDistrict.ToList();
+            electoralDistrict.Sort();
+            List<District> districts = _context.District.Where(d => d.ElectoralDistrict.Name.Equals(electoralDistrict[0].Name)).ToList();
+            List<int> selectStationsId = districts.Select(d => d.StationId ?? 0).ToList();
+
+            IQueryable<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.City).Include(p => p.Street).Include(p => p.House)
+                .Where(p => selectStationsId.Contains(p.StationId ?? 0));
+
+            return View(await pollingStations.ToListAsync());
         }
 
         // GET: PollingStations/Create
@@ -169,19 +176,17 @@ namespace Generater.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult GetPolingStationsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
+        public ActionResult GetPolingStationsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
         {
             List<District> districts = _context.District.Where(d => d.ElectoralDistrictId == electoralDistrictDTO.IdElectoralDistrict).ToList();
             List<int> selectStationsId = districts.Select(d => d.StationId ?? 0).ToList();
 
-            List<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.City).Include(p => p.Street).Include(p => p.House)
-                .Where(p => selectStationsId.Contains(p.StationId ?? 0)).ToList();
+            IQueryable<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.City).Include(p => p.Street).Include(p => p.House)
+                .Where(p => selectStationsId.Contains(p.StationId ?? 0));
 
-            var jsonPolingStations = Json(pollingStations);
 
-            return jsonPolingStations;
+            return PartialView(pollingStations);
 
-            //return PartialView(pollingStations);
         }
 
 
