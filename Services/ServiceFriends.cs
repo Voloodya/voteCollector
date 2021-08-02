@@ -51,10 +51,34 @@ namespace voteCollector.Services
             }
         }
 
-        public List<Friend> SearchFriendsByElectoralDistrict(ElectoralDistrictDTO electoralDistrict)
+        public IQueryable<Friend> SearchFriendsByElectoralDistrict(ElectoralDistrictDTO electoralDistrict)
         {
-            List<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User)
-                .Where(frnd => frnd.ElectoralDistrictId == electoralDistrict.IdElectoralDistrict).ToList();
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.ElectoralDistrictId == electoralDistrict.IdElectoralDistrict);
+
+            return friends;
+        }
+
+        public IQueryable<Friend> SearchFriendsByElectoralDistrictAndGroups(ElectoralDistrictDTO electoralDistrict, List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.ElectoralDistrictId == electoralDistrict.IdElectoralDistrict && groupsUser.Contains(frnd.GroupU));
+
+            return friends;
+        }
+
+        public IQueryable<Friend> SearchFriendsByNameElectoralDistrict(string nameElectoralDistrict)
+        {
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.ElectoralDistrict.Name.Equals(nameElectoralDistrict));
+
+            return friends;
+        }
+
+        public IQueryable<Friend> SearchFriendsByNameElectoralDistrictAndGroups(string nameElectoralDistrict, List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.ElectoralDistrict.Name.Equals(nameElectoralDistrict) && groupsUser.Contains(frnd.GroupU));
 
             return friends;
         }

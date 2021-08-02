@@ -11,6 +11,9 @@ create table GroupU(
                     Name VARCHAR(256) null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `votercollector`.`groupu` 
+ADD COLUMN `CreatorGroup` VARCHAR(256) NULL DEFAULT NULL AFTER `Name`;
+
 create table User(
                       Id_User BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       UserName VARCHAR(100) NOT NULL,

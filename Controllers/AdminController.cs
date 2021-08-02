@@ -26,6 +26,7 @@ namespace CollectVoters.Controllers
         private string WayController;
         private string NameQRcodeParametrs;
         private ServiceUser _serviceUser;
+        private string MinNameElectoralDistrict;
 
         public AdminController(VoterCollectorContext context, ILogger<AdminController> logger)
         {
@@ -36,27 +37,28 @@ namespace CollectVoters.Controllers
             WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
             NameQRcodeParametrs = "qrText";
             _serviceUser = new ServiceUser(context);
+            MinNameElectoralDistrict = _context.ElectoralDistrict.Min(e => e.Name);
         }
 
         // GET: Friends
         [HttpGet]
         public async Task<IActionResult> Index()
-        {            
-            List<Groupu> groupsUser =_serviceUser.GetGroupsUser(User.Identity.Name);
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
             Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
             if (mainGroup!=null && groupsUser.Contains(mainGroup))
             {
-                var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User);
-                List<Friend> friends = await voterCollectorContext.ToListAsync();
+                List<Friend> friends = await _serviceFriends.SearchFriendsByNameElectoralDistrict(MinNameElectoralDistrict).ToListAsync();
+                //var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User);
+                //List<Friend> friends = await voterCollectorContext.ToListAsync();
                 return View(friends);
             }
             else
             {
-                var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
-                    Where(f => groupsUser.Contains(f.GroupU));
+                List<Friend> friends = await _serviceFriends.SearchFriendsByNameElectoralDistrictAndGroups(MinNameElectoralDistrict, groupsUser).ToListAsync();
 
-                return View(await voterCollectorContext.ToListAsync());
+                return View(friends);
             }            
         }
 
@@ -338,9 +340,22 @@ namespace CollectVoters.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SearchFriendsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
+        public async Task<IActionResult> SearchFriendsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
         {
-            List<Friend> friends = _serviceFriends.SearchFriendsByElectoralDistrict(electoralDistrictDTO);
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            List<Friend> friends;
+
+            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            {
+                friends = await _serviceFriends.SearchFriendsByElectoralDistrict(electoralDistrictDTO).ToListAsync();
+            }
+            else
+            {
+                friends = await _serviceFriends.SearchFriendsByElectoralDistrictAndGroups(electoralDistrictDTO, groupsUser).ToListAsync();
+            }
 
             return PartialView(friends);
         }

@@ -129,7 +129,7 @@ namespace CollectVoters.Controllers
         [HttpPost("SearchFriendsByElectoralDistrict")]
         public async Task<List<FriendDTO>> SearchFriendsByElectoralDistrict([FromBody] ElectoralDistrictDTO electoralDistrictDTO)
         {
-            List<Friend> friends = _serviceFriends.SearchFriendsByElectoralDistrict(electoralDistrictDTO);
+            List<Friend> friends = await _serviceFriends.SearchFriendsByElectoralDistrict(electoralDistrictDTO).ToListAsync();
 
             List<FriendDTO> friendDTOs = friends.Select(frnd => new FriendDTO
             {

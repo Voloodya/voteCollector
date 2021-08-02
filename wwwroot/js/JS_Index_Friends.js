@@ -21,17 +21,58 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
 //});
 
 $(document).ready(function () {
+
     $('#friendTable').DataTable({
 
         retrieve: true,
         paging: false,
-        //ajax: '/ajax/arrays.txt',
         language: {
             url: "http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
         },
 
         initComplete: function () {
             this.api().columns([6,8,13,14,19,21]).every(function () {
+                var column = this;
+                var select = $('<select><option value="">Все</option></select>')
+                    .appendTo($($(column.header()))) //$(column.footer().empty())
+                    .on('change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+
+                        column
+                            .search(val ? '^' + val + '$' : '', true, false)
+                            .draw();
+                    });
+
+                $(select).click(function (e) {
+                    e.stopPropagation();
+                });
+
+                column.data().unique().sort().each(function (d, j) {
+                    if (column.search() === '^' + d + '$') {
+                        select.append('<option value="' + d + '" selected="selected">' + d.substr(0, 30) + '</option>')
+                    } else {
+                        select.append('<option value="' + d + '">' + d.substr(0, 30) + '</option>')
+                    }
+                });
+            });
+        }
+    });
+});
+
+$('#friendTable tr td').on('DOMSubtreeModified', function () {
+
+    $('#friendTable').DataTable({
+
+        retrieve: true,
+        paging: false,
+        language: {
+            url: "http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
+        },
+
+        initComplete: function () {
+            this.api().columns([6, 8, 13, 14, 19, 21]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -153,7 +194,6 @@ function deleteSelected(idObject, numberColumn) {
 $(function () {
     $("#SelectElectoralDistrictId").change(function () {
         var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
-
         $('#' + 'friendTable' + ' tbody > tr').remove();
 
         $.ajax({
@@ -165,20 +205,22 @@ $(function () {
                 'Content-Type': 'application/json',
                 'RequestVerificationToken': $('#RequestVerificationToken').val()
             },
-            //dataType: "json",
             data: JSON.stringify(formData),
             success: function (data) {
 
                 $('#TbodyFriendTable').replaceWith(data);
                 updatingFields('friendTable', 'numberRecords');
 
+                // Генерация события для элемента FriendTable
+                let elemFriendTable = document.querySelector('#friendTable')
+                const eventChange = new Event("change");
+                elemFriendTable.dispatchEvent(eventChange);
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
             }
         });
     });
-
 });
 
 function deleteTrTableBody(idObject, jsonMasId) {

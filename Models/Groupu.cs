@@ -25,6 +25,9 @@ namespace voteCollector.Models
         [DisplayName("Группа")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
+        [DisplayName("Автор группы")]
+        [Column(TypeName = "varchar(256)")]
+        public string CreatorGroup { get; set; }
 
         [DisplayName("Избиратели")]
         [InverseProperty("GroupU")]

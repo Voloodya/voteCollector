@@ -55,8 +55,17 @@ namespace voteCollector.Controllers
         {
             if (ModelState.IsValid)
             {
+                User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
                 _context.Add(groupu);
+                _context.SaveChanges();
+
+                Groupsusers groupsusers = new Groupsusers();
+                groupsusers.GroupUId = groupu.IdGroup;               
+                groupsusers.UserId = currentUser.IdUser;                
+                _context.Add(groupsusers);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(groupu);
