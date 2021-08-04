@@ -64,7 +64,7 @@ $(document).ready(function () {
 
 // Действия при перерисовки таблицы
 $('#friendTable').on('draw.dt', function () {
-    countVoters('friendTable', 18);
+//    countVoters('friendTable', 18);
 });
 
 function UpdateTablePlagin () {
@@ -202,11 +202,7 @@ $(function () {
     $("#SelectElectoralDistrictId").change(function () {
         var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
         //$('#' + 'friendTable' + ' tbody > tr').remove();
-
-        //Удаление строк через DataTable
-        var friendDataTable = $('#friendTable').DataTable();
-        friendDataTable.rows().remove().draw();
-
+        
         $.ajax({
             type: 'POST',
             //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
@@ -222,12 +218,14 @@ $(function () {
                 // Delete rows
                 var friendDataTable = $('#friendTable').DataTable();
                 friendDataTable.rows().remove().draw();
+                //friendDataTable.rows.add($(data)).draw();
+                //friendDataTable.Empty();
+                $('#friendTable').empty();
                 // Destroy object DataTable
-                friendDataTable.destroy();
-                //$('#friendTable').empty();
+                friendDataTable.destroy();                
 
                 // Update tbody new rows with data
-                $('#TbodyFriendTable').replaceWith(data);
+                $('#friendTable').replaceWith(data);
                 updatingFields('friendTable', 'numberRecords');
 
                 UpdateTablePlagin();

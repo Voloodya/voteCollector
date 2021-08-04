@@ -13,10 +13,6 @@ namespace voteCollector.Models
     [Table("polling_station")]
     public partial class PollingStation
     {
-        public PollingStation()
-        {
-            Friends = new HashSet<Friend>();
-        }
 
         [Key]
         [Column("Id_Polling_station")]
@@ -63,7 +59,5 @@ namespace voteCollector.Models
         [InverseProperty("PollingStations")]
         [DisplayName("Улица")]
         public virtual Street Street { get; set; }
-        [InverseProperty("PollingStation")]
-        public virtual ICollection<Friend> Friends { get; set; }
     }
 }

@@ -145,9 +145,6 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.MicroDistrictId)
                     .HasName("FK_Friend_MicroDistrict");
 
-                entity.HasIndex(e => e.PollingStationId)
-                    .HasName("FK_Friend_Polling_station");
-
                 entity.HasIndex(e => e.StationId)
                    .HasName("FK_Friend_Station");
 
@@ -245,12 +242,6 @@ namespace voteCollector.Data
                     .HasForeignKey(d => d.MicroDistrictId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Friend_MicroDistrict");
-
-                entity.HasOne(d => d.PollingStation)
-                    .WithMany(p => p.Friends)
-                    .HasForeignKey(d => d.PollingStationId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_Friend_Polling_station");
 
                 entity.HasOne(d => d.Station)
                     .WithMany(p => p.Friends)

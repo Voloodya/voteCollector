@@ -67,10 +67,6 @@ namespace voteCollector.Models
         [Column("Station_id")]
         [DisplayName("Избирательн. уч-к")]
         public int? StationId { get; set; }
-        //[Required(ErrorMessage = "Не указан УИК")]
-        [DisplayName("Избират. уч.")]
-        [Column("Polling_station_id")]
-        public int? PollingStationId { get; set; }
         [DisplayName("Организация")]
         [Column(TypeName = "varchar(256)")]
         public string Organization { get; set; }
@@ -143,10 +139,6 @@ namespace voteCollector.Models
         [ForeignKey(nameof(MicroDistrictId))]
         [InverseProperty(nameof(Microdistrict.Friends))]
         public virtual Microdistrict MicroDistrict { get; set; }
-        [DisplayName("Участок")]
-        [ForeignKey(nameof(PollingStationId))]
-        [InverseProperty("Friends")]
-        public virtual PollingStation PollingStation { get; set; }
         [ForeignKey(nameof(StationId))]
         [InverseProperty("Friends")]
         [DisplayName("Участок")]

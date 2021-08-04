@@ -48,8 +48,6 @@ namespace CollectVoters.Controllers
         }
 
         // PUT: api/APIFriends/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFriend(long id, Friend friend)
         {
@@ -145,7 +143,7 @@ namespace CollectVoters.Controllers
                 Apartment = frnd.Apartment,
                 Telephone = frnd.Telephone,
                 ElectiralDistrict = frnd.ElectoralDistrict.Name,
-                PollingStationName = frnd.PollingStation.Name,
+                PollingStationName = frnd.Station.Name,
                 Organization = frnd.Organization,
                 FieldActivityName = frnd.FieldActivity.Name,
                 PhoneNumberResponsible = frnd.PhoneNumberResponsible,

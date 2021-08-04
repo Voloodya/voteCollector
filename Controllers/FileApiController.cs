@@ -153,7 +153,6 @@ namespace voteCollector.Controllers
                 PollingStation pollingStation = _context.PollingStation.Where(p => (p.CityId == cityId && p.StreetId == streetId && p.HouseId == houseId)).FirstOrDefault();
                 if (pollingStation != null)
                 {
-                    newFriend.PollingStationId = pollingStation.IdPollingStation;
                     newFriend.StationId = pollingStation.StationId;
                 }
                 else if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Trim().Equals(""))

@@ -236,6 +236,16 @@ DROP COLUMN `District_id`;
 
 ////////////////////////////////////////////////////////
 
+ALTER TABLE `votercollector`.`friend` 
+DROP FOREIGN KEY `FK_Friend_Polling_station`;
+ALTER TABLE `votercollector`.`friend` 
+DROP INDEX `FK_Friend_Polling_station` ;
+;
+ALTER TABLE `votercollector`.`friend` 
+DROP COLUMN `Polling_station_id`;
+
+/////////////////////////////////////////////////////////
+
 INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');
 
