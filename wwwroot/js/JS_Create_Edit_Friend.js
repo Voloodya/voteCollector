@@ -120,124 +120,124 @@ $(function () {
 });
 
 // Обновление списка участков после выбора населенного пункта
-$(function () {
-    $("#CityId").change(function () {
-        var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
-        $.ajax({
-            url: partMyURL + "/api/API/searchPollingStations/city",
-           // url: "/CollectVoters/api/API/searchPollingStations/city",
-            headers:
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            type: 'POST',
-            dataType: "json",
-            data: JSON.stringify(formData),
-            success: function (data) {
-                var dataSort = [];
-                if (data != undefined) {
-                    dataSort = data.sort(function (a, b) {
-                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                    });
-                }
-                dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
-            },
-            error: function (result, status, er) {
-                alert("error: " + result + " status: " + status + " er:" + er);
-            }
-        });
-    });
-});
+//$(function () {
+//    $("#CityId").change(function () {
+//        var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
+//        $.ajax({
+//            url: partMyURL + "/api/API/searchPollingStations/city",
+//           // url: "/CollectVoters/api/API/searchPollingStations/city",
+//            headers:
+//            {
+//                'Accept': 'application/json',
+//                'Content-Type': 'application/json',
+//                'RequestVerificationToken': $('#RequestVerificationToken').val()
+//            },
+//            type: 'POST',
+//            dataType: "json",
+//            data: JSON.stringify(formData),
+//            success: function (data) {
+//                var dataSort = [];
+//                if (data != undefined) {
+//                    dataSort = data.sort(function (a, b) {
+//                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+//                    });
+//                }
+//                dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+//            },
+//            error: function (result, status, er) {
+//                alert("error: " + result + " status: " + status + " er:" + er);
+//            }
+//        });
+//    });
+//});
 
-// Обновление списка участков после выбора улицы
-$(function () {
-    $("#StreetId").change(function () {
-        var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
-        let select = document.getElementById('StreetId');
-        const valueSelect = select.value;
-        if ($('#StreetId').has('option').length != 0) {
-            $.ajax({
-                url: partMyURL + "/api/API/searchPollingStations/street",
-                //url: "/CollectVoters/api/API/searchPollingStations/street",
-                headers:
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('#RequestVerificationToken').val()
-                },
-                type: 'POST',
-                dataType: "json",
-                data: JSON.stringify(formData),
-                success: function (data) {
+//// Обновление списка участков после выбора улицы
+//$(function () {
+//    $("#StreetId").change(function () {
+//        var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
+//        let select = document.getElementById('StreetId');
+//        const valueSelect = select.value;
+//        if ($('#StreetId').has('option').length != 0) {
+//            $.ajax({
+//                url: partMyURL + "/api/API/searchPollingStations/street",
+//                //url: "/CollectVoters/api/API/searchPollingStations/street",
+//                headers:
+//                {
+//                    'Accept': 'application/json',
+//                    'Content-Type': 'application/json',
+//                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+//                },
+//                type: 'POST',
+//                dataType: "json",
+//                data: JSON.stringify(formData),
+//                success: function (data) {
 
-                    var dataSort = [];
-                    if (data != undefined) {
-                          dataSort = data.sort(function (a, b) {
-                          return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                        });
-                    }
-                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+//                    var dataSort = [];
+//                    if (data != undefined) {
+//                          dataSort = data.sort(function (a, b) {
+//                          return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+//                        });
+//                    }
+//                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
 
-                },
-                error: function (result, status, er) {
-                    alert("error: " + result + " status: " + status + " er:" + er);
-                }
-            });
-        }
-    });
-});
+//                },
+//                error: function (result, status, er) {
+//                    alert("error: " + result + " status: " + status + " er:" + er);
+//                }
+//            });
+//        }
+//    });
+//});
 
-// Обновление списка участков после выбора номера дома
-$(function () {
-    $('#HouseId').change(function () {
-        var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text() };
-        let select = document.getElementById('HouseId')
-        if ($('#HouseId').has('option').length != 0) {
-            $.ajax({
-                url: partMyURL + "/api/API/searchPollingStations/house",
-                //url: "/CollectVoters/api/API/searchPollingStations/house",
-                headers:
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('#RequestVerificationToken').val()
-                },
-                type: 'POST',
-                dataType: "json",
-                data: JSON.stringify(formData),
-                success: function (data) {
-                    var dataSort = [];
-                    if (data != undefined) {
-                        dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                        });
-                    }
-                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+//// Обновление списка участков после выбора номера дома
+//$(function () {
+//    $('#HouseId').change(function () {
+//        var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text() };
+//        let select = document.getElementById('HouseId')
+//        if ($('#HouseId').has('option').length != 0) {
+//            $.ajax({
+//                url: partMyURL + "/api/API/searchPollingStations/house",
+//                //url: "/CollectVoters/api/API/searchPollingStations/house",
+//                headers:
+//                {
+//                    'Accept': 'application/json',
+//                    'Content-Type': 'application/json',
+//                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+//                },
+//                type: 'POST',
+//                dataType: "json",
+//                data: JSON.stringify(formData),
+//                success: function (data) {
+//                    var dataSort = [];
+//                    if (data != undefined) {
+//                        dataSort = data.sort(function (a, b) {
+//                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+//                        });
+//                    }
+//                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
 
-                    // Генерация события для элемента Select
-                    let elemSelectPollingStation = document.querySelector('#PollingStationId')
-                    elemSelectPollingStation.selectedIndex = 0;
-                    const event = new Event("change");
-                    elemSelectPollingStation.dispatchEvent(event);
-                },
-                error: function (result, status, er) {
-                    alert("error: " + result + " status: " + status + " er:" + er);
-                }
-            });
-        }
-    });
-});
+//                    // Генерация события для элемента Select
+//                    let elemSelectPollingStation = document.querySelector('#PollingStationId')
+//                    elemSelectPollingStation.selectedIndex = 0;
+//                    const event = new Event("change");
+//                    elemSelectPollingStation.dispatchEvent(event);
+//                },
+//                error: function (result, status, er) {
+//                    alert("error: " + result + " status: " + status + " er:" + er);
+//                }
+//            });
+//        }
+//    });
+//});
 
 // Обновление списка округов после установления участка
 $(function () {
-    $('#PollingStationId').change(function () {
-        var formData = { 'IdPollingStation': Number.parseInt($('#PollingStationId').val()), 'Name': $('#PollingStationId>option:selected').text() };
+    $('#StationId').change(function () {
+        var formData = { 'IdStation': Number.parseInt($('#StationId').val()), 'Name': $('#StationId>option:selected').text() };
 
-        if ($('#PollingStationId').has('option').length != 0) {
+        if ($('#StationId').has('option').length != 0) {
             $.ajax({
-                url: partMyURL + "/api/API/searchElectoraldistrict/pollingstation",
+                url: partMyURL + "/api/API/searchElectoraldistrict/station",
                 //url: "/CollectVoters/api/API/searchPollingStations/house",
                 headers:
                 {

@@ -41,7 +41,7 @@ namespace voteCollector.Models
         [Column("Electoral_district_id")]
         public int? ElectoralDistrictId { get; set; }
         [Required(ErrorMessage = "Не указана улица")]
-        [DisplayName("Улица")]
+        [DisplayName("Улица/просп./пл./шоссе")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
         [DisplayName("Микрорайон")]
@@ -63,10 +63,11 @@ namespace voteCollector.Models
         [DisplayName("Тел. избирателя")]
         [Column(TypeName = "varchar(12)")]
         public string Telephone { get; set; }
+        //[Required(ErrorMessage = "Не указан участок")]
         [Column("Station_id")]
         [DisplayName("Избирательн. уч-к")]
         public int? StationId { get; set; }
-        [Required(ErrorMessage = "Не указан УИК")]
+        //[Required(ErrorMessage = "Не указан УИК")]
         [DisplayName("Избират. уч.")]
         [Column("Polling_station_id")]
         public int? PollingStationId { get; set; }
@@ -148,6 +149,7 @@ namespace voteCollector.Models
         public virtual PollingStation PollingStation { get; set; }
         [ForeignKey(nameof(StationId))]
         [InverseProperty("Friends")]
+        [DisplayName("Участок")]
         public virtual Station Station { get; set; }
         [DisplayName("Улица")]
         [ForeignKey(nameof(StreetId))]

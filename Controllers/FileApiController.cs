@@ -33,7 +33,8 @@ namespace voteCollector.Controllers
         [HttpPost("uploadDataFromFile")]
         public async Task<IActionResult> UploadDataFromFile([FromBody] FriendDTO[] friendsDTO)
         {
-            List<int> notUploadRecords = new List<int>();
+
+            List<FileUploadDTO> notUploadRecords = new List<FileUploadDTO>();
 
             User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
 
@@ -48,7 +49,16 @@ namespace voteCollector.Controllers
                 }
                 catch {
 
-                    notUploadRecords.Add(i + 1);                
+                    notUploadRecords.Add(new FileUploadDTO {
+                    NumberStrFile=Convert.ToString(i+1),
+                    FamilyName = friendsDTO[i].FamilyName,
+                    Name = friendsDTO[i].Name,
+                    PatronymicName = friendsDTO[i].PatronymicName,
+                    DateBirth = friendsDTO[i].DateBirth,
+                    CityName = friendsDTO[i].CityName,
+                    Street = friendsDTO[i].Street,
+                    House = friendsDTO[i].House
+                    });                
                 }
             }
 
@@ -97,10 +107,20 @@ namespace voteCollector.Controllers
         {
             Friend newFriend= new Friend();
 
+            ServiceUser serviceUser = new ServiceUser(_context);
+
             newFriend.UserId = friendDTO.UserId;
+            DateTime datesBirth;
 
             string[] dates = friendDTO.DateBirth.Trim().Split('.');
-            DateTime datesBirth = new DateTime(Convert.ToInt32(dates[2]), Convert.ToInt32(dates[1]), Convert.ToInt32(dates[0]));
+            try
+            {
+                datesBirth = new DateTime(Convert.ToInt32(dates[2]), Convert.ToInt32(dates[1]), Convert.ToInt32(dates[0]));
+            }
+            catch
+            {
+                datesBirth = new DateTime();
+            }
 
             List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friendDTO.Name.Trim()) && frnd.FamilyName.Equals(friendDTO.FamilyName.Trim()) && frnd.PatronymicName.Equals(friendDTO.PatronymicName.Trim()) && frnd.DateBirth.Value.Date == datesBirth).ToList();
 
@@ -112,9 +132,7 @@ namespace voteCollector.Controllers
                 newFriend.DateBirth = datesBirth;
                 int cityId = _context.City.Where(c => c.Name.Equals(friendDTO.CityName.Trim())).FirstOrDefault().IdCity;
                 newFriend.CityId = cityId;
-                if (friendDTO.ElectiralDistrict != null && !friendDTO.ElectiralDistrict.Trim().Equals("")) {
-                    newFriend.ElectoralDistrictId = _context.ElectoralDistrict.Where(d => d.Name.Equals(friendDTO.ElectiralDistrict.Trim())).FirstOrDefault().IdElectoralDistrict;
-                }
+               
                 int streetId = _context.Street.Where(s => s.Name.Equals(friendDTO.Street.Trim())).FirstOrDefault().IdStreet;
                 newFriend.StreetId = streetId;
                 if (friendDTO.Microdistrict != null && !friendDTO.Microdistrict.Trim().Equals("")) {
@@ -141,11 +159,23 @@ namespace voteCollector.Controllers
                 else if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Trim().Equals(""))
                 {
                     PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.Name.Equals(friendDTO.PollingStationName.Trim())).FirstOrDefault();
-                    newFriend.PollingStationId = pollingStationSearch.IdPollingStation;
+                    //newFriend.PollingStationId = pollingStationSearch.IdPollingStation;
                     newFriend.StationId = pollingStationSearch.StationId;
                 }
+                if (friendDTO.ElectiralDistrict != null && !friendDTO.ElectiralDistrict.Trim().Equals(""))
+                {
+                    newFriend.ElectoralDistrictId = _context.ElectoralDistrict.Where(d => d.Name.Equals(friendDTO.ElectiralDistrict.Trim())).FirstOrDefault().IdElectoralDistrict;
+                }
+                else
+                {
+                    District district = _context.District.Where(d => d.StationId == newFriend.StreetId).FirstOrDefault();
+                    newFriend.ElectoralDistrictId = district.ElectoralDistrictId;
+                }
                 newFriend.Organization = friendDTO.Organization.Trim();
-                newFriend.FieldActivityId = _context.Fieldactivity.Where(f => f.Name.Equals(friendDTO.FieldActivityName.Trim())).FirstOrDefault().IdFieldActivity;
+                if (friendDTO.FieldActivityName != null && !friendDTO.FieldActivityName.Trim().Equals(""))
+                {
+                    newFriend.FieldActivityId = _context.Fieldactivity.Where(f => f.Name.Equals(friendDTO.FieldActivityName.Trim())).FirstOrDefault().IdFieldActivity;
+                }
                 newFriend.PhoneNumberResponsible = friendDTO.PhoneNumberResponsible.Trim();
                 if (friendDTO.DateBirth != null && !friendDTO.DateBirth.Trim().Equals(""))
                 {
@@ -160,8 +190,16 @@ namespace voteCollector.Controllers
                     newFriend.VotingDate = datesVoting;
                 }
                 newFriend.Description = friendDTO.Description;
-                newFriend.GroupUId = _context.Groupu.Where(g => g.Name.Equals(friendDTO.Group.Trim())).FirstOrDefault().IdGroup;
 
+                if (friendDTO.Group != null && !friendDTO.Group.Trim().Equals(""))
+                {
+                    newFriend.GroupUId = _context.Groupu.Where(g => g.Name.Equals(friendDTO.Group.Trim())).FirstOrDefault().IdGroup;
+                }
+                else
+                {
+                    List<Groupu> groupsUser = serviceUser.GetGroupsUser(User.Identity.Name);
+                    newFriend.GroupUId = groupsUser[0].IdGroup;
+                }
                 if (friendDTO.Vote != null && !friendDTO.Vote.Trim().Equals(""))
                 {
                     newFriend.Voter = friendDTO.Vote.ToLower().Trim().Equals("да") ? true : false;

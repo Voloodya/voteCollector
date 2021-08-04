@@ -25,12 +25,15 @@ namespace voteCollector.Models
         public string Name { get; set; }
 
         [InverseProperty("Station")]
+        [DisplayName("Участок")]
         public virtual ICollection<District> Districts { get; set; }
-
         [InverseProperty("Station")]
+        [DisplayName("Участок")]
         public virtual ICollection<PollingStation> PollingStations { get; set; }
 
         [InverseProperty("Station")]
+        [DisplayName("Участок")]
+
         public virtual ICollection<Friend> Friends { get; set; }
 
         public int Compare(Station x, Station y)

@@ -20,10 +20,11 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
 
 //});
 
+var friendDataTable;
+
 $(document).ready(function () {
 
-    $('#friendTable').DataTable({
-
+     friendDataTable = $('#friendTable').DataTable({
         retrieve: true,
         paging: false,
         language: {
@@ -61,7 +62,12 @@ $(document).ready(function () {
     });
 });
 
-$('#friendTable tr td').on('DOMSubtreeModified', function () {
+// Действия при перерисовки таблицы
+$('#friendTable').on('draw.dt', function () {
+    countVoters('friendTable', 18);
+});
+
+function UpdateTablePlagin () {
 
     $('#friendTable').DataTable({
 
@@ -100,7 +106,8 @@ $('#friendTable tr td').on('DOMSubtreeModified', function () {
             });
         }
     });
-});
+};
+
 
 // Загрузка избирательных округов
 $(document).ready(function () {
@@ -194,7 +201,11 @@ function deleteSelected(idObject, numberColumn) {
 $(function () {
     $("#SelectElectoralDistrictId").change(function () {
         var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
-        $('#' + 'friendTable' + ' tbody > tr').remove();
+        //$('#' + 'friendTable' + ' tbody > tr').remove();
+
+        //Удаление строк через DataTable
+        var friendDataTable = $('#friendTable').DataTable();
+        friendDataTable.rows().remove().draw();
 
         $.ajax({
             type: 'POST',
@@ -208,13 +219,18 @@ $(function () {
             data: JSON.stringify(formData),
             success: function (data) {
 
+                // Delete rows
+                var friendDataTable = $('#friendTable').DataTable();
+                friendDataTable.rows().remove().draw();
+                // Destroy object DataTable
+                friendDataTable.destroy();
+                //$('#friendTable').empty();
+
+                // Update tbody new rows with data
                 $('#TbodyFriendTable').replaceWith(data);
                 updatingFields('friendTable', 'numberRecords');
 
-                // Генерация события для элемента FriendTable
-                let elemFriendTable = document.querySelector('#friendTable')
-                const eventChange = new Event("change");
-                elemFriendTable.dispatchEvent(eventChange);
+                UpdateTablePlagin();
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);

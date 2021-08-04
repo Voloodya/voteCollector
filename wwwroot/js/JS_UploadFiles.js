@@ -20,12 +20,13 @@ async function UploadExcelToWebService(fileSource) {
         },
         processData: false,
         data: JSON.stringify(data),
-        success: function (response) {
+        success: function (data) {
 
-            if (response != undefined) {
-                response.sort();
-            }
-            DataFillingDiv(response, 'outText');
+            //if (data != undefined) {
+            //    data.sort();
+            //}
+            //DataFillingDiv(response, 'outText');
+            DataFillingTableBody(data, 'fileUploadTable');
         },
         error: function (result, status, er) {
             alert('error: ' + result + ' status: ' + status + ' er:' + er);
@@ -132,3 +133,32 @@ function RequestUploadImage(fileSource) {
         }
     });
 };
+
+function DataFillingTableBody(data, idObjectTable) {
+
+    //var table = document.getElementById(idObjectTable);
+    var bodyTable = $(`#${idObjectTable} tbody`);
+    //var table = $(idObjectTable);
+    //$(idObjectTable + ' tbody').empty();
+    $('#' + idObjectTable + ' tbody > tr').remove();
+
+    for (let i = 0; i < data.length; i++) {
+
+        bodyTable.append(createRow(data[i]));
+    }
+
+}
+
+function createRow(data) {
+
+    var trElement = '<tr>';
+
+    for (key in data) {
+
+        trElement += '<td>' + data[key] + '</td>';
+    }
+
+    trElement += '</tr>';
+
+    return trElement;
+}

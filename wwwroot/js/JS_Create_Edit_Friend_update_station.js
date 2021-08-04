@@ -1,16 +1,10 @@
 ﻿
-let partMyURL = "/CollectVoters";
-if (window.location.href.substring(0, 16) == "http://localhost") {
-    partMyURL = "";
-}
-
-
 // Обновление списка участков после выбора населенного пункта
 $(function () {
     $("#CityId").change(function () {
         var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
         $.ajax({
-            url: partMyURL + "/api/API/searchPollingStations/city",
+            url: partMyURL + "/api/API/searchStations/city",
            // url: "/CollectVoters/api/API/searchPollingStations/city",
             headers:
             {
@@ -28,7 +22,7 @@ $(function () {
                     return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                     });
                 }
-                dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+                dataFilling(dataSort, 'idStation', 'name', '#StationId', '<option/>');
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
@@ -45,7 +39,7 @@ $(function () {
         const valueSelect = select.value;
         if ($('#StreetId').has('option').length != 0) {
             $.ajax({
-                url: partMyURL + "/api/API/searchPollingStations/street",
+                url: partMyURL + "/api/API/searchStations/street",
                 //url: "/CollectVoters/api/API/searchPollingStations/street",
                 headers:
                 {
@@ -64,7 +58,7 @@ $(function () {
                           return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                         });
                     }
-                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+                    dataFilling(dataSort, 'idStation', 'name', '#StationId', '<option/>');
 
                 },
                 error: function (result, status, er) {
@@ -82,7 +76,7 @@ $(function () {
         let select = document.getElementById('HouseId')
         if ($('#HouseId').has('option').length != 0) {
             $.ajax({
-                url: partMyURL + "/api/API/searchPollingStations/house",
+                url: partMyURL + "/api/API/searchStations/house",
                 //url: "/CollectVoters/api/API/searchPollingStations/house",
                 headers:
                 {
@@ -100,10 +94,10 @@ $(function () {
                         return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                         });
                     }
-                    dataFilling(dataSort, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
+                    dataFilling(dataSort, 'idStation', 'name', '#StationId', '<option/>');
 
                     // Генерация события для элемента Select
-                    let elemSelectPollingStation = document.querySelector('#PollingStationId')
+                    let elemSelectPollingStation = document.querySelector('#StationId')
                     elemSelectPollingStation.selectedIndex = 0;
                     const event = new Event("change");
                     elemSelectPollingStation.dispatchEvent(event);

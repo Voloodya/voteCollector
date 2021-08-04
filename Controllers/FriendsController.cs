@@ -44,7 +44,7 @@ namespace voteCollector.Controllers
             // userName=(string)TempData["userName"];
             userName = User.Identity.Name;
 
-            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
+            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
                                     Where(f => f.User.UserName.Equals(userName));
             return View(await voterCollectorContext.ToListAsync());
         }
@@ -57,7 +57,7 @@ namespace voteCollector.Controllers
             // userName=(string)TempData["userName"];
             userName = User.Identity.Name;
 
-            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User).
+            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
                                     Where(f => f.User.UserName.Equals(userName));
             return View(await voterCollectorContext.ToListAsync());
         }
@@ -79,7 +79,6 @@ namespace voteCollector.Controllers
                 .Include(f => f.House)
                 .Include(f => f.MicroDistrict)
                 .Include(f => f.Station)
-                .Include(f => f.PollingStation)
                 .Include(f => f.Street)
                 .Include(f => f.User)
                 .FirstOrDefaultAsync(m => m.IdFriend == id);
@@ -118,10 +117,16 @@ namespace voteCollector.Controllers
             IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
-            var polingStations = _context.PollingStation.Where(p => p.CityId == selectedIndexCity).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
+            List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == selectedIndexCity).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
             //IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
             //var polingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
-            ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name");
+            //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name");
+
+            ///////
+            int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
+            List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+            ViewData["StationId"] = new SelectList(stations, "IdStation", "Name");
+            //////
 
             ViewData["UserId"] = new SelectList(_context.User.Select(x => 
             new { IdUser = x.IdUser, UserName=x.UserName, Password=x.Password, RoleId=x.RoleId, FamilyName = x.FamilyName ?? string.Empty, Name=x.Name ?? string.Empty, PatronymicName=x.PatronymicName ?? string.Empty, DateBirth=x.DateBirth, Telephone=x.Telephone,
@@ -133,7 +138,7 @@ namespace voteCollector.Controllers
         // POST: Friends/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Email,Description,UserId,GroupUId")] Friend friend)
+        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Email,Description,UserId,GroupUId")] Friend friend)
         {
             List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
 
@@ -150,8 +155,8 @@ namespace voteCollector.Controllers
                     friend.Qrcode = fileNameQRcode;
 
                     ////???
-                    PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
-                    friend.StationId = pollingStationSearch.StationId;
+                    //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                    //friend.StationId = pollingStationSearch.StationId;
                     ////???
 
                     _context.Add(friend);
@@ -168,7 +173,7 @@ namespace voteCollector.Controllers
                 ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
                 ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
                 ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-                ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
+                ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
                 ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName", friend.UserId);
                 return View(friend);
             }
@@ -205,7 +210,14 @@ namespace voteCollector.Controllers
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
             List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == friend.CityId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
-            ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
+            //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
+
+            ///////
+            int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
+            List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+            ViewData["StationId"] = new SelectList(stations, "IdStation", "Name",friend.Station);
+            //////
+
             List<Street> selectStreets = _context.Street.Where(s => s.CityId==friend.CityId).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);            
             List<House> selectHouse = _context.House.Where(h => h.StreetId == friend.StreetId).ToList();
@@ -232,7 +244,7 @@ namespace voteCollector.Controllers
         // POST: Friends/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Email,Description,UserId,GroupUId")] Friend friend)
+        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Email,Description,UserId,GroupUId")] Friend friend)
         {
             if (id != friend.IdFriend)
             {
@@ -255,8 +267,8 @@ namespace voteCollector.Controllers
                         friend.Qrcode = fileNameQRcode;
 
                         ////???
-                        PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
-                        friend.StationId = pollingStationSearch.StationId;
+                        //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                        //friend.StationId = pollingStationSearch.StationId;
                         ////???
 
                         try
@@ -290,7 +302,7 @@ namespace voteCollector.Controllers
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            ViewData["PollingStationId"] = new SelectList(_context.PollingStation, "IdPollingStation", "Name", friend.PollingStationId);
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
             return View(friend);
@@ -312,7 +324,6 @@ namespace voteCollector.Controllers
                 .Include(f => f.House)
                 .Include(f => f.MicroDistrict)
                 .Include(f => f.Station)
-                .Include(f => f.PollingStation)
                 .Include(f => f.Street)
                 .Include(f => f.User)
                 .FirstOrDefaultAsync(m => m.IdFriend == id);

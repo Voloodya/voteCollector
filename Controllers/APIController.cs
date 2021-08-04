@@ -73,9 +73,9 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost("searchPollingStations/city")]
-        public IActionResult SearchPollingStationsCity(StreetDTO street)
+        public IActionResult SearchPollingStationsCity(CityDTO cityDTO)
         {
-            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.StreetId == street.IdStreet).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
 
             if (pollingStations.Any())
             {
@@ -83,6 +83,29 @@ namespace voteCollector.Controllers
                 return Ok(pollingStationsDTO);
             }
             return NoContent();
+        }
+
+        [HttpPost("searchStations/city")]
+        public IActionResult SearchStationsCity(CityDTO cityDTO)
+        {
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+
+            if (pollingStations.Any())
+            {
+                int[] stationsId = pollingStations.Select(p => p.StationId ?? 0).ToArray();
+
+                if (stationsId.Any())
+                {
+                    List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                    List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                    return Ok(stationDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else { return NoContent();}
         }
 
         [HttpPost("searchPollingStations/street")]
@@ -98,6 +121,30 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
+        [HttpPost("searchStations/street")]
+        public IActionResult SearchStationsStreet(StreetDTO street)
+        {
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.StreetId == street.IdStreet).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+
+            if (pollingStations.Any())
+            {
+                int[] stationsId = pollingStations.Select(p => p.StationId ?? 0).ToArray();
+
+                if (stationsId.Any())
+                {
+                    List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                    List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                    return Ok(stationDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else { return NoContent(); }
+        }
+
+
         [HttpPost("searchPollingStations/house")]
         public IActionResult SearchPollingStationsHouse(HouseDTO house)
         {
@@ -111,21 +158,42 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
-        [HttpPost("searchElectoraldistrict/pollingstation")]
-        public IActionResult SearchElectoralDistrictByPollingStation(PollingStationDTO pollingStationDTO)
+        [HttpPost("searchStations/house")]
+        public IActionResult SearchStationsHouse(HouseDTO house)
         {
-            PollingStation pollingStation = _context.PollingStation.Where(ps => ps.Name.Equals(pollingStationDTO.Name)).FirstOrDefault();
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.HouseId == house.IdHouse).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
 
-            if (pollingStation!=null)
+            if (pollingStations.Any())
             {
-                Station station = _context.Station.Where(s => s.IdStation == pollingStation.StationId).FirstOrDefault();
+                int[] stationsId = pollingStations.Select(p => p.StationId ?? 0).ToArray();
 
-                if (station != null)
+                if (stationsId.Any())
                 {
-                    District district = _context.District.Where(d => d.StationId == station.IdStation).FirstOrDefault();
-                    List<ElectoralDistrict> electoralDistrict = _context.ElectoralDistrict.Where(ed => ed.IdElectoralDistrict == district.ElectoralDistrictId).ToList();
+                    List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                    List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                    return Ok(stationDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else { return NoContent(); }
+        }
 
-                    List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict=ed.IdElectoralDistrict, Name=ed.Name }).ToList();
+        [HttpPost("searchElectoraldistrict/station")]
+        public IActionResult SearchElectoralDistrictByStation(StationDTO stationDTO)
+        {
+
+            if (stationDTO != null)
+            {
+                District district = _context.District.Where(d => d.StationId == stationDTO.IdStation).FirstOrDefault();
+                List<ElectoralDistrict> electoralDistrict = _context.ElectoralDistrict.Where(ed => ed.IdElectoralDistrict == district.ElectoralDistrictId).ToList();
+
+                if (electoralDistrict.Any())
+                {
+
+                    List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict = ed.IdElectoralDistrict, Name = ed.Name }).ToList();
 
                     return Ok(electoralDistrictDTOs);
                 }
@@ -134,7 +202,10 @@ namespace voteCollector.Controllers
                     return NoContent();
                 }
             }
-            return NoContent();
+            else
+            {
+                return NoContent();
+            }
         }
 
     }
