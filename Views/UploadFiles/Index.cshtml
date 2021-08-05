@@ -17,13 +17,20 @@
         <div class="form-group col-md-6">
             <input type="file" class="file-select" id="uploadFileFriends" name="uploadFileFriends" accept=".xls, .xlsx" /><br /><br />
         </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Загрузить в сервис" onclick="UploadExcelToWebService('uploadFileFriends');" />
-                </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Загрузить в сервис" onclick="UploadExcelToWebService('uploadFileFriends');" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Загрузить в сервис MVC" onclick="UploadExcelToWebServiceMVC('uploadFileFriends');" />
+            </div>
         </div>
     </div>
+    
 </div>
+
 <h4>Незагруженные строки</h4>
 <hr />
 <div class="row">

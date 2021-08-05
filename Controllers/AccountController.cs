@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using voteCollector.Data;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {

@@ -34,6 +34,37 @@ async function UploadExcelToWebService(fileSource) {
     });
 }
 
+async function UploadExcelToWebServiceMVC(fileSource) {
+    var data = await ExcelToJSON('Freinds', fileSource);
+    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'CityName', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group']);
+
+    $.ajax({
+        type: 'POST',
+        url: partMyURL + '/UploadFiles/uploadDataFromFile',
+        //url: "/CollectVoters/api/FileApi/uploadDataFromFile",
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        processData: false,
+        data: JSON.stringify(data),
+        success: function (data) {
+
+            //if (data != undefined) {
+            //    data.sort();
+            //}
+            //DataFillingDiv(response, 'outText');
+            DataFillingTableBody(data, 'fileUploadTable');
+        },
+        error: function (result, status, er) {
+            alert('error: ' + result + ' status: ' + status + ' er:' + er);
+        }
+    });
+}
+
+
 //Функция конвертации файла в json
 var ExcelToJSON = function (sheetNameRead, fileSource) {
 

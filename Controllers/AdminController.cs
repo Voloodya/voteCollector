@@ -370,6 +370,28 @@ namespace CollectVoters.Controllers
             return PartialView(friends);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SearchFriendsByFieldActivity([FromBody] FieldActivityDTO fieldActivityDTO)
+        {
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            List<Friend> friends=null;
+
+            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            {
+
+            }
+            else
+            {
+            }
+
+            return PartialView(friends);
+        }
+
+
 
         private bool FriendExists(long id)
         {

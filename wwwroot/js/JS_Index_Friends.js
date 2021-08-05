@@ -197,7 +197,7 @@ function deleteSelected(idObject, numberColumn) {
         });
     }
 }
-// Обновление списка избирателей
+// Обновление списка избирателей по избирательному округу
 $(function () {
     $("#SelectElectoralDistrictId").change(function () {
         var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
@@ -223,6 +223,46 @@ $(function () {
                 $('#friendTable').empty();
                 // Destroy object DataTable
                 friendDataTable.destroy();                
+
+                // Update tbody new rows with data
+                $('#friendTable').replaceWith(data);
+                updatingFields('friendTable', 'numberRecords');
+
+                UpdateTablePlagin();
+            },
+            error: function (result, status, er) {
+                alert('error: ' + result + ' status: ' + status + ' er:' + er);
+            }
+        });
+    });
+});
+
+// Обновление списка избирателей по сфере деятельности
+$(function () {
+    $("#SelectFieldActivityId").change(function () {
+        var formData = { 'IdFieldActivity': Number.parseInt($('#SelectFieldActivityId').val()), 'Name': $('#SelectFieldActivityId>option:selected').text() };
+        //$('#' + 'friendTable' + ' tbody > tr').remove();
+
+        $.ajax({
+            type: 'POST',
+            //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
+            url: 'Admin/SearchFriendsByFieldActivity/',
+            headers:
+            {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            data: JSON.stringify(formData),
+            success: function (data) {
+
+                // Delete rows
+                var friendDataTable = $('#friendTable').DataTable();
+                friendDataTable.rows().remove().draw();
+                //friendDataTable.rows.add($(data)).draw();
+                //friendDataTable.Empty();
+                $('#friendTable').empty();
+                // Destroy object DataTable
+                friendDataTable.destroy();
 
                 // Update tbody new rows with data
                 $('#friendTable').replaceWith(data);

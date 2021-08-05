@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using voteCollector.Data;
 using voteCollector.Models;
 
-namespace voteCollector.Controllers
+namespace voteCollector.Services
 {
     public class ServiceUser
     {

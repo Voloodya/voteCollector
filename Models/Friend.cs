@@ -33,21 +33,21 @@ namespace voteCollector.Models
         [DataType(DataType.Date)]
         [Column("Date_birth", TypeName = "date")]
         public DateTime? DateBirth { get; set; }
-        [Required(ErrorMessage = "Не указан насел. п-т")]
+        //[Required(ErrorMessage = "Не указан насел. п-т")]
         [DisplayName("Насел. пункт")]
         [Column("City_id")]
         public int? CityId { get; set; }
         [DisplayName("Избират. округ")]
         [Column("Electoral_district_id")]
         public int? ElectoralDistrictId { get; set; }
-        [Required(ErrorMessage = "Не указана улица")]
+        //[Required(ErrorMessage = "Не указана улица")]
         [DisplayName("Улица/просп./пл./шоссе")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
         [DisplayName("Микрорайон")]
         [Column("MicroDistrict_id")]
         public int? MicroDistrictId { get; set; }
-        [Required(ErrorMessage = "Не указан дом")]
+        //[Required(ErrorMessage = "Не указан дом")]
         [DisplayName("Дом")]
         [Column("House_id")]
         public int? HouseId { get; set; }
