@@ -25,9 +25,17 @@ namespace voteCollector.Models
         [DisplayName("Группа")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
+        [DisplayName("Сфера деятельности")]
+        [Column("FieldActivity_id")]
+        public int? FieldActivityId { get; set; }
         [DisplayName("Автор группы")]
         [Column(TypeName = "varchar(256)")]
         public string CreatorGroup { get; set; }
+
+        [ForeignKey(nameof(FieldActivityId))]
+        [InverseProperty(nameof(Fieldactivity.Groupus))]
+        [DisplayName("Сфера деятельности")]
+        public virtual Fieldactivity FieldActivity { get; set; }
 
         [DisplayName("Избиратели")]
         [InverseProperty("GroupU")]

@@ -35,24 +35,26 @@ namespace voteCollector.Controllers
 
             if (groupsUser.Contains(mainGroup))
             {
-                return View(await _context.Groupu.ToListAsync());
+                return View(await _context.Groupu.Include(g => g.FieldActivity).ToListAsync());
             }
             else
             {
-                return View(await _context.Groupu.Where(g => groupsUser.Contains(g)).ToListAsync());                
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Where(g => groupsUser.Contains(g)).ToListAsync());                
             }            
         }
 
         // GET: Groupus/Create
         public IActionResult Create()
         {
+
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             return View();
         }
 
         // POST: Groupus/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdGroup,Name")] Groupu groupu)
+        public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId")] Groupu groupu)
         {
             if (ModelState.IsValid)
             {
@@ -69,6 +71,8 @@ namespace voteCollector.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             return View(groupu);
         }
 
@@ -85,13 +89,15 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
             return View(groupu);
         }
 
         // POST: Groupus/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name")] Groupu groupu)
+        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name,FieldActivityId")] Groupu groupu)
         {
             if (id != groupu.IdGroup)
             {
@@ -102,6 +108,9 @@ namespace voteCollector.Controllers
             {
                 try
                 {
+                    User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                    groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
+
                     _context.Update(groupu);
                     await _context.SaveChangesAsync();
                 }
@@ -118,6 +127,8 @@ namespace voteCollector.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
             return View(groupu);
         }
 
@@ -129,13 +140,12 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
-            var groupu = await _context.Groupu
+            var groupu = await _context.Groupu.Include(g => g.FieldActivity)
                 .FirstOrDefaultAsync(m => m.IdGroup == id);
             if (groupu == null)
             {
                 return NotFound();
             }
-
             return View(groupu);
         }
 

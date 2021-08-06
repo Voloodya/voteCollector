@@ -40,8 +40,7 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadDataFromFile([FromBody] FriendDTO[] friendsDTO)
+        public IActionResult UploadDataFromFile([FromBody] FriendDTO[] friendsDTO)
         {
             ServiceUser serviceUser = new ServiceUser(_context);
 
@@ -60,12 +59,11 @@ namespace voteCollector.Controllers
                 {
                     friendsDTO[i].UserId = userSave.IdUser;
                     //Friend newFriend = CreateFreand(friendsDTO[i]);
-                    Friend newFriend = serviceFriends.CreateFreand(friendsDTO[i], regexTelephone, userSave, groupsUser);
+                    Friend newFriend = serviceFriends.CreateFreand(friendsDTO[i], regexTelephone, userSave, groupsUser,_context);
                     _context.Add(newFriend);
                 }
                 catch
                 {
-
                     notUploadRecords.Add(new FileUploadDTO
                     {
                         NumberStrFile = Convert.ToString(i + 1),
@@ -82,7 +80,7 @@ namespace voteCollector.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChangesAsync();
                 return Ok(notUploadRecords.ToArray());
             }
             catch (Exception ex)

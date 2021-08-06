@@ -294,9 +294,21 @@ namespace voteCollector.Data
                 entity.HasKey(e => e.IdGroup)
                     .HasName("PRIMARY");
 
+                entity.HasIndex(e => e.FieldActivityId)
+                    .HasName("FK_Groupu_Fieldactivity");
+
+                entity.Property(e => e.CreatorGroup)
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
                 entity.Property(e => e.Name)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasOne(d => d.FieldActivity)
+                   .WithMany(p => p.Groupus)
+                   .HasForeignKey(d => d.FieldActivityId)
+                   .HasConstraintName("FK_Groupu_Fieldactivity");
             });
 
             modelBuilder.Entity<House>(entity =>

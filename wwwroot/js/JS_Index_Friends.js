@@ -141,14 +141,46 @@ $(document).ready(function () {
 
 });
 
+// Загрузка сфер деятельности
+$(document).ready(function () {
+
+    $.ajax({
+        // url: "http://localhost:18246/api/API/getElectoralDistrict",
+        url: partMyURL + "/api/API/getfieldactivite",
+        //url: "/CollectVoters/api/API/getElectoralDistrict",
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        type: 'GET',
+        dataType: "json",
+        success: function (data) {
+
+            if (data != undefined) {
+                var dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                });
+            }
+            DataFillingSelect(dataSort, 'idFieldActivity', 'name', 'SelectFieldActivityId', '<option/>');
+
+        },
+        error: function (result, status, er) {
+            alert("error: " + result + " status: " + status + " er:" + er);
+        }
+    });
+
+});
 
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
+document.getElementById('totalFriends').innerHTML = (nrows);
 
-$('friendTable').ready(countVoters('friendTable',18));
-$('friendTable').change(countVoters('friendTable',18));
+$('friendTable').ready(CountVoters('friendTable',18));
+$('friendTable').change(CountVoters('friendTable',18));
 
-function countVoters(idObjectCount, numberColumn) {
+function CountVoters(idObjectCount, numberColumn) {
     var table = document.getElementById(idObjectCount);
     var rows = table.tBodies[0].rows;
     var total = 0;
@@ -189,7 +221,8 @@ function deleteSelected(idObject, numberColumn) {
             success: function (response) {
                 console.log(response);
                 deleteTrTableBody(idObject, jsonMasId);
-                updatingFields(idObject, 'numberRecords');
+                UpdatingFields(idObject, 'numberRecords', 'totalFriends');
+                CountVoters('friendTable', 18);
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
@@ -226,9 +259,10 @@ $(function () {
 
                 // Update tbody new rows with data
                 $('#friendTable').replaceWith(data);
-                updatingFields('friendTable', 'numberRecords');
+                UpdatingFields('friendTable', 'numberRecords','totalFriends');
 
                 UpdateTablePlagin();
+                CountVoters('friendTable', 18);
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
@@ -266,9 +300,10 @@ $(function () {
 
                 // Update tbody new rows with data
                 $('#friendTable').replaceWith(data);
-                updatingFields('friendTable', 'numberRecords');
+                UpdatingFields('friendTable', 'numberRecords','totalFriends');
 
                 UpdateTablePlagin();
+                CountVoters('friendTable', 18);
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
@@ -293,9 +328,16 @@ function deleteTrTableBody(idObject, jsonMasId) {
     }
 }
 
-function updatingFields(idObjectSelect, idObjectUpdate) {
+function UpdatingFields(idObjectSelect, idObjectUpdate, idObjectUpdate2) {
     let nrows = document.getElementById(idObjectSelect).tBodies[0].rows.length;
-    document.getElementById(idObjectUpdate).innerHTML = "Количество избирателей: " + (nrows);
+
+    if (idObjectUpdate2 != undefined) {
+        document.getElementById(idObjectUpdate).innerHTML = "Количество избирателей: " + (nrows);
+    }
+
+    if (idObjectUpdate2 != undefined) {
+        document.getElementById(idObjectUpdate2).innerHTML = nrows;
+    }
 }
 
 //Заполнение объекта html данными из json массива

@@ -20,6 +20,7 @@ namespace voteCollector.Controllers
     [ApiController]
     [Produces("application/json")]
     [Authorize(Roles = "admin, user")]
+    [Authorize]
     public class FileApiController : ControllerBase
     {
         private readonly ILogger<FileApiController> _logger;
@@ -32,6 +33,7 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost("uploadDataFromFile")]
+        [Authorize]
         public async Task<IActionResult> UploadDataFromFile([FromBody] FriendDTO[] friendsDTO)
         {
             ServiceUser serviceUser = new ServiceUser(_context);
@@ -51,7 +53,7 @@ namespace voteCollector.Controllers
                 {
                     friendsDTO[i].UserId = userSave.IdUser;
                     //Friend newFriend = CreateFreand(friendsDTO[i]);
-                    Friend newFriend = serviceFriends.CreateFreand(friendsDTO[i],regexTelephone,userSave, groupsUser);
+                    Friend newFriend = serviceFriends.CreateFreand(friendsDTO[i],regexTelephone,userSave, groupsUser, _context);
                     _context.Add(newFriend);                    
                 }
                 catch {

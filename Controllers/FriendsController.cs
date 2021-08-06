@@ -346,6 +346,7 @@ namespace voteCollector.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         private bool FriendExists(long id)
         {
             return _context.Friend.Any(e => e.IdFriend == id);
@@ -357,5 +358,7 @@ namespace voteCollector.Controllers
             List<Groupsusers> groupsUsers = userSave.Groupsusers.ToList();
             return groupsUsers.Select(g => g.GroupU).ToList();
         }
+
+
     }
 }

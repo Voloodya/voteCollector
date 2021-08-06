@@ -67,6 +67,23 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public IQueryable<Friend> SearchFriendsByFieldActivite(FieldActivityDTO fieldActivityDTO)
+        {
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity);
+
+            return friends;
+        }
+
+        public IQueryable<Friend> SearchFriendsByFieldActiviteAndGroups(FieldActivityDTO fieldActivityDTO, List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User)
+                .Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity && groupsUser.Contains(frnd.GroupU));
+
+            return friends;
+        }
+
+
         public IQueryable<Friend> SearchFriendsByNameElectoralDistrict(string nameElectoralDistrict)
         {
             IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User)
@@ -98,7 +115,7 @@ namespace voteCollector.Services
             }
             return friends;
         }
-        public Friend CreateFreand(FriendDTO friendDTO, Regex regexTelephone, User user, List<Groupu> groupsUser)
+        public Friend CreateFreand(FriendDTO friendDTO, Regex regexTelephone, User user, List<Groupu> groupsUser, VoterCollectorContext _context)
         {
             Friend newFriend = new Friend();
 

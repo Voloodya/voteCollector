@@ -57,6 +57,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreatorGroup)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldActivity)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -70,8 +73,10 @@
                 @Html.DisplayFor(modelItem => item.CreatorGroup)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdGroup">Удалить</a>
+                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a>
             </td>
         </tr>
 }

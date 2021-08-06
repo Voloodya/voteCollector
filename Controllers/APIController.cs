@@ -33,7 +33,7 @@ namespace voteCollector.Controllers
         }
 
         [HttpGet("getElectoralDistrict")]
-        public IActionResult GetgetElectoralDistrict()
+        public IActionResult GetElectoralDistrict()
         {
             List<ElectoralDistrict> electoralDistricts = _context.ElectoralDistrict.ToList();
 
@@ -41,6 +41,20 @@ namespace voteCollector.Controllers
             {
                 List<ElectoralDistrictDTO> electoralDistrictsDTO = electoralDistricts.Select(s => new ElectoralDistrictDTO { IdElectoralDistrict = s.IdElectoralDistrict, Name = s.Name }).ToList();
                 return Ok(electoralDistrictsDTO);
+            }
+            return NoContent();
+        }
+
+        [HttpGet("getfieldactivite")]
+        public IActionResult GetFieldActivite()
+        {
+            List<Fieldactivity> fieldactivities = _context.Fieldactivity.ToList();
+
+            if (fieldactivities.Any())
+            {
+                List<FieldActivityDTO> fieldActivityDTOs = fieldactivities.Select(f => new FieldActivityDTO { IdFieldActivity = f.IdFieldActivity, Name = f.Name }).ToList();
+                fieldActivityDTOs.Add(new FieldActivityDTO { IdFieldActivity = 0, Name = "" });
+                return Ok(fieldActivityDTOs);
             }
             return NoContent();
         }

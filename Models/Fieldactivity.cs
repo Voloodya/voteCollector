@@ -16,6 +16,7 @@ namespace voteCollector.Models
         public Fieldactivity()
         {
             Friends = new HashSet<Friend>();
+            Groupus = new HashSet<Groupu>();
         }
 
         [Key]
@@ -27,5 +28,8 @@ namespace voteCollector.Models
 
         [InverseProperty("FieldActivity")]
         public virtual ICollection<Friend> Friends { get; set; }
+        [InverseProperty("FieldActivity")]
+        [DisplayName("Сфера деятельности")]
+        public virtual ICollection<Groupu> Groupus { get; set; }
     }
 }

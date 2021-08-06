@@ -382,10 +382,11 @@ namespace CollectVoters.Controllers
 
             if (mainGroup != null && groupsUser.Contains(mainGroup))
             {
-
+                friends = await _serviceFriends.SearchFriendsByFieldActivite(fieldActivityDTO).ToListAsync();
             }
             else
             {
+                friends = await _serviceFriends.SearchFriendsByFieldActiviteAndGroups(fieldActivityDTO, groupsUser).ToListAsync();
             }
 
             return PartialView(friends);

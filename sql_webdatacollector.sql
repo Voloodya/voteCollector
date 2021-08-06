@@ -12,6 +12,19 @@ create table GroupU(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `votercollector`.`groupu` 
+ADD COLUMN `FieldActivity_id` INT NULL DEFAULT NULL AFTER `Name`;
+
+ALTER TABLE `votercollector`.`groupu` 
+ADD INDEX `FK_Groupu_Fieldactivity` (`FieldActivity_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`groupu` 
+ADD CONSTRAINT `FK_Groupu_Fieldactivity`
+  FOREIGN KEY (`FieldActivity_id`)
+  REFERENCES `votercollector`.`fieldactivity` (`Id_FieldActivity`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `votercollector`.`groupu` 
 ADD COLUMN `CreatorGroup` VARCHAR(256) NULL DEFAULT NULL AFTER `Name`;
 
 create table User(
@@ -37,6 +50,7 @@ create table GroupsUsers(
 					CONSTRAINT FK_GroupsUsers_User FOREIGN KEY (User_id) REFERENCES User (Id_User)
 					ON delete set null on update restrict                    
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 create table City(
                       Id_City INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
