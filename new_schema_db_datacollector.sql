@@ -66,6 +66,7 @@ CREATE TABLE `friend` (
   `Description` varchar(256) DEFAULT NULL,
   `User_id` bigint DEFAULT NULL,
   `GroupU_id` int DEFAULT NULL,
+  `FriendStatus_id` int DEFAULT NULL,
   PRIMARY KEY (`Id_Friend`),
   KEY `FK_Friend_City` (`City_id`),
   KEY `FK_Friend_Street` (`Street_id`),
@@ -76,9 +77,11 @@ CREATE TABLE `friend` (
   KEY `FK_Friend_GroupU` (`GroupU_id`),
   KEY `FK_Friend_ElectoralDistrict` (`Electoral_district_id`),
   KEY `FK_Friend_Station_idx` (`Station_id`),
+  KEY `FK_Friend_FriendStatus` (`FriendStatus_id`),
   CONSTRAINT `FK_Friend_City` FOREIGN KEY (`City_id`) REFERENCES `city` (`Id_City`) ON DELETE SET NULL ON UPDATE RESTRICT,
   CONSTRAINT `FK_Friend_ElectoralDistrict` FOREIGN KEY (`Electoral_district_id`) REFERENCES `electoral_district` (`Id_ElectoralDistrict`) ON DELETE SET NULL ON UPDATE RESTRICT,
   CONSTRAINT `FK_Friend_FieldActivity` FOREIGN KEY (`FieldActivity_id`) REFERENCES `fieldactivity` (`Id_FieldActivity`) ON DELETE SET NULL ON UPDATE RESTRICT,
+  CONSTRAINT `FK_Friend_FriendStatus` FOREIGN KEY (`FriendStatus_id`) REFERENCES `friend_status` (`Id_friend_status`),
   CONSTRAINT `FK_Friend_GroupU` FOREIGN KEY (`GroupU_id`) REFERENCES `groupu` (`Id_Group`),
   CONSTRAINT `FK_Friend_House` FOREIGN KEY (`House_id`) REFERENCES `house` (`Id_House`) ON DELETE SET NULL ON UPDATE RESTRICT,
   CONSTRAINT `FK_Friend_MicroDistrict` FOREIGN KEY (`MicroDistrict_id`) REFERENCES `microdistrict` (`Id_MicroDistrict`) ON DELETE SET NULL ON UPDATE RESTRICT,
@@ -86,6 +89,7 @@ CREATE TABLE `friend` (
   CONSTRAINT `FK_Friend_Street` FOREIGN KEY (`Street_id`) REFERENCES `street` (`Id_Street`) ON DELETE SET NULL ON UPDATE RESTRICT,
   CONSTRAINT `FK_Friend_User` FOREIGN KEY (`User_id`) REFERENCES `user` (`Id_User`) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 CREATE TABLE `groupsusers` (
@@ -199,5 +203,10 @@ CREATE TABLE `user` (
   CONSTRAINT `FK_User_Role` FOREIGN KEY (`Role_id`) REFERENCES `role` (`Id_Role`) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `friend_status` (
+  `Id_friend_status` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Id_friend_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 

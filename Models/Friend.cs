@@ -114,6 +114,9 @@ namespace voteCollector.Models
         [DisplayName("Группа")]
         [Column("GroupU_id")]
         public int? GroupUId { get; set; }
+        [Column("FriendStatus_id")]
+        [DisplayName("Статус избирателя")]
+        public int? FriendStatusId { get; set; }
 
         [DisplayName("Населен. п-т")]
         [ForeignKey(nameof(CityId))]
@@ -127,6 +130,10 @@ namespace voteCollector.Models
         [ForeignKey(nameof(FieldActivityId))]
         [InverseProperty(nameof(Fieldactivity.Friends))]
         public virtual Fieldactivity FieldActivity { get; set; }
+        [DisplayName("Статус избирателя")]
+        [ForeignKey(nameof(FriendStatusId))]
+        [InverseProperty("Friends")]
+        public virtual FriendStatus FriendStatus { get; set; }
         [DisplayName("Группа")]
         [ForeignKey(nameof(GroupUId))]
         [InverseProperty(nameof(Groupu.Friends))]

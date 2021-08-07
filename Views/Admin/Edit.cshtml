@@ -90,10 +90,10 @@
                     <span asp-validation-for="ElectoralDistrictId" class="text-danger"></span>
                 </div>
                 @*<div class="form-group col-md-6">
-                    <label asp-for="PollingStationId" class="control-label"></label>
-                    <select id="PollingStationId" asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStationId"></select>
-                    <span asp-validation-for="PollingStationId" class="text-danger"></span>
-                </div>*@
+                <label asp-for="PollingStationId" class="control-label"></label>
+                <select id="PollingStationId" asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStationId"></select>
+                <span asp-validation-for="PollingStationId" class="text-danger"></span>
+            </div>*@
                 <div class="form-group col-md-6">
                     <label asp-for="StationId" class="control-label"></label>
                     <select id="StationId" asp-for="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
@@ -106,11 +106,6 @@
                     <label asp-for="Organization" class="control-label"></label>
                     <input asp-for="Organization" class="form-control" />
                     <span asp-validation-for="Organization" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-6">
-                    <label asp-for="FieldActivityId" class="control-label"></label>
-                    <select asp-for="FieldActivityId" class="form-control" asp-items="ViewBag.FieldActivityId"></select>
-                    <span asp-validation-for="FieldActivityId" class="text-danger"></span>
                 </div>
             </div>
 
@@ -137,35 +132,48 @@
                     <span asp-validation-for="Voter" class="text-danger"></span>
                 </div>
             </div>
-
             <div class="form-group">
-                <label asp-for="TextQRcode" class="control-label"></label>
-                <input asp-for="TextQRcode" class="form-control" />
-                <span asp-validation-for="TextQRcode" class="text-danger"></span>
+                <label asp-for="FriendStatusId" class="control-label"></label>
+                <select asp-for="FriendStatusId" class="form-control" asp-items="ViewBag.FriendStatusId"></select>
+                <span asp-validation-for="FriendStatusId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="TextQRcode" class="control-label"></label>
+                <input asp-for="TextQRcode" class="form-control" />
+                <span asp-validation-for="TextQRcode" class="text-danger"></span>
+            </div>
             <div class="form-group" style="display:none">
                 <label asp-for="UserId" class="control-label"></label>
                 <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="GroupUId" class="control-label"></label>
-                <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
-                <span asp-validation-for="GroupUId" class="text-danger"></span>
-            </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <input type="submit" value="Сохранить" class="btn btn-primary btn-block" />
+                    <label asp-for="GroupUId" class="control-label"></label>
+                    <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
+                    <span asp-validation-for="GroupUId" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-6">
-                    <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+                    <label asp-for="FieldActivityId" class="control-label"></label>
+                    <select asp-for="FieldActivityId" class="form-control" asp-items="ViewBag.FieldActivityId"></select>
+                    <span asp-validation-for="FieldActivityId" class="text-danger"></span>
                 </div>
-            </div>
+             </div>
+
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <input type="submit" value="Сохранить" class="btn btn-primary btn-block" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+                    </div>
+                </div>
         </form>
     </div>
 </div>

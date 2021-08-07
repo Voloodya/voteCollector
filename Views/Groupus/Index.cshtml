@@ -64,23 +64,49 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatorGroup)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatorGroup)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Index_Groups.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+
 
 

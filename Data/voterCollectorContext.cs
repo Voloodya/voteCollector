@@ -34,6 +34,7 @@ namespace voteCollector.Data
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Station> Station { get; set; }
         public virtual DbSet<ElectoralDistrict> ElectoralDistrict { get; set; }
+        public virtual DbSet<FriendStatus> FriendStatus { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -154,6 +155,9 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.UserId)
                     .HasName("FK_Friend_User");
 
+                entity.HasIndex(e => e.FriendStatusId)
+                    .HasName("FK_Friend_FriendStatus");
+
                 entity.Property(e => e.Adress)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
@@ -260,6 +264,11 @@ namespace voteCollector.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Friend_User");
+
+                entity.HasOne(d => d.FriendStatus)
+                    .WithMany(p => p.Friends)
+                    .HasForeignKey(d => d.FriendStatusId)
+                    .HasConstraintName("FK_Friend_FriendStatus");
             });
 
             modelBuilder.Entity<Groupsusers>(entity =>
@@ -495,6 +504,17 @@ namespace voteCollector.Data
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_User_Role");
             });
+
+            modelBuilder.Entity<FriendStatus>(entity =>
+            {
+                entity.HasKey(e => e.IdFriendStatus)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.Name)
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+            });
+
 
             OnModelCreatingPartial(modelBuilder);
         }

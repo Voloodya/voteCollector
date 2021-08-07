@@ -26,6 +26,7 @@ namespace voteCollector.Models
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
         [DisplayName("Сфера деятельности")]
+        [Required(ErrorMessage = "Не указана отрасль")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
         [DisplayName("Автор группы")]

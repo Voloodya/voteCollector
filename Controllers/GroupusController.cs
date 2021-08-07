@@ -56,22 +56,29 @@ namespace voteCollector.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId")] Groupu groupu)
         {
+
             if (ModelState.IsValid)
             {
-                User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
-                _context.Add(groupu);
-                _context.SaveChanges();
+                Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name));
 
-                Groupsusers groupsusers = new Groupsusers();
-                groupsusers.GroupUId = groupu.IdGroup;               
-                groupsusers.UserId = currentUser.IdUser;                
-                _context.Add(groupsusers);
-                await _context.SaveChangesAsync();
+                if (groupuDB == null)
+                {
+                    User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                    groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
+                    _context.Add(groupu);
+                    _context.SaveChanges();
 
-                return RedirectToAction(nameof(Index));
+                    Groupsusers groupsusers = new Groupsusers();
+                    groupsusers.GroupUId = groupu.IdGroup;
+                    groupsusers.UserId = currentUser.IdUser;
+                    _context.Add(groupsusers);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
-
+            //
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             return View(groupu);
         }
@@ -106,26 +113,31 @@ namespace voteCollector.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name));
+                if (groupuDB == null)
                 {
-                    User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                    groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
+                    try
+                    {
+                        User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                        groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
 
-                    _context.Update(groupu);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GroupuExists(groupu.IdGroup))
-                    {
-                        return NotFound();
+                        _context.Update(groupu);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!GroupuExists(groupu.IdGroup))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
 
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);

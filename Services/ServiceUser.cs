@@ -30,12 +30,12 @@ namespace voteCollector.Services
 
             if (groupsUser.Contains(mainGroup))
             {
-                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User);
+                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.GroupU.FieldActivity).Include(g => g.User);
                 return  voterCollectorContext;
             }
             else
             {
-                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User).
+                var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.GroupU.FieldActivity).Include(g => g.User).
                     Where(g => groupsUser.Contains(g.GroupU));
                 return  voterCollectorContext;
             }

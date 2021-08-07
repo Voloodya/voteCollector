@@ -258,7 +258,29 @@ DROP INDEX `FK_Friend_Polling_station` ;
 ALTER TABLE `votercollector`.`friend` 
 DROP COLUMN `Polling_station_id`;
 
-/////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `FriendStatus_id` INT NULL DEFAULT NULL AFTER `GroupU_id`;
+
+ALTER TABLE `votercollector`.`friend` 
+ADD INDEX `FK_Friend_FriendStatus` (`FriendStatus_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`friend` 
+ADD CONSTRAINT `FK_Friend_FriendStatus`
+  FOREIGN KEY (`FriendStatus_id`)
+  REFERENCES `votercollector`.`friend_status` (`Id_friend_status`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+/////////////////////////////////////////////////////////////////////
+
+create table friend_status(
+					Id_friend_status INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					Name VARCHAR(100) NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 
 INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');

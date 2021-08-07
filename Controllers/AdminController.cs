@@ -100,6 +100,7 @@ namespace CollectVoters.Controllers
                 .Include(f => f.Station)
                 .Include(f => f.Street)
                 .Include(f => f.User)
+                .Include(f => f.FriendStatus)
                 .FirstOrDefaultAsync(m => m.IdFriend == id);
 
             if (friend == null)
@@ -130,7 +131,7 @@ namespace CollectVoters.Controllers
 
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
-            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupsUser[0].FieldActivityId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
@@ -151,6 +152,7 @@ namespace CollectVoters.Controllers
             //////
 
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+            ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name");
 
             return View();
         }
@@ -158,7 +160,7 @@ namespace CollectVoters.Controllers
         // POST: Friends/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId")] Friend friend)
+        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId")] Friend friend)
         {
             List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
 
@@ -197,6 +199,8 @@ namespace CollectVoters.Controllers
                 List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
                 ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
                 ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
+                ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
+
                 return View(friend);
             }
             else return Content("Данный пользователь уже был внесен в списки ранее!");
@@ -237,6 +241,8 @@ namespace CollectVoters.Controllers
             List<House> selectHouse = _context.House.Where(h => h.StreetId == friend.StreetId).ToList();
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
+            ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
+
             return View(friend);
         }
 
@@ -245,7 +251,7 @@ namespace CollectVoters.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId")] Friend friend)
+        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId")] Friend friend)
         {
             if (id != friend.IdFriend)
             {
@@ -307,6 +313,7 @@ namespace CollectVoters.Controllers
             ViewData["StationId"] = new SelectList(_context.PollingStation, "IdStation", "Name", friend.StationId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
+            ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
             return View(friend);
         }
 
@@ -328,6 +335,7 @@ namespace CollectVoters.Controllers
                 .Include(f => f.Station)
                 .Include(f => f.Street)
                 .Include(f => f.User)
+                .Include(f => f.FriendStatus)
                 .FirstOrDefaultAsync(m => m.IdFriend == id);
             if (friend == null)
             {

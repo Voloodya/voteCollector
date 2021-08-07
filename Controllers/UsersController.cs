@@ -59,15 +59,28 @@ namespace voteCollector.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdUser,UserName,Password,RoleId,FamilyName,Name,PatronymicName,DateBirth,Telephone")] User user)
         {
+
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                User userDB = _context.User.FirstOrDefault(u => u.UserName.Equals(user.UserName));
+
+                if (userDB == null)
+                {
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Пользователь с данным логином уже существует!");
+                }
             }
             ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
         }
+
+
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(long? id)
@@ -96,25 +109,32 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
+
             if (ModelState.IsValid)
             {
-                try
+
+                User userDB = _context.User.FirstOrDefault(u => u.UserName.Equals(user.UserName) && u.IdUser != id);
+                if (userDB == null)
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.IdUser))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!UserExists(user.IdUser))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else ModelState.AddModelError("", "Пользователь с данным логином уже существует!");
             }
             ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
@@ -165,7 +185,7 @@ namespace voteCollector.Controllers
         [HttpGet]
         public async Task<IActionResult> RedirectTo()
         {
-               return RedirectToAction("Index", "Admin");
+            return RedirectToAction("Index", "Admin");
         }
 
     }

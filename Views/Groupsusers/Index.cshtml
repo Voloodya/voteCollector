@@ -55,13 +55,16 @@
     <thead>
         <tr>
             @*<th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>*@
+            @Html.DisplayNameFor(model => model.Name)
+        </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupU.FieldActivity)
             </th>
             <th></th>
         </tr>
@@ -69,21 +72,24 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.GroupU.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.FamilyName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
-                </td>
-            </tr>
+        <tr>
+            @*<td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupU.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FamilyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

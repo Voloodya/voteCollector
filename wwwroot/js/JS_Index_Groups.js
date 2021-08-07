@@ -1,6 +1,6 @@
 ﻿
 $(document).ready(function () {
-    $('#grupsUsersTable').DataTable({
+    $('#grupsTable').DataTable({
 
         retrieve: true,
         paging: false,
