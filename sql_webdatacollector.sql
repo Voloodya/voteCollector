@@ -23,7 +23,20 @@ ADD CONSTRAINT `FK_Groupu_Fieldactivity`
   REFERENCES `votercollector`.`fieldactivity` (`Id_FieldActivity`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+///////////////////////////////////////////////////////////////////////////  
+  ALTER TABLE `votercollector`.`groupu` 
+ADD COLUMN `Organization_id` INT NULL DEFAULT NULL AFTER `FieldActivity_id`;
 
+ALTER TABLE `votercollector`.`groupu` 
+ADD INDEX `FK_Groupu_Organization` (`Organization_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`groupu` 
+ADD CONSTRAINT `FK_Groupu_Organization`
+  FOREIGN KEY (`Organization_id`)
+  REFERENCES `votercollector`.`organization` (`Id_Organization`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+////////////////////////////////////////////////////////////////////////////
 ALTER TABLE `votercollector`.`groupu` 
 ADD COLUMN `CreatorGroup` VARCHAR(256) NULL DEFAULT NULL AFTER `Name`;
 
@@ -208,7 +221,6 @@ create table Friend(
 					CONSTRAINT FK_Friend_GroupU FOREIGN KEY (GroupU_id) REFERENCES GroupU (Id_Group)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
 //////////////////////////////////////////////////////////////////////////////
 ALTER TABLE `votercollector`.`friend` 
 ADD COLUMN `Electoral_district_id` INT NULL DEFAULT NULL AFTER `City_id`;
@@ -273,13 +285,31 @@ ADD CONSTRAINT `FK_Friend_FriendStatus`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `Organization_id` INT NULL DEFAULT NULL AFTER `Organization`;
 
+ALTER TABLE `votercollector`.`friend` 
+ADD INDEX `FK_Friend_Organization` (`Organization_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`friend` 
+ADD CONSTRAINT `FK_Friend_Organization`
+  FOREIGN KEY (`Organization_id`)
+  REFERENCES `votercollector`.`organization` (`Id_Organization`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+/////////////////////////////////////////////////////////////////////////////
 create table friend_status(
 					Id_friend_status INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					Name VARCHAR(100) NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+create table Organization(
+					Id_Organization INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					Name VARCHAR(256) NULLfriend_status
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+////////////////////////////////////////////////////////////////////////////////
 
 
 INSERT INTO Role (Name) VALUES ('admin');

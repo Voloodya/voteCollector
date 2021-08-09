@@ -55,10 +55,13 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatorGroup)
+                @Html.DisplayNameFor(model => model.FieldActivity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FieldActivity)
+                @Html.DisplayNameFor(model => model.Organization)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatorGroup)
             </th>
             <th></th>
         </tr>
@@ -66,20 +69,23 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatorGroup)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FieldActivity.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Organization.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatorGroup)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

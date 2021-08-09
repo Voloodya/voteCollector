@@ -70,6 +70,9 @@ namespace voteCollector.Models
         [DisplayName("Организация")]
         [Column(TypeName = "varchar(256)")]
         public string Organization { get; set; }
+        [DisplayName("Организация")]
+        [Column("Organization_id")]
+        public int? OrganizationId { get; set; }
         [DisplayName("Сфера деят-ти")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
@@ -146,6 +149,11 @@ namespace voteCollector.Models
         [ForeignKey(nameof(MicroDistrictId))]
         [InverseProperty(nameof(Microdistrict.Friends))]
         public virtual Microdistrict MicroDistrict { get; set; }
+        [ForeignKey(nameof(OrganizationId))]
+        [InverseProperty("Friends")]
+        [DisplayName("Организация")]
+        public virtual Organization Organization_ { get; set; }
+
         [ForeignKey(nameof(StationId))]
         [InverseProperty("Friends")]
         [DisplayName("Участок")]

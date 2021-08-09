@@ -10,7 +10,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([0,2]).every(function () {
+            this.api().columns([0,1,2]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())

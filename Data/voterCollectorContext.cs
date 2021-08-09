@@ -35,6 +35,7 @@ namespace voteCollector.Data
         public virtual DbSet<Station> Station { get; set; }
         public virtual DbSet<ElectoralDistrict> ElectoralDistrict { get; set; }
         public virtual DbSet<FriendStatus> FriendStatus { get; set; }
+        public virtual DbSet<Organization> Organization { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -146,6 +147,9 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.MicroDistrictId)
                     .HasName("FK_Friend_MicroDistrict");
 
+                entity.HasIndex(e => e.OrganizationId)
+                   .HasName("FK_Friend_Organization");
+
                 entity.HasIndex(e => e.StationId)
                    .HasName("FK_Friend_Station");
 
@@ -247,6 +251,11 @@ namespace voteCollector.Data
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Friend_MicroDistrict");
 
+                entity.HasOne(d => d.Organization_)
+                   .WithMany(p => p.Friends)
+                   .HasForeignKey(d => d.OrganizationId)
+                   .HasConstraintName("FK_Friend_Organization");
+
                 entity.HasOne(d => d.Station)
                     .WithMany(p => p.Friends)
                     .HasForeignKey(d => d.StationId)
@@ -306,6 +315,9 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.FieldActivityId)
                     .HasName("FK_Groupu_Fieldactivity");
 
+                entity.HasIndex(e => e.OrganizationId)
+                    .HasName("FK_Groupu_Organization");
+
                 entity.Property(e => e.CreatorGroup)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
@@ -318,6 +330,11 @@ namespace voteCollector.Data
                    .WithMany(p => p.Groupus)
                    .HasForeignKey(d => d.FieldActivityId)
                    .HasConstraintName("FK_Groupu_Fieldactivity");
+
+                entity.HasOne(d => d.Organization)
+                    .WithMany(p => p.Groupus)
+                    .HasForeignKey(d => d.OrganizationId)
+                    .HasConstraintName("FK_Groupu_Organization");
             });
 
             modelBuilder.Entity<House>(entity =>
@@ -515,6 +532,15 @@ namespace voteCollector.Data
                     .HasCollation("utf8mb4_0900_ai_ci");
             });
 
+            modelBuilder.Entity<Organization>(entity =>
+            {
+                entity.HasKey(e => e.IdOrganization)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.Name)
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+            });
 
             OnModelCreatingPartial(modelBuilder);
         }

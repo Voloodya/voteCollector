@@ -101,6 +101,7 @@ namespace CollectVoters.Controllers
                 .Include(f => f.Street)
                 .Include(f => f.User)
                 .Include(f => f.FriendStatus)
+                .Include(f => f.Organization_)
                 .FirstOrDefaultAsync(m => m.IdFriend == id);
 
             if (friend == null)
@@ -132,6 +133,7 @@ namespace CollectVoters.Controllers
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupsUser[0].FieldActivityId);
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupsUser[0].OrganizationId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
@@ -160,14 +162,13 @@ namespace CollectVoters.Controllers
         // POST: Friends/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId")] Friend friend)
+        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
         {
-            List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
-
-            if (searchFriend.Count == 0)
+            if (ModelState.IsValid)
             {
+                List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
 
-                if (ModelState.IsValid)
+                if (searchFriend.Count == 0)
                 {
                     User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                     friend.UserId = userSave.IdUser;
@@ -184,26 +185,28 @@ namespace CollectVoters.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-
-                List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
-
-                ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
-                ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-                ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdDistrict", "Name", friend.ElectoralDistrictId);
-                ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
-                ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-                ViewData["StationId"] = new SelectList(_context.Station, "IdPollingStation", "Name", friend.StationId);
-                List<Street> selectStreets = _context.Street.Where(s => s.CityId == friend.CityId).ToList();
-                ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);
-                // ???
-                List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
-                ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
-                ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
-                ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
-
-                return View(friend);
+                else ModelState.AddModelError("", "Данный избиратель уже был внесен в списки ранее!");
             }
-            else return Content("Данный пользователь уже был внесен в списки ранее!");
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
+            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
+            List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.ToList();
+            ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
+            ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == friend.CityId).ToList();
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);
+            // ???
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
+            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
+            ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
+
+            return View(friend);
         }
 
         // GET: Friends/Edit/5
@@ -226,6 +229,7 @@ namespace CollectVoters.Controllers
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
             var polingStations = _context.PollingStation.Where(p => p.CityId == friend.CityId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
             //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
@@ -247,11 +251,9 @@ namespace CollectVoters.Controllers
         }
 
         // POST: Friends/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId")] Friend friend)
+        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
         {
             if (id != friend.IdFriend)
             {
@@ -297,20 +299,21 @@ namespace CollectVoters.Controllers
                         return RedirectToAction(nameof(Index));
 
                     }
-                    else return Content("Данный пользователь уже присутствует в списках!");
+                    else ModelState.AddModelError("", "Данный избиратель уже был внесен в списки ранее!");
                 }
-                else return Content("Не все обязательные поля были заполнены!");
+                else ModelState.AddModelError("", "Не все обязательные поля были заполнены!");
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-            ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdDistrict", "Name", friend.ElectoralDistrictId);
+            ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            ViewData["StationId"] = new SelectList(_context.PollingStation, "IdStation", "Name", friend.StationId);
+            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
             ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
@@ -336,6 +339,7 @@ namespace CollectVoters.Controllers
                 .Include(f => f.Street)
                 .Include(f => f.User)
                 .Include(f => f.FriendStatus)
+                .Include(f => f.Organization_)
                 .FirstOrDefaultAsync(m => m.IdFriend == id);
             if (friend == null)
             {

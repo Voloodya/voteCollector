@@ -35,11 +35,11 @@ namespace voteCollector.Controllers
 
             if (groupsUser.Contains(mainGroup))
             {
-                return View(await _context.Groupu.Include(g => g.FieldActivity).ToListAsync());
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).ToListAsync());
             }
             else
             {
-                return View(await _context.Groupu.Include(g => g.FieldActivity).Where(g => groupsUser.Contains(g)).ToListAsync());                
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).Where(g => groupsUser.Contains(g)).ToListAsync());                
             }            
         }
 
@@ -47,6 +47,7 @@ namespace voteCollector.Controllers
         public IActionResult Create()
         {
 
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             return View();
         }
@@ -54,7 +55,7 @@ namespace voteCollector.Controllers
         // POST: Groupus/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId")] Groupu groupu)
+        public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId,OrganizationId")] Groupu groupu)
         {
 
             if (ModelState.IsValid)
@@ -79,6 +80,7 @@ namespace voteCollector.Controllers
                 else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
             //
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             return View(groupu);
         }
@@ -97,6 +99,7 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
             return View(groupu);
         }
@@ -104,7 +107,7 @@ namespace voteCollector.Controllers
         // POST: Groupus/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name,FieldActivityId")] Groupu groupu)
+        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name,FieldActivityId,OrganizationId")] Groupu groupu)
         {
             if (id != groupu.IdGroup)
             {
@@ -113,7 +116,7 @@ namespace voteCollector.Controllers
 
             if (ModelState.IsValid)
             {
-                Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name));
+                Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name) && g.IdGroup!=id);
                 if (groupuDB == null)
                 {
                     try
@@ -140,6 +143,7 @@ namespace voteCollector.Controllers
                 else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
 
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
             return View(groupu);
         }
@@ -153,6 +157,7 @@ namespace voteCollector.Controllers
             }
 
             var groupu = await _context.Groupu.Include(g => g.FieldActivity)
+                .Include(g => g.Organization)
                 .FirstOrDefaultAsync(m => m.IdGroup == id);
             if (groupu == null)
             {
