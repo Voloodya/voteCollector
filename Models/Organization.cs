@@ -22,11 +22,11 @@ namespace voteCollector.Models
         [Key]
         [Column("Id_Organization")]
         public int IdOrganization { get; set; }
-        [DisplayName("Организация")]
+        [DisplayName("Подведомственные учреждения")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
 
-        [DisplayName("Организация")]
+        [DisplayName("Подведомственные учреждения")]
         [InverseProperty("Organization_")]
         public virtual ICollection<Friend> Friends { get; set; }
         [DisplayName("Организация")]

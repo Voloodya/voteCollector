@@ -43,12 +43,21 @@
                     <span asp-validation-for="DateBirth" class="text-danger"></span>
                 </div>
             </div>
-
-            <div class="form-row">
+            <div class="form-group">
+                <label asp-for="Unpinning" class="control-label"></label>
+                <input id="boolUnpinning" asp-for="Unpinning" class="form-control" onchange="HideShowBlocks('boolUnpinning', 'divCityDistrict','divStreet','divHouse','divApartment','divAdessText');"/>
+                <span asp-validation-for="Unpinning" class="text-danger"></span>
+            </div>
+            <div class="form-row" id="divAdressFull">
                 <div class="form-group col-md-6">
                     <label asp-for="CityId" class="control-label"></label>
                     <select id="CityId" asp-for="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
                     <span asp-validation-for="CityId" class="text-danger"></span>
+                </div>
+                <div id="divCityDistrict" class="form-group col-md-6" >
+                    <label asp-for="CityDistrictId" class="control-label"></label>
+                    <select id="CityDistrictId" asp-for="CityDistrictId" class="form-control" asp-items="ViewBag.CityDistrictId"></select>
+                    <span asp-validation-for="CityDistrictId" class="text-danger"></span>
                 </div>
                 <div id="divStreet" class="form-group col-md-6">
                     <label asp-for="StreetId" class="control-label"></label>
@@ -60,7 +69,7 @@
                 <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
                 <span asp-validation-for="MicroDistrictId" class="text-danger"></span>
             </div>*@
-                <div class="form-group col-md-6">
+                <div id="divHouse" class="form-group col-md-6">
                     <label asp-for="HouseId" class="control-label"></label>
                     <select id="HouseId" asp-for="HouseId" class="form-control" asp-items="ViewBag.HouseId"></select>
                     <span asp-validation-for="HouseId" class="text-danger"></span>
@@ -70,19 +79,22 @@
                 <input asp-for="Building" class="form-control" />
                 <span asp-validation-for="Building" class="text-danger"></span>
             </div>*@
-                <div class="form-group col-md-6">
+                <div id="divApartment" class="form-group col-md-6">
                     <label asp-for="Apartment" class="control-label"></label>
                     <input asp-for="Apartment" class="form-control" />
                     <span asp-validation-for="Apartment" class="text-danger"></span>
                 </div>
             </div>
-
+            <div id="divAdessText" class="form-group" style="display:none">
+                <label asp-for="Adress" class="control-label"></label>
+                <input id="AdressId" asp-for="Adress" class="form-control"/>
+                <span asp-validation-for="Adress" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Telephone" class="control-label"></label>
                 <input asp-for="Telephone" class="form-control" />
                 <span asp-validation-for="Telephone" class="text-danger"></span>
             </div>
-
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label asp-for="ElectoralDistrictId" class="control-label"></label>
@@ -109,7 +121,7 @@
             </div>
         </div>*@
 
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="PhoneNumberResponsible" class="control-label"></label>
                 <input asp-for="PhoneNumberResponsible" class="form-control" />
                 <span asp-validation-for="PhoneNumberResponsible" class="text-danger"></span>
@@ -121,12 +133,12 @@
                     <input asp-for="DateRegistrationSite" class="form-control" />
                     <span asp-validation-for="DateRegistrationSite" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none">
                     <label asp-for="VotingDate" class="control-label"></label>
                     <input id="dateVoting" asp-for="VotingDate" class="form-control" />
                     <span asp-validation-for="VotingDate" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none">
                     <label asp-for="Voter" class="control-label"></label>
                     <input id="boolVoter" asp-for="Voter" class="form-control" onchange="setDate('boolVoter','dateVoting');" />
                     <span asp-validation-for="Voter" class="text-danger"></span>
@@ -166,7 +178,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="TextQRcode" class="control-label"></label>
-                <input asp-for="TextQRcode" class="form-control" disabled="disabled"/>
+                <input asp-for="TextQRcode" class="form-control" disabled="disabled" />
                 <span asp-validation-for="TextQRcode" class="text-danger"></span>
             </div>
 

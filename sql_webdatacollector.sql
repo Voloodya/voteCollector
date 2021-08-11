@@ -311,6 +311,61 @@ create table Organization(
 
 ////////////////////////////////////////////////////////////////////////////////
 
+ALTER TABLE `votercollector`.`city` 
+RENAME TO  `votercollector`.`city_district`;
+
+ALTER TABLE `votercollector`.`city_district` 
+CHANGE COLUMN `Id_City` `Id_CityDistrict` INT NOT NULL AUTO_INCREMENT;
+
+create table City(
+                      Id_City INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                      Name VARCHAR(256) NULL                      
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `votercollector`.`city_district` 
+ADD COLUMN `City_id` INT NULL DEFAULT NULL AFTER `Name`;
+
+ALTER TABLE `votercollector`.`city_district` 
+ADD INDEX `FK_CityDistrict_City` (`City_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`city_district` 
+ADD CONSTRAINT `FK_CityDistrict_City`
+  FOREIGN KEY (`City_id`)
+  REFERENCES `votercollector`.`city` (`Id_City`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `votercollector`.`friend` 
+DROP FOREIGN KEY `FK_Friend_City`;
+ALTER TABLE `votercollector`.`friend` 
+CHANGE COLUMN `City_id` `CityDistrict_id` INT NULL DEFAULT NULL ;
+ALTER TABLE `votercollector`.`friend` 
+ADD CONSTRAINT `FK_Friend_CityDistrict`
+  FOREIGN KEY (`CityDistrict_id`)
+  REFERENCES `votercollector`.`city_district` (`Id_CityDistrict`)
+  ON DELETE SET NULL
+  ON UPDATE no action;
+  
+  ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `City_id` INT NULL DEFAULT NULL AFTER `Date_birth`;
+
+ALTER TABLE `votercollector`.`friend` 
+ADD INDEX `FK_Friend_City` (`City_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`friend` 
+ADD CONSTRAINT `FK_Friend_City`
+  FOREIGN KEY (`City_id`)
+  REFERENCES `votercollector`.`city` (`Id_City`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `Unpinning` TINYINT NULL DEFAULT 0 AFTER `Date_birth`;
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
 INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');

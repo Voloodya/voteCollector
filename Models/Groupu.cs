@@ -25,11 +25,11 @@ namespace voteCollector.Models
         [DisplayName("Группа")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
-        [DisplayName("Сфера деятельности")]
+        [DisplayName("Организация")]
         [Required(ErrorMessage = "Не указана отрасль")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
-        [DisplayName("Организация")]
+        [DisplayName("Подведомственное учреждение")]
         [Column("Organization_id")]
         public int? OrganizationId { get; set; }
         [DisplayName("Автор группы")]
@@ -42,7 +42,7 @@ namespace voteCollector.Models
         public virtual Fieldactivity FieldActivity { get; set; }
         [ForeignKey(nameof(OrganizationId))]
         [InverseProperty(nameof(Fieldactivity.Groupus))]
-        [DisplayName("Организация")]
+        [DisplayName("Подведомственное учреждение")]
         public virtual Organization Organization { get; set; }
 
         [DisplayName("Избиратели")]

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,37 +9,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace voteCollector.Models
 {
-    [Table("city_district")]
-    public partial class CityDistrict
+    [Table("city")]
+    public partial class City
     {
-        public CityDistrict()
+        public City()
         {
-            Districts = new HashSet<District>();
+            CityDistricts = new HashSet<CityDistrict>();
             Friends = new HashSet<Friend>();
-            Microdistricts = new HashSet<Microdistrict>();
-            PollingStations = new HashSet<PollingStation>();
-            Streets = new HashSet<Street>();
-            Houses = new HashSet<House>();
         }
 
         [Key]
         [Column("Id_City")]
         public int IdCity { get; set; }
-        [DisplayName("Городской огруг")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
 
-        [InverseProperty("CityDistrict")]
-        public virtual ICollection<District> Districts { get; set; }
-        [InverseProperty("CityDistrict")]
+        [InverseProperty("City")]
+        public virtual ICollection<CityDistrict> CityDistricts { get; set; }
+        [InverseProperty("City")]
         public virtual ICollection<Friend> Friends { get; set; }
-        [InverseProperty("CityDistrict")]
-        public virtual ICollection<House> Houses { get; set; }
-        [InverseProperty("CityDistrict")]
-        public virtual ICollection<Microdistrict> Microdistricts { get; set; }
-        [InverseProperty("CityDistrict")]
-        public virtual ICollection<PollingStation> PollingStations { get; set; }
-        [InverseProperty("CityDistrict")]
-        public virtual ICollection<Street> Streets { get; set; }
     }
 }

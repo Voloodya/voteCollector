@@ -1,8 +1,8 @@
 ﻿
 // Обновление списка участков после выбора населенного пункта
 $(function () {
-    $("#CityId").change(function () {
-        var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()  };
+    $("#CityDistrictId").change(function () {
+        var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text()  };
         $.ajax({
             url: partMyURL + "/api/API/searchStations/city",
            // url: "/CollectVoters/api/API/searchPollingStations/city",

@@ -20,6 +20,7 @@ namespace voteCollector.Data
         {
         }
 
+        public virtual DbSet<City> City { get; set; }
         public virtual DbSet<CityDistrict> CityDistrict { get; set; }
         public virtual DbSet<District> District { get; set; }
         public virtual DbSet<Fieldactivity> Fieldactivity { get; set; }
@@ -49,7 +50,7 @@ namespace voteCollector.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CityDistrict>(entity =>
+            modelBuilder.Entity<City>(entity =>
             {
                 entity.HasKey(e => e.IdCity)
                     .HasName("PRIMARY");
@@ -57,6 +58,24 @@ namespace voteCollector.Data
                 entity.Property(e => e.Name)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+            });
+
+            modelBuilder.Entity<CityDistrict>(entity =>
+            {
+                entity.HasKey(e => e.IdCityDistrict)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.Name)
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasIndex(e => e.CityId)
+                    .HasName("FK_CityDistrict_City");
+
+                entity.HasOne(d => d.City)
+                    .WithMany(p => p.CityDistricts)
+                    .HasForeignKey(d => d.CityId)
+                    .HasConstraintName("FK_CityDistrict_City");
             });
 
             modelBuilder.Entity<District>(entity =>
@@ -131,6 +150,9 @@ namespace voteCollector.Data
 
                 entity.HasIndex(e => e.CityId)
                     .HasName("FK_Friend_City");
+
+                entity.HasIndex(e => e.CityDistrictId)
+                    .HasName("FK_Friend_CityDistrict");
 
                 entity.HasIndex(e => e.ElectoralDistrictId)
                     .HasName("FK_Friend_ElectoralDistrict");
@@ -216,9 +238,14 @@ namespace voteCollector.Data
 
                 entity.Property(e => e.Voter).HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.CityDistrict)
+                entity.HasOne(d => d.City)
                     .WithMany(p => p.Friends)
                     .HasForeignKey(d => d.CityId)
+                    .HasConstraintName("FK_Friend_CityDistrict");
+
+                entity.HasOne(d => d.CityDistrict)
+                    .WithMany(p => p.Friends)
+                    .HasForeignKey(d => d.CityDistrictId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Friend_City");
 

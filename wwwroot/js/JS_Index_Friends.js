@@ -175,7 +175,7 @@ $(document).ready(function () {
 
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
-document.getElementById('totalFriends').innerHTML = (nrows);
+document.getElementById('totalFriends').rows[0].cols[21] = nrows;
 
 $('friendTable').ready(CountVoters('friendTable',18));
 $('friendTable').change(CountVoters('friendTable',18));

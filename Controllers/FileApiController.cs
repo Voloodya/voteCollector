@@ -157,8 +157,8 @@ namespace voteCollector.Controllers
 
                 if (friendDTO.CityName != null && !friendDTO.CityName.Trim().Equals(""))
                 {
-                    int cityId = _context.CityDistrict.Where(c => c.Name.Equals(friendDTO.CityName.Trim())).FirstOrDefault().IdCity;
-                    newFriend.CityId = cityId;
+                    int cityDistrictId = _context.CityDistrict.Where(c => c.Name.Equals(friendDTO.CityName.Trim())).FirstOrDefault().IdCityDistrict;
+                    newFriend.CityDistrictId = cityDistrictId;
 
                     int streetId = _context.Street.Where(s => s.Name.Equals(friendDTO.Street.Trim())).FirstOrDefault().IdStreet;
                     newFriend.StreetId = streetId;
@@ -173,7 +173,7 @@ namespace voteCollector.Controllers
                         newFriend.HouseId = house.IdHouse;
                         newFriend.Apartment = friendDTO.Apartment.Trim();
 
-                        PollingStation pollingStation = _context.PollingStation.Where(p => (p.CityId == cityId && p.StreetId == streetId && p.HouseId == house.IdHouse)).FirstOrDefault();
+                        PollingStation pollingStation = _context.PollingStation.Where(p => (p.CityId == cityDistrictId && p.StreetId == streetId && p.HouseId == house.IdHouse)).FirstOrDefault();
                         if (pollingStation != null)
                         {
                             newFriend.StationId = pollingStation.StationId;

@@ -30,10 +30,14 @@ function stateDate(idObject) {
     document.getElementById(idObject).value = today;
 }
 
+$(document).ready(function () {
+    HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+});
+
 // Обновление списка улиц после выбора города
 $(function () {
-    $("#CityId").change(function () {
-        var formData = { 'IdCity': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text() };
+    $("#CityDistrictId").change(function () {
+        var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text() };
         $.ajax({
            // url: "http://localhost:18246/api/API/searchStreets",
             url: partMyURL+"/api/API/searchStreets",
@@ -66,7 +70,6 @@ $(function () {
                 alert("error: " + result + " status: " + status + " er:" + er);
             }
         });
-
     });    
 });
 
@@ -307,3 +310,46 @@ function GetSelectedOption(select) {
         //        language: "ru"
         //    });
         //});
+
+// Проверка откреплен/неоткреплен. Установка галочки
+$(function () {
+    $("#CityId").change(function () {
+
+        var selectCity = $('#CityId>option:selected').text();
+
+        if (selectCity !== 'Оренбург') {
+
+            document.getElementById('boolUnpinning').checked = true;
+
+            HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+        }        
+    });
+});
+
+
+function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible)
+{   
+    let hideObj1 = document.getElementById(idObjectHidden1);
+    let hideObj2 = document.getElementById(idObjectHidden2);
+    let hideObj3 = document.getElementById(idObjectHidden3);
+    let hideObj4 = document.getElementById(idObjectHidden4);
+    let showObj = document.getElementById(idObjectVisible);
+
+    chbox = document.getElementById(idchbox);
+    if (chbox.checked) {        
+
+        hideObj1.style.display = 'none';
+        hideObj2.style.display = 'none';
+        hideObj3.style.display = 'none';
+        hideObj4.style.display = 'none';
+        showObj.style.display = 'block';
+    }
+    else {
+
+        hideObj1.style.display = 'block';
+        hideObj2.style.display = 'block';
+        hideObj3.style.display = 'block';
+        hideObj4.style.display = 'block';
+        showObj.style.display = 'none';        
+    }
+}

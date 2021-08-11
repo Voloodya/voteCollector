@@ -26,7 +26,7 @@ namespace voteCollector.Controllers
 
             if (Cities.Any())
             {
-                List<CityDTO> citiesDTO = Cities.Select(s => new CityDTO { IdCity = s.IdCity, Name = s.Name }).ToList();
+                List<CityDTO> citiesDTO = Cities.Select(s => new CityDTO { IdCity = s.IdCityDistrict, Name = s.Name }).ToList();
                 return Ok(citiesDTO);
             }
             return NoContent();

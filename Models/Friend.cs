@@ -33,14 +33,21 @@ namespace voteCollector.Models
         [DataType(DataType.Date)]
         [Column("Date_birth", TypeName = "date")]
         public DateTime? DateBirth { get; set; }
-        [Required(ErrorMessage = "Не указан насел. п-т")]
-        [DisplayName("Насел. пункт")]
+        [DisplayName("Откреплен")]
+        [Column("Unpinning", TypeName = "TINYINT")]
+        public bool Unpinning { get; set; }
+        //[Required(ErrorMessage = "Не указан город")]
         [Column("City_id")]
+        [DisplayName("Город")]
         public int? CityId { get; set; }
+        //[Required(ErrorMessage = "Городской округ")]
+        [DisplayName("Городской округ")]
+        [Column("CityDistrict_id")]
+        public int? CityDistrictId { get; set; }
         [DisplayName("Избират. округ")]
         [Column("Electoral_district_id")]
         public int? ElectoralDistrictId { get; set; }
-        [Required(ErrorMessage = "Не указана улица")]
+        //[Required(ErrorMessage = "Не указана улица")]
         [DisplayName("Улица/просп./пл./шоссе")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
@@ -71,10 +78,10 @@ namespace voteCollector.Models
         [DisplayName("Организация")]
         [Column(TypeName = "varchar(256)")]
         public string Organization { get; set; }
-        [DisplayName("Организация")]
+        [DisplayName("Подведомственное учреждение")]
         [Column("Organization_id")]
         public int? OrganizationId { get; set; }
-        [DisplayName("Сфера деят-ти")]
+        [DisplayName("Организация")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
         [MinLength(11)]
@@ -122,15 +129,19 @@ namespace voteCollector.Models
         [DisplayName("Статус избирателя")]
         public int? FriendStatusId { get; set; }
 
-        [DisplayName("Городской огруг")]
         [ForeignKey(nameof(CityId))]
+        [InverseProperty("Friends")]
+        [DisplayName("Город")]
+        public virtual City City { get; set; }
+        [DisplayName("Городской огруг")]
+        [ForeignKey(nameof(CityDistrictId))]
         [InverseProperty("Friends")]
         public virtual CityDistrict CityDistrict { get; set; }
         [DisplayName("Округ")]
         [ForeignKey(nameof(ElectoralDistrictId))]
         [InverseProperty("Friends")]
         public virtual ElectoralDistrict ElectoralDistrict { get; set; }
-        [DisplayName("Сфера деят-ти")]
+        [DisplayName("Организация")]
         [ForeignKey(nameof(FieldActivityId))]
         [InverseProperty(nameof(Fieldactivity.Friends))]
         public virtual Fieldactivity FieldActivity { get; set; }
@@ -152,7 +163,7 @@ namespace voteCollector.Models
         public virtual Microdistrict MicroDistrict { get; set; }
         [ForeignKey(nameof(OrganizationId))]
         [InverseProperty("Friends")]
-        [DisplayName("Организация")]
+        [DisplayName("Подведомственное учреждение")]
         public virtual Organization Organization_ { get; set; }
 
         [ForeignKey(nameof(StationId))]
