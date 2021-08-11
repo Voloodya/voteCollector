@@ -93,7 +93,7 @@
                 @Html.DisplayNameFor(model => model.Station)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                @Html.DisplayNameFor(model => model.CityDistrict)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Street)
@@ -104,29 +104,58 @@
             <th></th>
         </tr>
     </thead>
-    <tbody id="tableBodyPollingStation">
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td></td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Station.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.City.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Street.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.House.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru"))
+    {
+        <tbody id="tableBodyPollingStation">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityDistrict.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Street.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.House.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody id="tableBodyPollingStation">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityDistrict.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Street.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.House.Name)
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+
 </table>
 
 <environment include="Development">

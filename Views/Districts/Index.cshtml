@@ -79,26 +79,51 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td align="center"></td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Station.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdDistrict">Править</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru"))
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center"></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdDistrict">Править</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center"></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
 </table>
 
 <environment include="Development">

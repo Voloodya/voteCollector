@@ -33,7 +33,7 @@ namespace Generater.Controllers
             List<District> districts = _context.District.Where(d => d.ElectoralDistrict.Name.Equals(electoralDistrict[0].Name)).ToList();
             List<int> selectStationsId = districts.Select(d => d.StationId ?? 0).ToList();
 
-            IQueryable<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.City).Include(p => p.Street).Include(p => p.House)
+            IQueryable<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.CityDistrict).Include(p => p.Street).Include(p => p.House)
                 .Where(p => selectStationsId.Contains(p.StationId ?? 0));
 
             return View(await pollingStations.ToListAsync());
@@ -45,7 +45,7 @@ namespace Generater.Controllers
             int selectedIndexCity = 1;
 
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", selectedIndexCity);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
@@ -68,7 +68,7 @@ namespace Generater.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", pollingStation.CityId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", pollingStation.StreetId);
@@ -91,7 +91,7 @@ namespace Generater.Controllers
                 return NotFound();
             }
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name",pollingStation.StationId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", pollingStation.CityId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", pollingStation.StreetId);
@@ -133,7 +133,7 @@ namespace Generater.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", pollingStation.StationId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", pollingStation.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", pollingStation.CityId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", pollingStation.StreetId);
@@ -150,7 +150,7 @@ namespace Generater.Controllers
 
             var pollingStation = await _context.PollingStation
                 .Include(p => p.StationId)
-                .Include(p => p.City)
+                .Include(p => p.CityDistrict)
                 .Include(p => p.House)
                 .Include(p => p.MicroDistrict)
                 .Include(p => p.Street)
@@ -181,7 +181,7 @@ namespace Generater.Controllers
             List<District> districts = _context.District.Where(d => d.ElectoralDistrictId == electoralDistrictDTO.IdElectoralDistrict).ToList();
             List<int> selectStationsId = districts.Select(d => d.StationId ?? 0).ToList();
 
-            IQueryable<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.City).Include(p => p.Street).Include(p => p.House)
+            IQueryable<PollingStation> pollingStations = _context.PollingStation.Include(p => p.Station).Include(p => p.CityDistrict).Include(p => p.Street).Include(p => p.House)
                 .Where(p => selectStationsId.Contains(p.StationId ?? 0));
 
 

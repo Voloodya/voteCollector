@@ -306,7 +306,7 @@ create table friend_status(
 
 create table Organization(
 					Id_Organization INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-					Name VARCHAR(256) NULLfriend_status
+					Name VARCHAR(256)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -50,7 +50,7 @@ namespace voteCollector.Models
         public DateTime? DateBirth { get; set; }
         [MinLength(11)]
         [MaxLength(12)]
-        [RegularExpression(@"[+]?[0-9]+"), StringLength(12)]
+        [RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
         [DisplayName("Телефон")]
         [Column(TypeName = "varchar(12)")]
         public string Telephone { get; set; }

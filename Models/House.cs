@@ -40,7 +40,7 @@ namespace voteCollector.Models
 
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Houses")]
-        public virtual City City { get; set; }
+        public virtual CityDistrict CityDistrict { get; set; }
 
         [ForeignKey(nameof(MicroDistrictId))]
         [InverseProperty(nameof(Microdistrict.Houses))]

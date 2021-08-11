@@ -78,8 +78,6 @@ namespace CollectVoters.Controllers
         }
 
         // POST: api/APIFriends
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<Friend>> PostFriend(Friend friend)
         {
@@ -136,7 +134,7 @@ namespace CollectVoters.Controllers
                 Name = frnd.Name,
                 PatronymicName = frnd.PatronymicName,
                 DateBirth = frnd.DateBirth.ToString(),
-                CityName = frnd.City.Name,
+                CityName = frnd.CityDistrict.Name,
                 Street = frnd.Street.Name,
                 Microdistrict = frnd.MicroDistrict.Name,
                 House = frnd.House.Name,

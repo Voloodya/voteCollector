@@ -44,7 +44,7 @@ namespace voteCollector.Controllers
             // userName=(string)TempData["userName"];
             userName = User.Identity.Name;
 
-            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+            var voterCollectorContext = _context.Friend.Include(f => f.CityDistrict).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
                                     Include(f => f.FriendStatus).Include(f => f.Organization_).Where(f => f.User.UserName.Equals(userName));
             return View(await voterCollectorContext.ToListAsync());
         }
@@ -57,7 +57,7 @@ namespace voteCollector.Controllers
             // userName=(string)TempData["userName"];
             userName = User.Identity.Name;
 
-            var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+            var voterCollectorContext = _context.Friend.Include(f => f.CityDistrict).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
                 Include(f => f.FriendStatus).Include(f => f.Organization_).Where(f => f.User.UserName.Equals(userName));
             return View(await voterCollectorContext.ToListAsync());
         }
@@ -72,7 +72,7 @@ namespace voteCollector.Controllers
             }
 
             var friend = await _context.Friend
-                .Include(f => f.City)
+                .Include(f => f.CityDistrict)
                 .Include(f => f.ElectoralDistrict)
                 .Include(f => f.FieldActivity)
                 .Include(f => f.GroupU)
@@ -109,7 +109,7 @@ namespace voteCollector.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name");
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", selectedIndexCity);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => fac.IdFieldActivity == groupsUser[0].FieldActivityId).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name");
@@ -177,7 +177,7 @@ namespace voteCollector.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => fac.IdFieldActivity == groupsUser[0].FieldActivityId).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -218,7 +218,7 @@ namespace voteCollector.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name", friend.GroupUId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => fac.IdFieldActivity == groupsUser[0].FieldActivityId).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -314,7 +314,7 @@ namespace voteCollector.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name", friend.GroupUId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
             List<Organization> organizationSelect = _context.Organization.Where(org => org.IdOrganization == groupsUser[0].OrganizationId).ToList();
@@ -337,7 +337,7 @@ namespace voteCollector.Controllers
             }
 
             var friend = await _context.Friend
-                .Include(f => f.City)
+                .Include(f => f.CityDistrict)
                 .Include(f => f.ElectoralDistrict)
                 .Include(f => f.FieldActivity)
                 .Include(f => f.GroupU)

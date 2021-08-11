@@ -20,7 +20,7 @@ namespace voteCollector.Data
         {
         }
 
-        public virtual DbSet<City> City { get; set; }
+        public virtual DbSet<CityDistrict> CityDistrict { get; set; }
         public virtual DbSet<District> District { get; set; }
         public virtual DbSet<Fieldactivity> Fieldactivity { get; set; }
         public virtual DbSet<Friend> Friend { get; set; }
@@ -49,7 +49,7 @@ namespace voteCollector.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<City>(entity =>
+            modelBuilder.Entity<CityDistrict>(entity =>
             {
                 entity.HasKey(e => e.IdCity)
                     .HasName("PRIMARY");
@@ -91,7 +91,7 @@ namespace voteCollector.Data
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_District_Station");
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.Districts)
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.SetNull)
@@ -216,7 +216,7 @@ namespace voteCollector.Data
 
                 entity.Property(e => e.Voter).HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.Friends)
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.SetNull)
@@ -355,7 +355,7 @@ namespace voteCollector.Data
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.Houses)
                     .HasForeignKey(d => d.CityId)
                     .HasConstraintName("FK_House_City");
@@ -383,7 +383,7 @@ namespace voteCollector.Data
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.Microdistricts)
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.SetNull)
@@ -429,7 +429,7 @@ namespace voteCollector.Data
                     .HasForeignKey(d => d.StationId)
                     .HasConstraintName("FK_PollingStation_Station");
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.PollingStations)
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.SetNull)
@@ -476,7 +476,7 @@ namespace voteCollector.Data
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.Streets)
                     .HasForeignKey(d => d.CityId)
                     .OnDelete(DeleteBehavior.SetNull)

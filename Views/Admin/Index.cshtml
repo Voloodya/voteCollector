@@ -58,7 +58,6 @@
     <p id="numberRecords"><font size="4" color="black" face="Arial"></font></p>
 
     <p>
-        <a asp-controller="Home" asp-action="Index">На главную</a>  |
         <a asp-controller="Users" asp-action="Index">Пользователи</a> |
         <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
         <a asp-controller="Groupus" asp-action="Index">Группы</a> |
@@ -66,7 +65,6 @@
         <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
         <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
     </p>
-
 }
 else
 {
@@ -120,7 +118,7 @@ else
                 @Html.DisplayNameFor(model => model.DateBirth)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                @Html.DisplayNameFor(model => model.CityDistrict)
             </th>
             <th style="display:none">
                 @Html.DisplayNameFor(model => model.ElectoralDistrict)
@@ -197,7 +195,7 @@ else
                     @Html.DisplayFor(modelItem => item.DateBirth)
                 </td>
                 <td class="colFilter">
-                    @Html.DisplayFor(modelItem => item.City.Name)
+                    @Html.DisplayFor(modelItem => item.CityDistrict.Name)
                 </td>
                 <td style="display:none">
                     @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
@@ -276,7 +274,7 @@ else
                 @Html.DisplayNameFor(model => model.DateBirth)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                @Html.DisplayNameFor(model => model.CityDistrict)
             </th>
             <th style="display:none">
                 @Html.DisplayNameFor(model => model.ElectoralDistrict)

@@ -10,10 +10,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace voteCollector.Models
 {
-    [Table("city")]
-    public partial class City
+    [Table("city_district")]
+    public partial class CityDistrict
     {
-        public City()
+        public CityDistrict()
         {
             Districts = new HashSet<District>();
             Friends = new HashSet<Friend>();
@@ -26,21 +26,21 @@ namespace voteCollector.Models
         [Key]
         [Column("Id_City")]
         public int IdCity { get; set; }
-        [DisplayName("Насел. п-т")]
+        [DisplayName("Городской огруг")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
 
-        [InverseProperty("City")]
+        [InverseProperty("CityDistrict")]
         public virtual ICollection<District> Districts { get; set; }
-        [InverseProperty("City")]
+        [InverseProperty("CityDistrict")]
         public virtual ICollection<Friend> Friends { get; set; }
-        [InverseProperty("City")]
+        [InverseProperty("CityDistrict")]
         public virtual ICollection<House> Houses { get; set; }
-        [InverseProperty("City")]
+        [InverseProperty("CityDistrict")]
         public virtual ICollection<Microdistrict> Microdistricts { get; set; }
-        [InverseProperty("City")]
+        [InverseProperty("CityDistrict")]
         public virtual ICollection<PollingStation> PollingStations { get; set; }
-        [InverseProperty("City")]
+        [InverseProperty("CityDistrict")]
         public virtual ICollection<Street> Streets { get; set; }
     }
 }

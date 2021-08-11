@@ -13,7 +13,6 @@ namespace voteCollector.Models
     [Table("polling_station")]
     public partial class PollingStation
     {
-
         [Key]
         [Column("Id_Polling_station")]
         public int IdPollingStation { get; set; }
@@ -24,7 +23,7 @@ namespace voteCollector.Models
         [Column("Station_id")]
         public int? StationId { get; set; }
 
-        [DisplayName("Населен. п-т")]
+        [DisplayName("Городской огруг")]
         [Required(ErrorMessage = "Не указан населен. п-т")]
         [Column("City_id")]
         public int? CityId { get; set; }
@@ -46,7 +45,7 @@ namespace voteCollector.Models
         [ForeignKey(nameof(CityId))]
         [InverseProperty("PollingStations")]
         [DisplayName("Насел. п-т")]
-        public virtual City City { get; set; }
+        public virtual CityDistrict CityDistrict { get; set; }
         [ForeignKey(nameof(HouseId))]
         [InverseProperty("PollingStations")]
         [DisplayName("Дом")]

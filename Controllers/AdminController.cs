@@ -91,7 +91,7 @@ namespace CollectVoters.Controllers
             }
 
             var friend = await _context.Friend
-                .Include(f => f.City)
+                .Include(f => f.CityDistrict)
                 .Include(f => f.ElectoralDistrict)
                 .Include(f => f.FieldActivity)
                 .Include(f => f.GroupU)
@@ -130,7 +130,7 @@ namespace CollectVoters.Controllers
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
 
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectedIndexCity);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", selectedIndexCity);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupsUser[0].FieldActivityId);
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupsUser[0].OrganizationId);
@@ -191,7 +191,7 @@ namespace CollectVoters.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -226,7 +226,7 @@ namespace CollectVoters.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
@@ -307,7 +307,7 @@ namespace CollectVoters.Controllers
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
-            ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
@@ -329,7 +329,7 @@ namespace CollectVoters.Controllers
             }
 
             var friend = await _context.Friend
-                .Include(f => f.City)
+                .Include(f => f.CityDistrict)
                 .Include(f => f.ElectoralDistrict)
                 .Include(f => f.FieldActivity)
                 .Include(f => f.GroupU)

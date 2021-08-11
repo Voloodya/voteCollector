@@ -130,7 +130,7 @@ namespace voteCollector.Controllers
             var district = await _context.District
                 .Include(d => d.ElectoralDistrict)
                 .Include(d => d.Station)
-                .Include(d => d.City)
+                .Include(d => d.CityDistrict)
                 .Include(d => d.Street)
                 .FirstOrDefaultAsync(m => m.IdDistrict == id);
             if (district == null)

@@ -22,7 +22,7 @@ namespace voteCollector.Controllers
         [HttpGet("getSities")]
         public IActionResult GetSities()
         {
-            List<City> Cities = _context.City.ToList();
+            List<CityDistrict> Cities = _context.CityDistrict.ToList();
 
             if (Cities.Any())
             {

@@ -29,7 +29,7 @@ namespace voteCollector.Models
 
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Microdistricts")]
-        public virtual City City { get; set; }
+        public virtual CityDistrict CityDistrict { get; set; }
         [InverseProperty("MicroDistrict")]
         public virtual ICollection<Friend> Friends { get; set; }
         [InverseProperty("MicroDistrict")]

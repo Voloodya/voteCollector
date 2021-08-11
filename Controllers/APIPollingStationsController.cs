@@ -33,11 +33,11 @@ namespace voteCollector.Controllers
             List<District> districts = _context.District.Where(d => d.ElectoralDistrictId == electoralDistrictDTO.IdElectoralDistrict).ToList();
             List<int> selectStationsId = districts.Select(d => d.StationId ?? 0).ToList();
 
-            List<PollingStation> pollingStations = _context.PollingStation.Include(p => p.City).Include(p => p.Street).Include(p => p.House)
+            List<PollingStation> pollingStations = _context.PollingStation.Include(p => p.CityDistrict).Include(p => p.Street).Include(p => p.House)
                 .Where(p => selectStationsId.Contains(p.StationId ?? 0)).ToList();
 
             List<PollingStationDTO> pollingStationDTOs = pollingStations.Select(
-            p => new PollingStationDTO { IdPollingStation = p.IdPollingStation, Name = p.Name, CityName = p.City.Name, StreetName = p.Street.Name, HouseName = p.House.Name }).ToList();
+            p => new PollingStationDTO { IdPollingStation = p.IdPollingStation, Name = p.Name, CityName = p.CityDistrict.Name, StreetName = p.Street.Name, HouseName = p.House.Name }).ToList();
 
             return Ok(pollingStationDTOs);
         }

@@ -41,7 +41,7 @@ namespace voteCollector.Models
         public virtual Station Station { get; set; }
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Districts")]
-        public virtual City City { get; set; }
+        public virtual CityDistrict CityDistrict { get; set; }
         [InverseProperty("Districts")]
         public virtual Street Street { get; set; }
     }

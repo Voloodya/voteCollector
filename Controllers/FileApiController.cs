@@ -157,7 +157,7 @@ namespace voteCollector.Controllers
 
                 if (friendDTO.CityName != null && !friendDTO.CityName.Trim().Equals(""))
                 {
-                    int cityId = _context.City.Where(c => c.Name.Equals(friendDTO.CityName.Trim())).FirstOrDefault().IdCity;
+                    int cityId = _context.CityDistrict.Where(c => c.Name.Equals(friendDTO.CityName.Trim())).FirstOrDefault().IdCity;
                     newFriend.CityId = cityId;
 
                     int streetId = _context.Street.Where(s => s.Name.Equals(friendDTO.Street.Trim())).FirstOrDefault().IdStreet;

@@ -33,14 +33,14 @@ namespace voteCollector.Models
         [DataType(DataType.Date)]
         [Column("Date_birth", TypeName = "date")]
         public DateTime? DateBirth { get; set; }
-        //[Required(ErrorMessage = "Не указан насел. п-т")]
+        [Required(ErrorMessage = "Не указан насел. п-т")]
         [DisplayName("Насел. пункт")]
         [Column("City_id")]
         public int? CityId { get; set; }
         [DisplayName("Избират. округ")]
         [Column("Electoral_district_id")]
         public int? ElectoralDistrictId { get; set; }
-        //[Required(ErrorMessage = "Не указана улица")]
+        [Required(ErrorMessage = "Не указана улица")]
         [DisplayName("Улица/просп./пл./шоссе")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
@@ -59,9 +59,10 @@ namespace voteCollector.Models
         public string Apartment { get; set; }
         [MinLength(11)]
         [MaxLength(12)]
-        [RegularExpression(@"[+]?[0-9]+"), StringLength(12)]
+        [RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
         [DisplayName("Тел. избирателя")]
         [Column(TypeName = "varchar(12)")]
+        [Required(ErrorMessage = "Не указан телефон избирателя")]
         public string Telephone { get; set; }
         //[Required(ErrorMessage = "Не указан участок")]
         [Column("Station_id")]
@@ -78,7 +79,7 @@ namespace voteCollector.Models
         public int? FieldActivityId { get; set; }
         [MinLength(11)]
         [MaxLength(12)]
-        [RegularExpression(@"[+]?[0-9]+"), StringLength(12)]
+        [RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
         [DisplayName("Тел. ответств-го")]
         [Column("Phone_number_responsible", TypeName = "varchar(12)")]
         public string PhoneNumberResponsible { get; set; }
@@ -121,10 +122,10 @@ namespace voteCollector.Models
         [DisplayName("Статус избирателя")]
         public int? FriendStatusId { get; set; }
 
-        [DisplayName("Населен. п-т")]
+        [DisplayName("Городской огруг")]
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Friends")]
-        public virtual City City { get; set; }
+        public virtual CityDistrict CityDistrict { get; set; }
         [DisplayName("Округ")]
         [ForeignKey(nameof(ElectoralDistrictId))]
         [InverseProperty("Friends")]
