@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using voteCollector.Data;
 using voteCollector.DTO;
 using voteCollector.Models;
@@ -40,6 +41,7 @@ namespace voteCollector.Controllers
             if (electoralDistricts.Any())
             {
                 List<ElectoralDistrictDTO> electoralDistrictsDTO = electoralDistricts.Select(s => new ElectoralDistrictDTO { IdElectoralDistrict = s.IdElectoralDistrict, Name = s.Name }).ToList();
+                electoralDistrictsDTO.Add(new ElectoralDistrictDTO { IdElectoralDistrict = 0, Name = " Все" });
                 return Ok(electoralDistrictsDTO);
             }
             return NoContent();
@@ -53,8 +55,69 @@ namespace voteCollector.Controllers
             if (fieldactivities.Any())
             {
                 List<FieldActivityDTO> fieldActivityDTOs = fieldactivities.Select(f => new FieldActivityDTO { IdFieldActivity = f.IdFieldActivity, Name = f.Name }).ToList();
-                fieldActivityDTOs.Add(new FieldActivityDTO { IdFieldActivity = 0, Name = "" });
+                fieldActivityDTOs.Add(new FieldActivityDTO { IdFieldActivity = 0, Name = " Все" });
                 return Ok(fieldActivityDTOs);
+            }
+            return NoContent();
+        }
+
+
+        [HttpGet("getorganization/{idFielfActivity}")]
+        public IActionResult GetOrganizationActivity(int idFielfActivity)
+        {
+            List<Groupu> groups = _context.Groupu.Include(g => g.Organization).Where(g => g.FieldActivityId == idFielfActivity).ToList();
+            List<int> idOrganizations = groups.Select(g => g.Organization.IdOrganization).ToList().Distinct().ToList();
+
+
+            if (idOrganizations.Count>0)
+            {
+                List<Organization> organizations = _context.Organization.Where(org => idOrganizations.Contains(org.IdOrganization)).ToList();
+                List<OrganizationDTO> organizationDTOs = organizations.Select(org => new OrganizationDTO { IdOrganization = org.IdOrganization, Name = org.Name }).ToList();
+                organizationDTOs.Add(new OrganizationDTO { IdOrganization = 0, Name = " Все" });
+                return Ok(organizationDTOs);
+            }
+            return NoContent();
+        }
+
+        [HttpGet("getorganizationall")]
+        public IActionResult GetOrganizationAll()
+        {
+
+            List<Organization> organizations = _context.Organization.ToList();
+
+            if (organizations.Count > 0)
+            {
+                List<OrganizationDTO> organizationDTOs = organizations.Select(org => new OrganizationDTO { IdOrganization = org.IdOrganization, Name = org.Name }).ToList();
+                organizationDTOs.Add(new OrganizationDTO { IdOrganization = 0, Name = " Все" });
+                return Ok(organizationDTOs);
+            }
+            return NoContent();
+        }
+
+        [HttpGet("getgroupsbyorganization/{idorganization}")]
+        public IActionResult GetGroupsByOrganization(int idorganization)
+        {
+            List<Groupu> groups = _context.Groupu.Where(g => g.OrganizationId == idorganization).ToList();
+
+            if (groups.Count > 0)
+            {
+                List<GroupDTO> groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
+                groupDTOs.Add( new GroupDTO { IdGroup = 0, Name = " Все" });
+                return Ok(groupDTOs);
+            }
+            return NoContent();
+        }
+
+        [HttpGet("getgroupsall")]
+        public IActionResult GetGroupsAll()
+        {
+            List<Groupu> groups = _context.Groupu.ToList();
+
+            if (groups.Count > 0)
+            {
+                List<GroupDTO> groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
+                groupDTOs.Add(new GroupDTO { IdGroup = 0, Name = " Все" });
+                return Ok(groupDTOs);
             }
             return NoContent();
         }

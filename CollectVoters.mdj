@@ -635,7 +635,7 @@
 											"top": 342,
 											"width": 201.97607421875,
 											"height": 13,
-											"text": "+?MicroDistrict: MicroDistrict",
+											"text": "+MicroDistrict: MicroDistrict",
 											"horizontalAlignment": 0
 										},
 										{
@@ -652,7 +652,7 @@
 											"top": 357,
 											"width": 201.97607421875,
 											"height": 13,
-											"text": "+?Street: Street",
+											"text": "+Street: Street",
 											"horizontalAlignment": 0
 										},
 										{
@@ -669,7 +669,7 @@
 											"top": 372,
 											"width": 201.97607421875,
 											"height": 13,
-											"text": "+?House: House",
+											"text": "+House: House",
 											"horizontalAlignment": 0
 										},
 										{
@@ -686,7 +686,7 @@
 											"top": 387,
 											"width": 201.97607421875,
 											"height": 13,
-											"text": "+?Building: string",
+											"text": "+Building: string",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4776,13 +4776,47 @@
 											"height": 13,
 											"text": "+Organization: Organization",
 											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAF7Otizp3BH2Ys=",
+											"_parent": {
+												"$ref": "AAAAAAF42V5KmHlFqVo="
+											},
+											"model": {
+												"$ref": "AAAAAAF7OtizfHAy9f4="
+											},
+											"font": "Arial;13;0",
+											"left": 109,
+											"top": 641,
+											"width": 199.04345703125,
+											"height": 13,
+											"text": "+Level: int",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAF7OtkAenN4Hjw=",
+											"_parent": {
+												"$ref": "AAAAAAF42V5KmHlFqVo="
+											},
+											"model": {
+												"$ref": "AAAAAAF7OtkAUXNj9E8="
+											},
+											"font": "Arial;13;0",
+											"left": 109,
+											"top": 656,
+											"width": 199.04345703125,
+											"height": 13,
+											"text": "+Parents_id: ?",
+											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 104,
 									"top": 561,
 									"width": 209.04345703125,
-									"height": 83
+									"height": 113
 								},
 								{
 									"_type": "UMLOperationCompartmentView",
@@ -4795,7 +4829,7 @@
 									},
 									"font": "Arial;13;0",
 									"left": 104,
-									"top": 644,
+									"top": 674,
 									"width": 209.04345703125,
 									"height": 10
 								},
@@ -4837,7 +4871,7 @@
 							"left": 104,
 							"top": 536,
 							"width": 209.04345703125,
-							"height": 118,
+							"height": 148,
 							"nameCompartment": {
 								"$ref": "AAAAAAF42V5KmHlAMOU="
 							},
@@ -12431,8 +12465,10 @@
 							"_parent": {
 								"$ref": "AAAAAAF42OTV/yYH9CA="
 							},
-							"name": "?MicroDistrict",
-							"type": "MicroDistrict"
+							"name": "MicroDistrict",
+							"type": {
+								"$ref": "AAAAAAF42TMyRjNrf/0="
+							}
 						},
 						{
 							"_type": "UMLAttribute",
@@ -12440,8 +12476,10 @@
 							"_parent": {
 								"$ref": "AAAAAAF42OTV/yYH9CA="
 							},
-							"name": "?Street",
-							"type": "Street"
+							"name": "Street",
+							"type": {
+								"$ref": "AAAAAAF42TY6hjkOYFg="
+							}
 						},
 						{
 							"_type": "UMLAttribute",
@@ -12449,8 +12487,10 @@
 							"_parent": {
 								"$ref": "AAAAAAF42OTV/yYH9CA="
 							},
-							"name": "?House",
-							"type": "House"
+							"name": "House",
+							"type": {
+								"$ref": "AAAAAAF42TcPCzufxu0="
+							}
 						},
 						{
 							"_type": "UMLAttribute",
@@ -12458,7 +12498,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF42OTV/yYH9CA="
 							},
-							"name": "?Building",
+							"name": "Building",
 							"type": "string"
 						},
 						{
@@ -13684,6 +13724,24 @@
 							"type": {
 								"$ref": "AAAAAAF7KuNwWsb4IMU="
 							}
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAF7OtizfHAy9f4=",
+							"_parent": {
+								"$ref": "AAAAAAF42V5Kl3k9y8k="
+							},
+							"name": "Level",
+							"type": "int"
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAF7OtkAUXNj9E8=",
+							"_parent": {
+								"$ref": "AAAAAAF42V5Kl3k9y8k="
+							},
+							"name": "Parents_id",
+							"type": "?"
 						}
 					]
 				},

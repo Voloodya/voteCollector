@@ -32,7 +32,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([6,8,13,14,19,21]).every(function () {
+            this.api().columns([5, 6, 7, 8, 9]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -138,7 +138,6 @@ $(document).ready(function () {
             alert("error: " + result + " status: " + status + " er:" + er);
         }
     });
-
 });
 
 // Загрузка сфер деятельности
@@ -178,8 +177,40 @@ $(function () {
     $("#SelectFieldActivityId").change(function () {
         var idFielfActivity = Number.parseInt($('#SelectFieldActivityId').val());
 
+        if (idFielfActivity != 0) {
+            $.ajax({
+                url: partMyURL + "/api/API/getorganization" + "/" + idFielfActivity,
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'GET',
+                dataType: "json",
+                success: function (data) {
+
+                    if (data != undefined) {
+                        var dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    DataFillingSelect(dataSort, 'idOrganization', 'name', 'SelectOrganizationId', '<option/>');
+
+                    setTimeout(GeneratingChangeEvent('SelectOrganizationId'), 1000);
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
+                }
+            });
+        }
+    });
+});
+
+// all organization
+$(document).ready(function () {
         $.ajax({
-            url: partMyURL + "/api/API/getorganization" + "/" + idFielfActivity,
+            url: partMyURL + "/api/API/getorganizationall",
             headers:
             {
                 'Accept': 'application/json',
@@ -197,22 +228,19 @@ $(function () {
                 }
                 DataFillingSelect(dataSort, 'idOrganization', 'name', 'SelectOrganizationId', '<option/>');
 
-                setTimeout(GeneratingChangeEvent('SelectOrganizationId'),1000);
+                setTimeout(GeneratingChangeEvent('SelectOrganizationId'), 1000);
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
             }
         });
     });
-});
 
-// Загрузка групп
-$(function () {
-    $("#SelectOrganizationId").change(function () {
-        var idorganization = Number.parseInt($('#SelectOrganizationId').val());
 
+// all groups
+$(document).ready(function () {
         $.ajax({
-            url: partMyURL + "/api/API/getgroupsbyorganization" + "/" + idorganization,
+            url: partMyURL + "/api/API/getgroupsall",
             headers:
             {
                 'Accept': 'application/json',
@@ -230,18 +258,85 @@ $(function () {
                 }
                 DataFillingSelect(dataSort, 'IdGroup', 'name', 'SelectGroupId', '<option/>');
 
-                GeneratingChangeEvent('SelectGroupId');
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
             }
         });
     });
+
+
+// Загрузка групп
+$(function () {
+    $("#SelectOrganizationId").change(function () {
+        var idorganization = Number.parseInt($('#SelectOrganizationId').val());
+
+        if (idorganization != 0) {
+            $.ajax({
+                url: partMyURL + "/api/API/getgroupsbyorganization" + "/" + idorganization,
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'GET',
+                dataType: "json",
+                success: function (data) {
+
+                    if (data != undefined) {
+                        var dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    DataFillingSelect(dataSort, 'IdGroup', 'name', 'SelectGroupId', '<option/>');
+
+                    GeneratingChangeEvent('SelectGroupId');
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
+                }
+            });
+        }
+    });
 });
+
+// Загрузка избирательных округов
+$(document).ready(function () {
+
+    $.ajax({
+        // url: "http://localhost:18246/api/API/getElectoralDistrict",
+        url: partMyURL + "/api/API/getElectoralDistrict",
+        //url: "/CollectVoters/api/API/getElectoralDistrict",
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        type: 'GET',
+        dataType: "json",
+        success: function (data) {
+
+            if (data != undefined) {
+                var dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                });
+            }
+            DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', 'SelectElectoralDistrictId', '<option/>');
+
+            GeneratingChangeEvent('SelectElectoralDistrictId');
+        },
+        error: function (result, status, er) {
+            alert("error: " + result + " status: " + status + " er:" + er);
+        }
+    });
+});
+
 
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
-document.getElementById('totalFriends').rows[0].cols[21] = nrows;
+//$('resultTable').ready($('resultTable').rows[0].cols[21].innerHTML = nrows);
 
 $('friendTable').ready(CountVoters('friendTable',18));
 $('friendTable').change(CountVoters('friendTable',18));
@@ -301,39 +396,41 @@ $(function () {
     $("#SelectElectoralDistrictId").change(function () {
         var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
         //$('#' + 'friendTable' + ' tbody > tr').remove();
-        
-        $.ajax({
-            type: 'POST',
-            //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
-            url: 'Admin/SearchFriendsByElectoralDistrict/',
-            headers:
-            {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            data: JSON.stringify(formData),
-            success: function (data) {
 
-                // Delete rows
-                var friendDataTable = $('#friendTable').DataTable();
-                friendDataTable.rows().remove().draw();
-                //friendDataTable.rows.add($(data)).draw();
-                //friendDataTable.Empty();
-                $('#friendTable').empty();
-                // Destroy object DataTable
-                friendDataTable.destroy();                
+        if (formData['IdElectoralDistrict'] !== "") {
+            $.ajax({
+                type: 'POST',
+                //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
+                url: 'Admin/SearchFriendsByElectoralDistrict/',
+                headers:
+                {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                data: JSON.stringify(formData),
+                success: function (data) {
 
-                // Update tbody new rows with data
-                $('#friendTable').replaceWith(data);
-                UpdatingFields('friendTable', 'numberRecords','totalFriends');
+                    // Delete rows
+                    var friendDataTable = $('#friendTable').DataTable();
+                    friendDataTable.rows().remove().draw();
+                    //friendDataTable.rows.add($(data)).draw();
+                    //friendDataTable.Empty();
+                    $('#friendTable').empty();
+                    // Destroy object DataTable
+                    friendDataTable.destroy();
 
-                UpdateTablePlagin();
-                CountVoters('friendTable', 18);
-            },
-            error: function (result, status, er) {
-                alert('error: ' + result + ' status: ' + status + ' er:' + er);
-            }
-        });
+                    // Update tbody new rows with data
+                    $('#friendTable').replaceWith(data);
+                    UpdatingFields('friendTable', 'numberRecords', 'totalFriends');
+
+                    UpdateTablePlagin();
+                    CountVoters('friendTable', 18);
+                },
+                error: function (result, status, er) {
+                    alert('error: ' + result + ' status: ' + status + ' er:' + er);
+                }
+            });
+        }
     });
 });
 

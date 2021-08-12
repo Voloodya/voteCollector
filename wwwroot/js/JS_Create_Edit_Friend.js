@@ -1,5 +1,5 @@
 ﻿
-let partMyURL = "/CollectVoters";
+let partMyURL = "";
 if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = "";
 }
@@ -32,6 +32,10 @@ function stateDate(idObject) {
 
 $(document).ready(function () {
     HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+
+//    $(function () {
+//        $("#phoneNumber").mask("+7(999) 999-9999");
+//    });
 });
 
 // Обновление списка улиц после выбора города

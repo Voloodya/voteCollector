@@ -1,5 +1,5 @@
 ﻿
-let partMyURL = "/CollectVoters";
+let partMyURL = "";
 if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = "";
 }

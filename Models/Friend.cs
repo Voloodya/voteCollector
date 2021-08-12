@@ -78,9 +78,13 @@ namespace voteCollector.Models
         [DisplayName("Организация")]
         [Column(TypeName = "varchar(256)")]
         public string Organization { get; set; }
-        [DisplayName("Подведомственное учреждение")]
+        [DisplayName("Подразделение")]
         [Column("Organization_id")]
         public int? OrganizationId { get; set; }
+        [DisplayName("Подведом. учрежд.")]
+        [Column("GroupU_id")]
+        public int? GroupUId { get; set; }
+
         [DisplayName("Организация")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
@@ -103,7 +107,7 @@ namespace voteCollector.Models
         [DisplayName("Проголос-л")]
         [Column("Voter", TypeName = "TINYINT")]
         public bool Voter { get; set; }
-        [DisplayName("Адресс")]
+        [DisplayName("Адрес")]
         [Column(TypeName = "varchar(500)")]
         public string Adress { get; set; }
         [DisplayName("QR текст")]
@@ -122,9 +126,6 @@ namespace voteCollector.Models
         [DisplayName("Агитатор")]
         [Column("User_id")]
         public long? UserId { get; set; }
-        [DisplayName("Группа")]
-        [Column("GroupU_id")]
-        public int? GroupUId { get; set; }
         [Column("FriendStatus_id")]
         [DisplayName("Статус избирателя")]
         public int? FriendStatusId { get; set; }
@@ -149,7 +150,7 @@ namespace voteCollector.Models
         [ForeignKey(nameof(FriendStatusId))]
         [InverseProperty("Friends")]
         public virtual FriendStatus FriendStatus { get; set; }
-        [DisplayName("Группа")]
+        [DisplayName("Подведом. учрежд.")]
         [ForeignKey(nameof(GroupUId))]
         [InverseProperty(nameof(Groupu.Friends))]
         public virtual Groupu GroupU { get; set; }
@@ -163,7 +164,7 @@ namespace voteCollector.Models
         public virtual Microdistrict MicroDistrict { get; set; }
         [ForeignKey(nameof(OrganizationId))]
         [InverseProperty("Friends")]
-        [DisplayName("Подведомственное учреждение")]
+        [DisplayName("Подразделение")]
         public virtual Organization Organization_ { get; set; }
 
         [ForeignKey(nameof(StationId))]
