@@ -54,6 +54,11 @@ namespace voteCollector.Services
                 return _context.Groupu.Where(g => groupsUser.Contains(g));
             }
         }
+
+        public User SearchUserByUserName(string userName)
+        {
+            return _context.User.FirstOrDefault(u => u.UserName.Equals(userName));
+        }
         
     }
 }

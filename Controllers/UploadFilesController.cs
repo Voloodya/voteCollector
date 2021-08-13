@@ -71,7 +71,7 @@ namespace voteCollector.Controllers
                         Name = friendsDTO[i].Name,
                         PatronymicName = friendsDTO[i].PatronymicName,
                         DateBirth = friendsDTO[i].DateBirth,
-                        CityName = friendsDTO[i].CityName,
+                        CityName = friendsDTO[i].CityDistrict,
                         Street = friendsDTO[i].Street,
                         House = friendsDTO[i].House
                     });
@@ -94,7 +94,7 @@ namespace voteCollector.Controllers
                     Name = x.Name,
                     PatronymicName = x.PatronymicName,
                     DateBirth = x.DateBirth,
-                    CityName = x.CityName,
+                    CityName = x.CityDistrict,
                     Street = x.Street,
                     House = x.House
                 }).ToList();

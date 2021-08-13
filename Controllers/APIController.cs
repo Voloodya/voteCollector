@@ -152,7 +152,7 @@ namespace voteCollector.Controllers
         [HttpPost("searchPollingStations/city")]
         public IActionResult SearchPollingStationsCity(CityDTO cityDTO)
         {
-            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityDistrictId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
 
             if (pollingStations.Any())
             {
@@ -165,7 +165,7 @@ namespace voteCollector.Controllers
         [HttpPost("searchStations/city")]
         public IActionResult SearchStationsCity(CityDTO cityDTO)
         {
-            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityDistrictId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
 
             if (pollingStations.Any())
             {

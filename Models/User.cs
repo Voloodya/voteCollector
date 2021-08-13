@@ -17,6 +17,7 @@ namespace voteCollector.Models
         {
             Friends = new HashSet<Friend>();
             Groupsusers = new HashSet<Groupsusers>();
+            Groupus = new HashSet<Groupu>();
         }
 
         [Key]
@@ -62,9 +63,12 @@ namespace voteCollector.Models
         [DisplayName("Друзья")]
         [InverseProperty("User")]
         public virtual ICollection<Friend> Friends { get; set; }
-        [DisplayName("Группы")]
+        [DisplayName("Группы пользователя")]
         [InverseProperty("User")]
         public virtual ICollection<Groupsusers> Groupsusers { get; set; }
+        [DisplayName("Группы ответственного")]
+        [InverseProperty("UserResponsible")]
+        public virtual ICollection<Groupu> Groupus { get; set; }
 
         [DisplayName("Кол-во избирателей")]
         [NotMapped]

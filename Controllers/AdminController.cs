@@ -146,7 +146,7 @@ namespace CollectVoters.Controllers
             //IQueryable<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == 1).GroupBy(p => p.Name).Select(grp => grp.First());
             //IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
             //var pollingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
-            var pollingStations = _context.PollingStation.Where(p => p.CityId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
+            var pollingStations = _context.PollingStation.Where(p => p.CityDistrictId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
             //ViewData["PollingStationId"] = new SelectList(pollingStations, "IdPollingStation", "Name");
 
             ///////
@@ -261,7 +261,7 @@ namespace CollectVoters.Controllers
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            var polingStations = _context.PollingStation.Where(p => p.CityId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
+            var polingStations = _context.PollingStation.Where(p => p.CityDistrictId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
             //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
 
             ///////

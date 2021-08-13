@@ -26,7 +26,7 @@ namespace voteCollector.Models
         [DisplayName("Городской огруг")]
         [Required(ErrorMessage = "Не указан населен. п-т")]
         [Column("City_id")]
-        public int? CityId { get; set; }
+        public int? CityDistrictId { get; set; }
         [DisplayName("Улица")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
@@ -42,7 +42,7 @@ namespace voteCollector.Models
         [DisplayName("Номер участка")]
         public virtual Station Station { get; set; }
 
-        [ForeignKey(nameof(CityId))]
+        [ForeignKey(nameof(CityDistrictId))]
         [InverseProperty("PollingStations")]
         [DisplayName("Насел. п-т")]
         public virtual CityDistrict CityDistrict { get; set; }

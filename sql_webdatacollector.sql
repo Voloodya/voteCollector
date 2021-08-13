@@ -364,7 +364,29 @@ ADD COLUMN `Unpinning` TINYINT NULL DEFAULT 0 AFTER `Date_birth`;
   
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+ALTER TABLE `votercollector`.`groupu` 
+ADD COLUMN `Level` INT NULL DEFAULT NULL AFTER `CreatorGroup`,
+ADD COLUMN `Group_Parents_id` INT NULL DEFAULT NULL AFTER `Level`,
+ADD COLUMN `User_Responsible_id` BIGINT NULL DEFAULT NULL AFTER `Group_Parents_id`,
+ADD COLUMN `NumberEmployees` INT NULL DEFAULT NULL AFTER `User_Responsible_id`;
 
+ALTER TABLE `votercollector`.`groupu` 
+ADD INDEX `FK_Groupu_Groupu` (`Group_Parents_id` ASC) VISIBLE,
+ADD INDEX `FK_Groupu_User` (`User_Responsible_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`groupu` 
+ADD CONSTRAINT `FK_Groupu_Groupu`
+  FOREIGN KEY (`Group_Parents_id`)
+  REFERENCES `votercollector`.`groupu` (`Id_Group`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_Groupu_User`
+  FOREIGN KEY (`User_Responsible_id`)
+  REFERENCES `votercollector`.`user` (`Id_User`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;  
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 INSERT INTO Role (Name) VALUES ('admin');

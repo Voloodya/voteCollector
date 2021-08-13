@@ -345,6 +345,12 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.OrganizationId)
                     .HasName("FK_Groupu_Organization");
 
+                entity.HasIndex(e => e.GroupParentsId)
+                    .HasName("FK_Groupu_Groupu");
+
+                entity.HasIndex(e => e.UserResponsibleId)
+                    .HasName("FK_Groupu_User");
+
                 entity.Property(e => e.CreatorGroup)
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
@@ -362,6 +368,16 @@ namespace voteCollector.Data
                     .WithMany(p => p.Groupus)
                     .HasForeignKey(d => d.OrganizationId)
                     .HasConstraintName("FK_Groupu_Organization");
+
+                entity.HasOne(d => d.GroupParents)
+                    .WithMany(p => p.InverseGroupParents)
+                    .HasForeignKey(d => d.GroupParentsId)
+                    .HasConstraintName("FK_Groupu_Groupu");
+
+                entity.HasOne(d => d.UserResponsible)
+                    .WithMany(p => p.Groupus)
+                    .HasForeignKey(d => d.UserResponsibleId)
+                    .HasConstraintName("FK_Groupu_User");
             });
 
             modelBuilder.Entity<House>(entity =>
@@ -435,7 +451,7 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.StationId)
                     .HasName("FK_PollingStation_Station");
 
-                entity.HasIndex(e => e.CityId)
+                entity.HasIndex(e => e.CityDistrictId)
                     .HasName("FK_PollingStation_City");
 
                 entity.HasIndex(e => e.HouseId)
@@ -458,7 +474,7 @@ namespace voteCollector.Data
 
                 entity.HasOne(d => d.CityDistrict)
                     .WithMany(p => p.PollingStations)
-                    .HasForeignKey(d => d.CityId)
+                    .HasForeignKey(d => d.CityDistrictId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_PollingStation_City");
 

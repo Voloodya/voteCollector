@@ -1,8 +1,9 @@
 ﻿@model voteCollector.Models.District
 
-@{
+@*@{
     ViewData["Title"] = "Create";
-}
+}*@
+
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions {
     public string GetAntiXsrfRequestToken()

@@ -12,7 +12,9 @@ namespace voteCollector.DTO
         public string Name { get; set; }
         public string PatronymicName { get; set; }
         public string DateBirth { get; set; }
-        public string CityName { get; set; }
+        public string Unpinning { get; set; }
+        public string City { get; set; }
+        public string CityDistrict { get; set; }
         public string Street { get; set; }
         public string Microdistrict { get; set; }
         public string House { get; set; }
@@ -32,6 +34,8 @@ namespace voteCollector.DTO
         public string Group { get; set; }
         public long? UserId { get; set; }
         public string UserName { get; set; }
+        public string LoginUsers { get; set; }
+        public string Adress { get; set; }
 
     }
 }

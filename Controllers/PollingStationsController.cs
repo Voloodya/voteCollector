@@ -45,7 +45,7 @@ namespace Generater.Controllers
             int selectedIndexCity = 1;
 
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
-            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", selectedIndexCity);
+            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", selectedIndexCity);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCity).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
@@ -57,7 +57,7 @@ namespace Generater.Controllers
         // POST: PollingStations/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPollingStation,Name,StationId,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
+        public async Task<IActionResult> Create([Bind("IdPollingStation,Name,StationId,CityDistrictId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
         {
             if (ModelState.IsValid)
             {
@@ -68,9 +68,9 @@ namespace Generater.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
-            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", pollingStation.CityId);
+            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", pollingStation.CityDistrictId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
-            List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityDistrictId).ToList();
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", pollingStation.StreetId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
 
@@ -91,9 +91,9 @@ namespace Generater.Controllers
                 return NotFound();
             }
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name",pollingStation.StationId);
-            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", pollingStation.CityId);
+            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", pollingStation.CityDistrictId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
-            List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityId).ToList();
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == pollingStation.CityDistrictId).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", pollingStation.StreetId);
             List<House> selectHouse = _context.House.Where(h => h.StreetId == pollingStation.StreetId).ToList();
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", pollingStation.HouseId);
@@ -103,7 +103,7 @@ namespace Generater.Controllers
         // POST: PollingStations/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPollingStation,Name,StationId,CityId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
+        public async Task<IActionResult> Edit(int id, [Bind("IdPollingStation,Name,StationId,CityDistrictId,StreetId,MicroDistrictId,HouseId")] PollingStation pollingStation)
         {
             if (id != pollingStation.IdPollingStation)
             {
@@ -133,7 +133,7 @@ namespace Generater.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", pollingStation.StationId);
-            ViewData["CityId"] = new SelectList(_context.CityDistrict, "IdCity", "Name", pollingStation.CityId);
+            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", pollingStation.CityDistrictId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", pollingStation.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", pollingStation.MicroDistrictId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", pollingStation.StreetId);

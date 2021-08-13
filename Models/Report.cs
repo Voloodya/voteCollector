@@ -7,7 +7,7 @@ namespace voteCollector.Models
 {
     public class Report
     {
-        public string FieldActivity { get; set; }
-        public List<Organization> Organizations { get; set; }
+        public int Level { get; set; }
+        public int IdOdject { get; set; }
     }
 }

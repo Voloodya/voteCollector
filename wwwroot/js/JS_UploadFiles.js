@@ -6,7 +6,7 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
 
 async function UploadExcelToWebService(fileSource) {
     var data = await ExcelToJSON('Freinds', fileSource);
-    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'CityName', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode','Email','Description','Group']);
+    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'Unpinning', 'City', 'CityDistrict', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group', 'LoginUsers','Adress']);
 
     $.ajax({
         type: 'POST',
@@ -36,7 +36,7 @@ async function UploadExcelToWebService(fileSource) {
 
 async function UploadExcelToWebServiceMVC(fileSource) {
     var data = await ExcelToJSON('Freinds', fileSource);
-    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'CityName', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group', 'UserName']);
+    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'Unpinning', 'City', 'CityDistrict', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group', 'LoginUsers','Adress']);
 
     $.ajax({
         type: 'POST',

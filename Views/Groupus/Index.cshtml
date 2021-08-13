@@ -61,6 +61,18 @@
                 @Html.DisplayNameFor(model => model.Organization)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupParents)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserResponsible)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberEmployees)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.CreatorGroup)
             </th>
             <th></th>
@@ -78,6 +90,18 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Organization.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupParents.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserResponsible.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberEmployees)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatorGroup)

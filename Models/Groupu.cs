@@ -17,6 +17,7 @@ namespace voteCollector.Models
         {
             Friends = new HashSet<Friend>();
             Groupsusers = new HashSet<Groupsusers>();
+            InverseGroupParents = new HashSet<Groupu>();
         }
 
         [Key]
@@ -35,21 +36,44 @@ namespace voteCollector.Models
         [DisplayName("Автор группы")]
         [Column(TypeName = "varchar(256)")]
         public string CreatorGroup { get; set; }
+        [DisplayName("Уровень группы")]
+        [Column("Level")]
+        public int? Level { get; set; }
+        [DisplayName("Подчиняется")]
+        [Column("Group_Parents_id")]
+        public int? GroupParentsId { get; set; }
+        [DisplayName("Сотрудников")]
+        [Column("NumberEmployees")]
+        public int? NumberEmployees { get; set; }
+        [DisplayName("Ответственный")]
+        [Column("User_Responsible_id")]
+        public long? UserResponsibleId { get; set; }
 
         [ForeignKey(nameof(FieldActivityId))]
         [InverseProperty(nameof(Fieldactivity.Groupus))]
         [DisplayName("Организация")]
         public virtual Fieldactivity FieldActivity { get; set; }
+        [DisplayName("Подчиняется")]
+        [ForeignKey(nameof(GroupParentsId))]
+        [InverseProperty(nameof(Groupu.InverseGroupParents))]
+        public virtual Groupu GroupParents { get; set; }
         [ForeignKey(nameof(OrganizationId))]
         [InverseProperty(nameof(Fieldactivity.Groupus))]
         [DisplayName("Подведом. учрежд.")]
         public virtual Organization Organization { get; set; }
+        [DisplayName("Ответственный")]
+        [ForeignKey(nameof(UserResponsibleId))]
+        [InverseProperty(nameof(User.Groupus))]
+        public virtual User UserResponsible { get; set; }
 
         [DisplayName("Избиратели")]
         [InverseProperty("GroupU")]
         public virtual ICollection<Friend> Friends { get; set; }
         [InverseProperty("GroupU")]
         public virtual ICollection<Groupsusers> Groupsusers { get; set; }
+        [InverseProperty(nameof(Groupu.GroupParents))]
+        public virtual ICollection<Groupu> InverseGroupParents { get; set; }
+
 
     }
 }

@@ -125,7 +125,7 @@ namespace voteCollector.Controllers
             IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
-            List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+            List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
             //IQueryable<PollingStation> filteredStations = _context.PollingStation.Where(p => p.CityId == 1);
             //var polingStations = filteredStations.Where(p => p.IdPollingStation == filteredStations.Where(x => x.Name == p.Name).Min(y => y.IdPollingStation));
             //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name");
@@ -240,7 +240,7 @@ namespace voteCollector.Controllers
             List<Organization> organizationSelect = _context.Organization.Where(org => org.IdOrganization == groupsUser[0].OrganizationId).ToList();
             ViewData["OrganizationId"] = new SelectList(organizationSelect, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+            List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
             //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
 
             ///////

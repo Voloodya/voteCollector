@@ -35,27 +35,29 @@ namespace voteCollector.Controllers
 
             if (groupsUser.Contains(mainGroup))
             {
-                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).ToListAsync());
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).Include(g => g.GroupParents).Include(g => g.UserResponsible).ToListAsync());
             }
             else
             {
-                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).Where(g => groupsUser.Contains(g)).ToListAsync());                
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).Include(g => g.GroupParents).Include(g => g.UserResponsible).Where(g => groupsUser.Contains(g)).ToListAsync());                
             }            
         }
 
         // GET: Groupus/Create
         public IActionResult Create()
         {
-
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+
             return View();
         }
 
         // POST: Groupus/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId,OrganizationId")] Groupu groupu)
+        public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId,OrganizationId,GroupParentsId,UserResponsibleId,NumberEmployees,Level")] Groupu groupu)
         {
 
             if (ModelState.IsValid)
@@ -82,6 +84,9 @@ namespace voteCollector.Controllers
             //
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+
             return View(groupu);
         }
 
@@ -101,13 +106,16 @@ namespace voteCollector.Controllers
 
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupu.GroupParents);
+            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName", groupu.UserResponsible);
+
             return View(groupu);
         }
 
         // POST: Groupus/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name,FieldActivityId,OrganizationId")] Groupu groupu)
+        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name,FieldActivityId,OrganizationId,GroupParentsId,UserResponsibleId,NumberEmployees,Level")] Groupu groupu)
         {
             if (id != groupu.IdGroup)
             {
@@ -145,6 +153,9 @@ namespace voteCollector.Controllers
 
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupu.GroupParents);
+            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName", groupu.UserResponsible);
+
             return View(groupu);
         }
 
