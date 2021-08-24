@@ -40,9 +40,19 @@
         }
 </style>
 
-<div>
+@*<div>
     <a asp-action="RedirectTo">Вернуться на главную</a>
-</div>
+</div>*@
+<p>
+    <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
+    <a asp-controller="Admin" asp-action="LkAdmin">Избиратели</a> |
+    <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+    <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+    <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+    <a asp-controller="Stations" asp-action="Index">Участки</a> |
+    <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+    <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
+</p>
 
 <br />
 
@@ -61,7 +71,16 @@
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                @Html.DisplayNameFor(model => model.User.FamilyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.PatronymicName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.Telephone)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.GroupU.FieldActivity)
@@ -81,6 +100,15 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.User.FamilyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.PatronymicName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Telephone)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)

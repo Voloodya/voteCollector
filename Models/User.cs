@@ -23,11 +23,14 @@ namespace voteCollector.Models
         [Key]
         [Column("Id_User")]
         public long IdUser { get; set; }
-        [DisplayName("Пользователь")]
-        [Required(ErrorMessage = "Не указано имя")]
+        [DisplayName("Логин (ivanov@gmail.com)")]
+        [Required(ErrorMessage = "Не указан логин")]
         [Column(TypeName = "varchar(100)")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Не указан пароль")]
+        [MinLength(5)]
+        [MaxLength(100)]
+        [RegularExpression(@"(^[A-Za-z0-9]{5,100})"), StringLength(100)]
         [Column(TypeName = "varchar(100)")]
         public string Password { get; set; }
         [DisplayName("Роль")]
@@ -73,6 +76,8 @@ namespace voteCollector.Models
         [DisplayName("Кол-во избирателей")]
         [NotMapped]
         public string numberFriends { get; set; }
+        [NotMapped]
+        public string FioPhoneNumber { get; set; }
 
     }
 }

@@ -387,7 +387,12 @@ ADD CONSTRAINT `FK_Groupu_User`
   ON UPDATE NO ACTION;  
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+ALTER TABLE `votercollector`.`friend` 
+ADD COLUMN `ByteQRcode` MEDIUMBLOB NULL DEFAULT NULL AFTER `City_id`,
+ADD COLUMN `TypeImage` VARCHAR(45) NULL DEFAULT NULL AFTER `ByteQRcode`;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 INSERT INTO Role (Name) VALUES ('admin');
 INSERT INTO Role (Name) VALUES ('user');

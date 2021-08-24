@@ -19,12 +19,14 @@ namespace voteCollector.Controllers
         private readonly ILogger<GroupusController> _logger;
         private readonly VoterCollectorContext _context;
         private ServiceUser _serviceUser;
+        private ServiceGroup _serviceGroup;
 
         public GroupusController(VoterCollectorContext context, ILogger<GroupusController> logger)
         {
             _context = context;
             _logger = logger;
             _serviceUser = new ServiceUser(context);
+            _serviceGroup = new ServiceGroup(context);
         }
 
         // GET: Groupus
@@ -46,10 +48,12 @@ namespace voteCollector.Controllers
         // GET: Groupus/Create
         public IActionResult Create()
         {
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
-            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber");
 
             return View();
         }
@@ -68,6 +72,11 @@ namespace voteCollector.Controllers
                 {
                     User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                     groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
+                    Groupu groupuParent = _context.Groupu.Find(groupu.GroupParentsId);
+                    if (groupuParent.Name.Equals(""))
+                    {
+                        groupu.GroupParentsId = null;
+                    }
                     _context.Add(groupu);
                     _context.SaveChanges();
 
@@ -82,10 +91,12 @@ namespace voteCollector.Controllers
                 else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
             //
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
             ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
-            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName");
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber");
 
             return View(groupu);
         }
@@ -104,10 +115,12 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+            
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
             ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupu.GroupParents);
-            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName", groupu.UserResponsible);
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupu.UserResponsible);
 
             return View(groupu);
         }
@@ -127,6 +140,12 @@ namespace voteCollector.Controllers
                 Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name) && g.IdGroup!=id);
                 if (groupuDB == null)
                 {
+                    Groupu groupuParent = _context.Groupu.Find(groupu.GroupParentsId);
+                    if (groupuParent.Name.Equals(""))
+                    {
+                        groupu.GroupParentsId = null;
+                    }
+
                     try
                     {
                         User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -150,11 +169,12 @@ namespace voteCollector.Controllers
                 }
                 else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
 
             ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
             ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
             ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupu.GroupParents);
-            ViewData["UserResponsibleId"] = new SelectList(_context.User, "IdUser", "FamilyName", groupu.UserResponsible);
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupu.UserResponsible);
 
             return View(groupu);
         }
@@ -188,6 +208,27 @@ namespace voteCollector.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Groupu/GetChildGroups/5
+        [HttpGet]
+        public async Task<IActionResult> GetChildGroups(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Groupu rootGroup = _context.Groupu.Include(g => g.InverseGroupParents).Include(g => g.GroupParents)
+                .Include(g => g.UserResponsible).FirstOrDefault(g => g.IdGroup==id);
+            if (rootGroup == null)
+            {
+                return NotFound();
+            }
+            List<Groupu> groups = _serviceGroup.GetAllChildGroupsBFS(rootGroup, rootGroup, rootGroup);
+            //groups.Sort((g1, g2) => ((g1.Level ?? 0) - (g2.Level ?? 0)));
+            return View(groups);
+
+        }
+
         private bool GroupuExists(int id)
         {
             return _context.Groupu.Any(e => e.IdGroup == id);
@@ -196,7 +237,7 @@ namespace voteCollector.Controllers
         [HttpGet]
         public async Task<IActionResult> RedirectTo()
         {
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("LkAdmin", "Admin");
         }
     }
 }

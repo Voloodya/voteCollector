@@ -27,58 +27,158 @@ namespace CollectVoters.Controllers
         private string NameQRcodeParametrs;
         private ServiceUser _serviceUser;
         private string MinNameElectoralDistrict;
+        private string WayPathQrCodes;
 
         public AdminController(VoterCollectorContext context, ILogger<AdminController> logger)
         {
             _context = context;
             _logger = logger;
             _serviceFriends = new ServiceFriends();
-            NameServer = "http://195.226.209.40";
-            WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
+            NameServer = "http://оренбургвсе.рф";
+           // WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
+            WayController = "/api/QRcodeСheckAPI/checkqrcode";
             NameQRcodeParametrs = "qrText";
             _serviceUser = new ServiceUser(context);
             MinNameElectoralDistrict = _context.ElectoralDistrict.Min(e => e.Name);
+            WayPathQrCodes = "/wwwroot/qr_codes/";
         }
 
-        // GET: Friends
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
-            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
-
-            if (mainGroup!=null && groupsUser.Contains(mainGroup))
+            List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends).Where(g => g.Level == 1).Distinct().Select(g => new Report
             {
-                List<Friend> friends = await _serviceFriends.SearchFriendsByNameElectoralDistrict(MinNameElectoralDistrict).ToListAsync();
-                //var voterCollectorContext = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.PollingStation).Include(f => f.Street).Include(f => f.User);
-                //List<Friend> friends = await voterCollectorContext.ToListAsync();
-                return View(friends);
-            }
-            else
-            {
-                List<Friend> friends = await _serviceFriends.SearchFriendsByNameElectoralDistrictAndGroups(MinNameElectoralDistrict, groupsUser).ToListAsync();
+                Responseble = g.UserResponsible.FamilyName +" "+ g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
+                IdOdject = g.FieldActivityId ?? 0,
+                NameObject = g.FieldActivity.Name,
+                Level = g.Level ?? 0,
+                NumberEmployees = g.NumberEmployees ?? 0,
+                NumberVoters = g.Friends.Count,
+                NumberVoted = g.Friends.Select(f => f.Voter==true).Count(),
+            }).Distinct().ToListAsync();
 
-                return View(friends);
-            }            
+
+            return View(report);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index([Bind("UserName", "Password", "ReturnUrl")] LoginModel loginViewModel)
         {
+            List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Where(g => g.Level == 1).Distinct().Select(g => new Report
+            {
+                Responseble = g.UserResponsible.FamilyName + " " + g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
+                IdOdject = g.FieldActivityId ?? 0,
+                NameObject = g.FieldActivity.Name,
+                Level = g.Level ?? 0,
+                NumberEmployees = g.NumberEmployees ?? 0,
+            }).Distinct().ToListAsync();
+
+            return View(report);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReportOrganization(int id)
+        {
+            List<Groupu> groupus = _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Where(g => g.Level == 2 && g.FieldActivityId == id).ToList()
+                .GroupBy(g => g.OrganizationId).Select(g => g.First()).ToList();
+
+            List<Groupu> groupus1 = groupus;
+
+            List<Report> reports = groupus.Select(g => new Report
+            {
+                Responseble = g.UserResponsible.FamilyName+" "+ g.UserResponsible.Name + " "+ g.UserResponsible.PatronymicName,
+                IdOdject = g.OrganizationId ?? 0,
+                NameObject = g.Organization.Name,
+                Level = g.Level ?? 0,
+                NumberEmployees = g.NumberEmployees ?? 0,
+                IdParent = id,
+                NameParent = g.FieldActivity.Name
+            }).ToList();
+
+            return View(reports);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReportGroup(int id)
+        {
+            List<Report> report = await _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Where(g => g.Level == 3 && g.OrganizationId == id)
+                .Distinct().Select(g => new Report
+                {
+                    Responseble = g.UserResponsible.FamilyName + " " + g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
+                    IdOdject = g.IdGroup,
+                    NameObject = g.Name,
+                    Level = g.Level ?? 0,
+                    NumberEmployees = g.NumberEmployees ?? 0,
+                    IdParent = id,
+                    NameParent = g.Organization.Name
+                }).ToListAsync();
+
+            return View(report);
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        [HttpGet]
+        public async Task<IActionResult> LkAdmin()
+        {
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
             Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-            if (groupsUser.Contains(mainGroup))
+            if (groupsUser.Count > 0)
             {
-                List<Friend> friends = await _serviceFriends.SearchFriendsByNameElectoralDistrict(MinNameElectoralDistrict).ToListAsync();
-                return View(friends);
+
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    List<Friend> friends = new List<Friend>();
+                    try
+                    {
+                        friends = _serviceFriends.GetAllFriendsLimit(100).ToList();
+                    }
+                    catch
+                    {
+                        friends = _serviceFriends.GetAllFriends().ToList();
+                    }
+                    return View(friends);
+                }
+                else
+                {
+                    List<Friend> friends = _serviceFriends.GetAllFriendsByGroupUsers(groupsUser).ToList();
+                    return View(friends);
+                }
             }
-            else
+            return NoContent();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LkAdmin([Bind("UserName", "Password", "ReturnUrl")] LoginModel loginViewModel)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            if (groupsUser.Count > 0)
             {
-                List<Friend> friends = await _serviceFriends.SearchFriendsByNameElectoralDistrictAndGroups(MinNameElectoralDistrict, groupsUser).ToListAsync();
-                return View(friends);
+                if (groupsUser.Contains(mainGroup))
+                {
+                    List<Friend> friends = new List<Friend>();
+                    try
+                    {
+                        friends =  _serviceFriends.GetAllFriendsLimit(100).ToList();
+                    }
+                    catch
+                    {
+                        friends = _serviceFriends.GetAllFriends().ToList();
+                    }
+                    return View(friends);
+                }
+                else
+                {
+                    List<Friend> friends = _serviceFriends.GetAllFriendsByGroupUsers(groupsUser).ToList();
+                    return View(friends);
+                }
             }
+            return NoContent();
         }
 
         // GET: Friends/Details/5
@@ -110,11 +210,11 @@ namespace CollectVoters.Controllers
                 return NotFound();
             }
 
-            if (friend.Qrcode != null && !friend.Qrcode.Equals(""))
+            if (friend.ByteQrcode != null)
             {
                 try
                 {
-                    friend.QRcodeBytes = QRcodeServices.BitmapToBytes(QRcodeServices.ReadingQRcodeFromFile(friend.Qrcode));
+                    friend.QRcodeBytes = QRcodeServices.BitmapToBytes(QRcodeServices.CreateBitmapFromBytes(friend.ByteQrcode));
                 } catch(Exception ex) { }
             }
 
@@ -129,13 +229,19 @@ namespace CollectVoters.Controllers
             int selectIndexCity = 1;
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<Groupu> filterGroupUser = _serviceUser.FilterGroups(groupsUser).ToList();
+            int[] idFieldActivityUser = filterGroupUser.Select(g => g.FieldActivityId ?? 0).ToArray();
+            int[] idOrganizationUser = filterGroupUser.Select(g => g.OrganizationId ?? 0).ToArray();
 
-            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
+
+            ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name");
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectIndexCity);
             ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", selectedIndexCityDistrict);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
-            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupsUser[0].FieldActivityId);
-            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupsUser[0].OrganizationId);
+            List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
+            ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", groupsUser[0].FieldActivityId);
+            List<Organization> organization = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
+            ViewData["OrganizationId"] = new SelectList(organization, "IdOrganization", "Name", groupsUser[0].OrganizationId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
             List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCityDistrict).ToList();
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
@@ -152,6 +258,7 @@ namespace CollectVoters.Controllers
             ///////
             int[] stationsId = pollingStations.Select(p => p.StationId ?? 0).ToArray();
             List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+            stations.Sort((s1, s2) => Convert.ToInt32(s1.Name) - Convert.ToInt32(s2.Name));
             ViewData["StationId"] = new SelectList(stations, "IdStation", "Name");
             //////
 
@@ -174,13 +281,22 @@ namespace CollectVoters.Controllers
 
                 if (searchFriend.Count == 0)
                 {
-                    if (!friend.Unpinning)
+                    friend.DateRegistrationSite = DateTime.Today;
+
+                    User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                    friend.UserId = userSave.IdUser;
+                    friend.PhoneNumberResponsible = userSave.Telephone;
+                    //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
+                    friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
+                    //friend.Qrcode = fileNameQRcode;
+                    friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
+
+                    if (friend.Unpinning)
                     {
-                        User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                        friend.UserId = userSave.IdUser;
-                        //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                        string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png");
-                        friend.Qrcode = fileNameQRcode;
+                        friend.CityDistrictId = null;
+                        friend.StreetId = null;
+                        friend.HouseId = null;
+                        friend.Apartment = null;
 
                         ////???
                         //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
@@ -189,32 +305,34 @@ namespace CollectVoters.Controllers
                     }
                     else
                     {
-                        friend.CityDistrictId = null;
-                        friend.StreetId = null;
-                        friend.HouseId = null;
-                        friend.Apartment = null;
+                        friend.Adress = null;
                     }
 
                     _context.Add(friend);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(LkAdmin));
                 }
                 else ModelState.AddModelError("", "Данный избиратель уже был внесен в списки ранее!");
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<Groupu> filterGroupUser = _serviceUser.FilterGroups(groupsUser).ToList();
+            int[] idFieldActivityUser = filterGroupUser.Select(g => g.FieldActivityId ?? 0).ToArray();
+            int[] idOrganizationUser = filterGroupUser.Select(g => g.OrganizationId ?? 0).ToArray();
 
-            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
+
+            ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
-            List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.ToList();
-            ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
-            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
+            List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
+            ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", friend.FieldActivityId);
+            List<Organization> organization = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
+            ViewData["OrganizationId"] = new SelectList(organization, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "Name", friend.UserId);
             ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
 
-            if (!friend.Unpinning)
+            if (!friend.Unpinning && friend.CityId != 1)
             {
                 ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
                 ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
@@ -251,17 +369,31 @@ namespace CollectVoters.Controllers
             {
                 return NotFound();
             }
+            int selectedIndexCityDistrict = 1;
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<Groupu> filterGroupUser = _serviceUser.FilterGroups(groupsUser).ToList();
+            int[] idFieldActivityUser = filterGroupUser.Select(g => g.FieldActivityId ?? 0).ToArray();
+            int[] idOrganizationUser = filterGroupUser.Select(g => g.OrganizationId ?? 0).ToArray();
 
-            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
+            ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
             ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
-            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
-            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
+            List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
+            ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", friend.FieldActivityId);
+            List<Organization> organization = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
+            ViewData["OrganizationId"] = new SelectList(organization, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            var polingStations = _context.PollingStation.Where(p => p.CityDistrictId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault());
+            List<PollingStation> polingStations;
+            if (friend.CityDistrictId != null)
+            {
+                polingStations = _context.PollingStation.Where(p => p.CityDistrictId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+            }
+            else
+            {
+                polingStations = _context.PollingStation.Where(p => p.CityDistrictId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+            }
             //ViewData["PollingStationId"] = new SelectList(polingStations, "IdPollingStation", "Name", friend.PollingStationId);
 
             ///////
@@ -283,7 +415,7 @@ namespace CollectVoters.Controllers
         // POST: Friends/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
+        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
         {
             if (id != friend.IdFriend)
             {
@@ -299,14 +431,18 @@ namespace CollectVoters.Controllers
 
                     if (searchFriend.Count == 0)
                     {
-                        if (!friend.Unpinning)
-                        {
-                            User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                            friend.UserId = userSave.IdUser;
-                            //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                            string fileNameQRcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png");
-                            friend.Qrcode = fileNameQRcode;
+                        User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                        //friend.UserId = userSave.IdUser;
+                        //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
+                        friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
+                        //friend.Qrcode = fileNameQRcode;
 
+                        if (friend.Unpinning && friend.CityId != 1)
+                        {
+                            friend.CityDistrictId = null;
+                            friend.StreetId = null;
+                            friend.HouseId = null;
+                            friend.Apartment = null;
                             ////???
                             //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
                             //friend.StationId = pollingStationSearch.StationId;
@@ -314,10 +450,7 @@ namespace CollectVoters.Controllers
                         }
                         else
                         {
-                            friend.CityDistrictId = null;
-                            friend.StreetId = null;
-                            friend.HouseId = null;
-                            friend.Apartment = null;
+                            friend.Adress = null;
                         }
                         try
                         {
@@ -335,7 +468,7 @@ namespace CollectVoters.Controllers
                                 throw;
                             }
                         }
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(LkAdmin));
 
                     }
                     else ModelState.AddModelError("", "Данный избиратель уже был внесен в списки ранее!");
@@ -344,19 +477,25 @@ namespace CollectVoters.Controllers
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<Groupu> filterGroupUser = _serviceUser.FilterGroups(groupsUser).ToList();
+            int[] idFieldActivityUser = filterGroupUser.Select(g => g.FieldActivityId ?? 0).ToArray();
+            int[] idOrganizationUser = filterGroupUser.Select(g => g.OrganizationId ?? 0).ToArray();
 
-            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", friend.GroupUId);
+            ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
             ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
-            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", friend.FieldActivityId);
-            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", friend.OrganizationId);
+            List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
+            ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", friend.FieldActivityId);
+            List<Organization> organization = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
+            ViewData["OrganizationId"] = new SelectList(organization, "IdOrganization", "Name", friend.OrganizationId);
             ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
             ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
+
             return View(friend);
         }
 
@@ -417,7 +556,7 @@ namespace CollectVoters.Controllers
             }
             else
             {
-                friends = await _serviceFriends.SearchFriendsByElectoralDistrictAndGroups(electoralDistrictDTO, groupsUser).ToListAsync();
+                friends = await _serviceFriends.SearchFriendsByElectoralDistrictAndGroupsUsers(electoralDistrictDTO, groupsUser).ToListAsync();
             }
 
             return PartialView(friends);
@@ -427,24 +566,142 @@ namespace CollectVoters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SearchFriendsByFieldActivity([FromBody] FieldActivityDTO fieldActivityDTO)
         {
-
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
             Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
             List<Friend> friends=null;
 
-            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            if (fieldActivityDTO.LimitUpload != null)
             {
-                friends = await _serviceFriends.SearchFriendsByFieldActivite(fieldActivityDTO).ToListAsync();
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByFieldActiviteLimit(fieldActivityDTO, fieldActivityDTO.LimitUpload.Value).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByFieldActiviteAndGroupsUsersLimit(fieldActivityDTO, groupsUser, fieldActivityDTO.LimitUpload.Value).ToListAsync();
+                }
             }
             else
             {
-                friends = await _serviceFriends.SearchFriendsByFieldActiviteAndGroups(fieldActivityDTO, groupsUser).ToListAsync();
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByFieldActivite(fieldActivityDTO).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByFieldActiviteAndGroupsUsers(fieldActivityDTO, groupsUser).ToListAsync();
+                }
             }
 
             return PartialView(friends);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SearchFriendsByAllFieldActivity([FromBody] FieldActivityDTO fieldActivityDTO)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            List<Friend> friends = null;
+
+            if(fieldActivityDTO.LimitUpload != null)
+            {
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.GetAllFriendsLimit(fieldActivityDTO.LimitUpload.Value).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.GetAllFriendsByGroupUsersLimit(groupsUser, fieldActivityDTO.LimitUpload.Value).ToListAsync();
+                }
+            }
+            else
+            {
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.GetAllFriends().ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.GetAllFriendsByGroupUsers(groupsUser).ToListAsync();
+                }
+            }
+
+            return PartialView(friends);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SearchFriendsByOrganization([FromBody] OrganizationDTO organizationDTO)
+        {
+
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            List<Friend> friends = null;
+
+            if (organizationDTO.LimitUpload != null)
+            {
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByOrganizationLimit(organizationDTO, organizationDTO.LimitUpload.Value).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByOrganizationAndGroupsUsersLimit(organizationDTO, groupsUser, organizationDTO.LimitUpload.Value).ToListAsync();
+                }
+            }
+            else
+            {
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByOrganization(organizationDTO).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByOrganizationAndGroupsUsers(organizationDTO, groupsUser).ToListAsync();
+                }
+            }
+
+            return PartialView(friends);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SearchFriendsByGroup([FromBody] GroupDTO groupDTO)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            List<Friend> friends = null;
+
+            if (groupDTO.LimitUpload != null)
+            {
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByGroupLimit(groupDTO, groupDTO.LimitUpload.Value).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByGroupAndGroupsUsersLimit(groupDTO, groupsUser, groupDTO.LimitUpload.Value).ToListAsync();
+                }
+            }
+            else
+            {
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByGroup(groupDTO).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByGroupAndGroupsUsers(groupDTO, groupsUser).ToListAsync();
+                }
+            }
+            return PartialView(friends);
+        }
 
 
         private bool FriendExists(long id)

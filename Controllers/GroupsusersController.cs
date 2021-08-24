@@ -37,9 +37,9 @@ namespace voteCollector.Controllers
         public IActionResult Create()
         {
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
-
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber");
 
             return View();
         }
@@ -56,9 +56,10 @@ namespace voteCollector.Controllers
                 return RedirectToAction(nameof(Index));
             }
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -76,9 +77,10 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -113,9 +115,10 @@ namespace voteCollector.Controllers
                 return RedirectToAction(nameof(Index));
             }
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
 
             ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -158,7 +161,7 @@ namespace voteCollector.Controllers
         [HttpGet]
         public async Task<IActionResult> RedirectTo()
         {
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("LkAdmin", "Admin");
         }
     }
 }

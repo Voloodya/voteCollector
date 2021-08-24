@@ -175,7 +175,7 @@ namespace voteCollector.Controllers
         [HttpGet]
         public async Task<IActionResult> RedirectTo()
         {
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("LkAdmin", "Admin");
         }
 
     }

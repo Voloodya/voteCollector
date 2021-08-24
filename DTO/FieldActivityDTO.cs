@@ -9,5 +9,6 @@ namespace voteCollector.DTO
     {
         public int IdFieldActivity { get; set; }
         public string Name { get; set; }
+        public int? LimitUpload { get; set; }
     }
 }

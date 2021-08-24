@@ -34,5 +34,6 @@ namespace voteCollector.Models
         [ForeignKey(nameof(UserId))]
         [InverseProperty("Groupsusers")]
         public virtual User User { get; set; }
+        
     }
 }

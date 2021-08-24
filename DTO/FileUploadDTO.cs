@@ -15,5 +15,6 @@ namespace voteCollector.DTO
         public string CityName { get; set; }
         public string Street { get; set; }
         public string House { get; set; }
+        public string ErrorUpload { get; set; }
     }
 }

@@ -81,6 +81,7 @@ namespace voteCollector.Models
         [DisplayName("Подразделение")]
         [Column("Organization_id")]
         public int? OrganizationId { get; set; }
+        [Required(ErrorMessage = "Не указана группа (подведомств. учреждение!")]
         [DisplayName("Подведом. учрежд.")]
         [Column("GroupU_id")]
         public int? GroupUId { get; set; }
@@ -129,6 +130,10 @@ namespace voteCollector.Models
         [Column("FriendStatus_id")]
         [DisplayName("Статус избирателя")]
         public int? FriendStatusId { get; set; }
+        [Column("ByteQRcode", TypeName = "mediumblob")]
+        public byte[] ByteQrcode { get; set; }
+        [Column(TypeName = "varchar(45)")]
+        public string TypeImage { get; set; }
 
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Friends")]

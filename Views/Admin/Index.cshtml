@@ -1,15 +1,9 @@
-﻿@model IEnumerable<voteCollector.Models.Friend>
+﻿@model IEnumerable<voteCollector.Models.Report>
 
 @{
     ViewData["Title"] = "Index";
 }
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
-@functions {
-    public string GetAntiXsrfRequestToken()
-    {
-        return Xsrf.GetAndStoreTokens(Context).RequestToken;
-    }
-}
+
 <style>
     #buttonsright input {
         font-size: 12px;
@@ -21,23 +15,23 @@
         display: block;
     }
 
-    #friendTable {
+    #reportFieldActivityTable {
         counter-reset: rowNumber;
         font-size: 14px;
     }
 
-        #friendTable thead {
+        #reportFieldActivityTable thead {
             background: Gainsboro;
             word-wrap: break-word;
             /* word-break: break-all; */
         }
 
-        #friendTable tbody tr {
+        #reportFieldActivityTable tbody tr {
             counter-increment: rowNumber;
             font-size: 14px;
         }
 
-        #friendTable tr td:first-child::before {
+        #reportFieldActivityTable tr td:first-child::before {
             content: counter(rowNumber);
             min-width: 1em;
             margin-right: 0.5em;
@@ -45,11 +39,6 @@
         }
 </style>
 
-<div id="buttonsright">
-    <p>
-        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
-    </p>
-</div>
 
 @if (User.Identity.IsAuthenticated)
 {
@@ -57,6 +46,8 @@
     <p id="numberRecords"><font size="4" color="black" face="Arial"></font></p>
 
     <p>
+        <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
+        <a asp-action="LkAdmin">Избиратели</a> |
         <a asp-controller="Users" asp-action="Index">Пользователи</a> |
         <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
         <a asp-controller="Groupus" asp-action="Index">Группы</a> |
@@ -71,346 +62,72 @@ else
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
 
+<h1>Отчет</h1>
 
-
-<h1>Избиратели</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
-    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',22)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
-</p>
-
-<div class="row">
-    <input type="hidden" id="RequestVerificationToken"
-           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
-
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="control-label">Организация</label>
-            <select id="SelectFieldActivityId" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="control-label">Подразделение</label>
-            <select id="SelectOrganizationId" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="control-label">Подведомств. учреждение</label>
-            <select id="SelectGroupId" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="control-label">Избирательный округ</label>
-            <select id="SelectElectoralDistrictId" class="form-control"></select>
-        </div>
-    </div>
-</div>
-
-<table class="table" id="friendTable">
+<table class="table" id="reportFieldActivityTable">
     <thead>
         <tr>
             <th></th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.IdFriend)
+            <th>
+                @Html.DisplayNameFor(model => model.Responseble)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FamilyName)
+                @Html.DisplayNameFor(model => model.NameObject)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.NumberVoters)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PatronymicName)
+                @Html.DisplayNameFor(model => model.NumberVoted)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FieldActivity)
+                @Html.DisplayNameFor(model => model.NumberEmployees)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Organization_)
+                @Html.DisplayNameFor(model => model.PersentVotersByEmploees)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.GroupU)
+                @Html.DisplayNameFor(model => model.PersentVotedByVoters)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                @Html.DisplayNameFor(model => model.PersentVotedByEmploees)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ElectoralDistrict)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Station)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Street)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.House)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Building)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Apartment)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Telephone)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateRegistrationSite)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VotingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Voter)
-            </th>
-            @*<th>
-            @Html.DisplayNameFor(model => model.MicroDistrict)
-        </th>*@
-            <th>
-                Удалить
-            </th>
-            <th>Действия</th>
+            <th></th>
         </tr>
     </thead>
-    <tbody id="TbodyFriendTable">
+    <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td align="center"></td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.IdFriend)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FamilyName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PatronymicName)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Organization_.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.GroupU.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.City.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Station.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Street.Name)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.House.Name)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Building)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Apartment)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Telephone)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.DateRegistrationSite)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.VotingDate)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Voter)
-            </td>
-            @*<td class="colFilter">
-            @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
-        </td>*@
-            <td>
-                <input type="checkbox">
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdFriend">Править</a> |
-                <a asp-action="Details" asp-route-id="@item.IdFriend">Подробнее</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdFriend">Удалить</a>
-            </td>
-        </tr>
+            <tr>
+                <td align="center"></td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Responseble)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameObject)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberVoters)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberVoted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberEmployees)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersentVotersByEmploees)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersentVotedByVoters)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersentVotedByEmploees)
+                </td>
+                <td>
+                    <a asp-action="ReportOrganization" asp-route-id="@item.IdOdject">Отчет по подразделениям</a>
+                </td>
+            </tr>
         }
     </tbody>
-    <tfoot>
-        <tr>
-            <th></th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.IdFriend)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FamilyName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PatronymicName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FieldActivity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Organization_)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GroupU)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ElectoralDistrict)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Station)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Street)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.House)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Building)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Apartment)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.Telephone)
-            </th>
-            <th style="display:none">
-                @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateRegistrationSite)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VotingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Voter)
-            </th>
-            @*<th>
-            @Html.DisplayNameFor(model => model.MicroDistrict)
-        </th>*@
-            <th>
-                Удалить
-            </th>
-            <th>Действия</th>
-        </tr>
-    </tfoot>
 </table>
-<table class="table" id="resultTable">
-    <tbody>
-        <tr>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-                <font size="3" color="black" b face="Arial"><b>Итого проголосовавших:</b></font>
-            </td>
-            <td id="totalVoter">
-            </td>
-            <td>
-                <font size="3" color="black" b face="Arial"><b>Всего избирателей:</b></font>
-            </td>
-            <td id="totalFriends" align="center">
-                <font size="3" color="black" b face="Arial"></font>
-            </td>
-            <td style="display:none">
-            </td>
-            <td align="center">
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-<environment include="Development">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-</environment>
-
-<environment include="Production">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-</environment>
-
-@section Scripts {
-
-    <script type="text/javascript" src="~/js/JS_Index_Friends_Admin.js"></script>
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    @{
-        if (TempData["msg"] != null)
-        {
-            <script>
-            alert('@TempData["msg"]')
-            </script>
-        }
-    }
-}
-
-
-

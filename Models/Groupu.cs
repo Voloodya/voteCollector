@@ -27,7 +27,7 @@ namespace voteCollector.Models
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
         [DisplayName("Организация")]
-        [Required(ErrorMessage = "Не указана отрасль")]
+        //[Required(ErrorMessage = "Не указана отрасль")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
         [DisplayName("Подведом. учрежд.")]
@@ -42,7 +42,7 @@ namespace voteCollector.Models
         [DisplayName("Подчиняется")]
         [Column("Group_Parents_id")]
         public int? GroupParentsId { get; set; }
-        [DisplayName("Сотрудников")]
+        [DisplayName("Численность")]
         [Column("NumberEmployees")]
         public int? NumberEmployees { get; set; }
         [DisplayName("Ответственный")]
@@ -74,6 +74,7 @@ namespace voteCollector.Models
         [InverseProperty(nameof(Groupu.GroupParents))]
         public virtual ICollection<Groupu> InverseGroupParents { get; set; }
 
-
+        [NotMapped]
+        public bool Visited { get; set; }
     }
 }

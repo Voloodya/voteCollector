@@ -12,5 +12,6 @@ namespace voteCollector.DTO
         public string CityName { get; set; }
         public string StreetName { get; set; }
         public string HouseName { get; set; }
+        public int? LimitUpload { get; set; }
     }
 }

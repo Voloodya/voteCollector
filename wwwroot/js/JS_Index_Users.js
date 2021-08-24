@@ -6,7 +6,7 @@ $(document).ready(function () {
         paging: false,
         //ajax: '/ajax/arrays.txt',
         language: {
-            url: "http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
+            url: "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
         },
 
         initComplete: function () {

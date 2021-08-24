@@ -3,6 +3,7 @@ let partMyURL = "";
 if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = "";
 }
+let numberColumnWhithVote = 19;
 
 // Define a custom selector icontains instead of overriding the existing expression contains
 // A global js asset file will be a good place to put this code
@@ -28,11 +29,10 @@ $(document).ready(function () {
         retrieve: true,
         paging: false,
         language: {
-            url: "http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
+            url: "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
         },
-
         initComplete: function () {
-            this.api().columns([6,8,13,14,19,21]).every(function () {
+            this.api().columns([6,8,14,15,16,21]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -74,11 +74,11 @@ function UpdateTablePlagin () {
         retrieve: true,
         paging: false,
         language: {
-            url: "http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
+            url: "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"
         },
 
         initComplete: function () {
-            this.api().columns([6, 8, 13, 14, 19, 21]).every(function () {
+            this.api().columns([6, 8, 14, 15,16, 21]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -108,143 +108,12 @@ function UpdateTablePlagin () {
     });
 };
 
-
-// Загрузка избирательных округов
-$(document).ready(function () {
-
-    $.ajax({
-        // url: "http://localhost:18246/api/API/getElectoralDistrict",
-        url: partMyURL + "/api/API/getElectoralDistrict",
-        //url: "/CollectVoters/api/API/getElectoralDistrict",
-        headers:
-        {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': $('#RequestVerificationToken').val()
-        },
-        type: 'GET',
-        dataType: "json",
-        success: function (data) {
-
-            if (data != undefined) {
-                var dataSort = data.sort(function (a, b) {
-                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                });
-            }
-            DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', 'SelectElectoralDistrictId', '<option/>');
-
-        },
-        error: function (result, status, er) {
-            alert("error: " + result + " status: " + status + " er:" + er);
-        }
-    });
-
-});
-
-// Загрузка сфер деятельности
-$(document).ready(function () {
-
-    $.ajax({
-        // url: "http://localhost:18246/api/API/getElectoralDistrict",
-        url: partMyURL + "/api/API/getfieldactivite",
-        //url: "/CollectVoters/api/API/getElectoralDistrict",
-        headers:
-        {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': $('#RequestVerificationToken').val()
-        },
-        type: 'GET',
-        dataType: "json",
-        success: function (data) {
-
-            if (data != undefined) {
-                var dataSort = data.sort(function (a, b) {
-                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                });
-            }
-            DataFillingSelect(dataSort, 'idFieldActivity', 'name', 'SelectFieldActivityId', '<option/>');
-
-            GeneratingChangeEvent('SelectFieldActivityId');
-        },
-        error: function (result, status, er) {
-            alert("error: " + result + " status: " + status + " er:" + er);
-        }
-    });
-});
-
-// Загрузка организаций
-$(function () {
-    $("#SelectFieldActivityId").change(function () {
-        var idFielfActivity = Number.parseInt($('#SelectFieldActivityId').val());
-
-        $.ajax({
-            url: partMyURL + "/api/API/getorganization" + "/" + idFielfActivity,
-            headers:
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            type: 'GET',
-            dataType: "json",
-            success: function (data) {
-
-                if (data != undefined) {
-                    var dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                    });
-                }
-                DataFillingSelect(dataSort, 'idOrganization', 'name', 'SelectOrganizationId', '<option/>');
-
-                setTimeout(GeneratingChangeEvent('SelectOrganizationId'),1000);
-            },
-            error: function (result, status, er) {
-                alert("error: " + result + " status: " + status + " er:" + er);
-            }
-        });
-    });
-});
-
-// Загрузка групп
-$(function () {
-    $("#SelectOrganizationId").change(function () {
-        var idorganization = Number.parseInt($('#SelectOrganizationId').val());
-
-        $.ajax({
-            url: partMyURL + "/api/API/getgroupsbyorganization" + "/" + idorganization,
-            headers:
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            type: 'GET',
-            dataType: "json",
-            success: function (data) {
-
-                if (data != undefined) {
-                    var dataSort = data.sort(function (a, b) {
-                        return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                    });
-                }
-                DataFillingSelect(dataSort, 'IdGroup', 'name', 'SelectGroupId', '<option/>');
-
-                GeneratingChangeEvent('SelectGroupId');
-            },
-            error: function (result, status, er) {
-                alert("error: " + result + " status: " + status + " er:" + er);
-            }
-        });
-    });
-});
-
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
-document.getElementById('totalFriends').rows[0].cols[21] = nrows;
+document.getElementById('totalFriends').innerHTML = nrows;
 
-$('friendTable').ready(CountVoters('friendTable',18));
-$('friendTable').change(CountVoters('friendTable',18));
+$('friendTable').ready(CountVoters('friendTable', numberColumnWhithVote));
+$('friendTable').change(CountVoters('friendTable', numberColumnWhithVote));
 
 function CountVoters(idObjectCount, numberColumn) {
     var table = document.getElementById(idObjectCount);
@@ -288,7 +157,7 @@ function deleteSelected(idObject, numberColumn) {
                 console.log(response);
                 deleteTrTableBody(idObject, jsonMasId);
                 UpdatingFields(idObject, 'numberRecords', 'totalFriends');
-                CountVoters('friendTable', 18);
+                CountVoters('friendTable', numberColumnWhithVote);
             },
             error: function (result, status, er) {
                 alert("error: " + result + " status: " + status + " er:" + er);
@@ -296,87 +165,6 @@ function deleteSelected(idObject, numberColumn) {
         });
     }
 }
-// Обновление списка избирателей по избирательному округу
-$(function () {
-    $("#SelectElectoralDistrictId").change(function () {
-        var formData = { 'IdElectoralDistrict': Number.parseInt($('#SelectElectoralDistrictId').val()), 'Name': $('#SelectElectoralDistrictId>option:selected').text() };
-        //$('#' + 'friendTable' + ' tbody > tr').remove();
-        
-        $.ajax({
-            type: 'POST',
-            //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
-            url: 'Admin/SearchFriendsByElectoralDistrict/',
-            headers:
-            {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            data: JSON.stringify(formData),
-            success: function (data) {
-
-                // Delete rows
-                var friendDataTable = $('#friendTable').DataTable();
-                friendDataTable.rows().remove().draw();
-                //friendDataTable.rows.add($(data)).draw();
-                //friendDataTable.Empty();
-                $('#friendTable').empty();
-                // Destroy object DataTable
-                friendDataTable.destroy();                
-
-                // Update tbody new rows with data
-                $('#friendTable').replaceWith(data);
-                UpdatingFields('friendTable', 'numberRecords','totalFriends');
-
-                UpdateTablePlagin();
-                CountVoters('friendTable', 18);
-            },
-            error: function (result, status, er) {
-                alert('error: ' + result + ' status: ' + status + ' er:' + er);
-            }
-        });
-    });
-});
-
-// Обновление списка избирателей по сфере деятельности
-$(function () {
-    $("#SelectFieldActivityId").change(function () {
-        var formData = { 'IdFieldActivity': Number.parseInt($('#SelectFieldActivityId').val()), 'Name': $('#SelectFieldActivityId>option:selected').text() };
-        //$('#' + 'friendTable' + ' tbody > tr').remove();
-
-        $.ajax({
-            type: 'POST',
-            //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
-            url: 'Admin/SearchFriendsByFieldActivity/',
-            headers:
-            {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            data: JSON.stringify(formData),
-            success: function (data) {
-
-                // Delete rows
-                var friendDataTable = $('#friendTable').DataTable();
-                friendDataTable.rows().remove().draw();
-                //friendDataTable.rows.add($(data)).draw();
-                //friendDataTable.Empty();
-                $('#friendTable').empty();
-                // Destroy object DataTable
-                friendDataTable.destroy();
-
-                // Update tbody new rows with data
-                $('#friendTable').replaceWith(data);
-                UpdatingFields('friendTable', 'numberRecords','totalFriends');
-
-                UpdateTablePlagin();
-                CountVoters('friendTable', 18);
-            },
-            error: function (result, status, er) {
-                alert('error: ' + result + ' status: ' + status + ' er:' + er);
-            }
-        });
-    });
-});
 
 function deleteTrTableBody(idObject, jsonMasId) {
 

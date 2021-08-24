@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using voteCollector.Data;
 using voteCollector.DTO;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
@@ -14,10 +15,19 @@ namespace voteCollector.Controllers
     public class APIController : ControllerBase
     {
         private readonly VoterCollectorContext _context;
+        private string NameServer;
+        private string WayController;
+        private string NameQRcodeParametrs;
+        private string WayPathQrCodes;
 
         public APIController(VoterCollectorContext context)
         {
             _context = context;
+            NameServer = "http://оренбургвсе.рф";
+            // WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
+            WayController = "/api/QRcodeСheckAPI/checkqrcode";
+            NameQRcodeParametrs = "qrText";
+            WayPathQrCodes = "/wwwroot/qr_codes/";
         }
 
         [HttpGet("getSities")]
@@ -65,61 +75,64 @@ namespace voteCollector.Controllers
         [HttpGet("getorganization/{idFielfActivity}")]
         public IActionResult GetOrganizationActivity(int idFielfActivity)
         {
-            List<Groupu> groups = _context.Groupu.Include(g => g.Organization).Where(g => g.FieldActivityId == idFielfActivity).ToList();
+            List<Groupu> groups = _context.Groupu.Include(g => g.Organization).Where(g => g.FieldActivityId == idFielfActivity && g.Level == 2).ToList();
             List<int> idOrganizations = groups.Select(g => g.Organization.IdOrganization).ToList().Distinct().ToList();
-
+            List<OrganizationDTO> organizationDTOs = new List<OrganizationDTO>();
 
             if (idOrganizations.Count>0)
             {
                 List<Organization> organizations = _context.Organization.Where(org => idOrganizations.Contains(org.IdOrganization)).ToList();
-                List<OrganizationDTO> organizationDTOs = organizations.Select(org => new OrganizationDTO { IdOrganization = org.IdOrganization, Name = org.Name }).ToList();
+                organizationDTOs = organizations.Select(org => new OrganizationDTO { IdOrganization = org.IdOrganization, Name = org.Name }).ToList();
                 organizationDTOs.Add(new OrganizationDTO { IdOrganization = 0, Name = " Все" });
                 return Ok(organizationDTOs);
             }
-            return NoContent();
+            return Ok(organizationDTOs);
         }
 
         [HttpGet("getorganizationall")]
         public IActionResult GetOrganizationAll()
         {
 
-            List<Organization> organizations = _context.Organization.ToList();
+            List<Organization> organizations = _context.Groupu.Where(g => g.Level == 2).Select(g => g.Organization).Distinct().ToList();
 
+            List<OrganizationDTO> organizationDTOs = new List<OrganizationDTO>();
             if (organizations.Count > 0)
             {
-                List<OrganizationDTO> organizationDTOs = organizations.Select(org => new OrganizationDTO { IdOrganization = org.IdOrganization, Name = org.Name }).ToList();
+                organizationDTOs = organizations.Select(org => new OrganizationDTO { IdOrganization = org.IdOrganization, Name = org.Name }).ToList();
                 organizationDTOs.Add(new OrganizationDTO { IdOrganization = 0, Name = " Все" });
                 return Ok(organizationDTOs);
             }
-            return NoContent();
+            return Ok(organizationDTOs);
         }
 
         [HttpGet("getgroupsbyorganization/{idorganization}")]
         public IActionResult GetGroupsByOrganization(int idorganization)
         {
-            List<Groupu> groups = _context.Groupu.Where(g => g.OrganizationId == idorganization).ToList();
+            List<Groupu> groups = _context.Groupu.Where(g => g.OrganizationId == idorganization && g.Level>=3).ToList();
+            List<GroupDTO> groupDTOs = new List<GroupDTO>();
 
             if (groups.Count > 0)
             {
-                List<GroupDTO> groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
+                groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
                 groupDTOs.Add( new GroupDTO { IdGroup = 0, Name = " Все" });
                 return Ok(groupDTOs);
             }
-            return NoContent();
+            return Ok(groupDTOs);
         }
 
         [HttpGet("getgroupsall")]
         public IActionResult GetGroupsAll()
         {
-            List<Groupu> groups = _context.Groupu.ToList();
+            List<Groupu> groups = _context.Groupu.Where(g => g.Level>=3).ToList();
+            List<GroupDTO> groupDTOs = new List<GroupDTO>();
 
             if (groups.Count > 0)
             {
-                List<GroupDTO> groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
+                groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
                 groupDTOs.Add(new GroupDTO { IdGroup = 0, Name = " Все" });
                 return Ok(groupDTOs);
             }
-            return NoContent();
+            return Ok(groupDTOs);
         }
 
 
@@ -127,26 +140,26 @@ namespace voteCollector.Controllers
         public IActionResult SearchStreets(CityDTO citySelected)
         {
             List<Street> streets =  _context.Street.Where(s => s.CityId == citySelected.IdCity).ToList<Street>();
-            
+            List<StreetDTO> streetsDTO = new List<StreetDTO>();
             if (streets.Any())
             {
-                List<StreetDTO> streetsDTO = streets.Select(s => new StreetDTO { IdStreet = s.IdStreet, Name = s.Name }).ToList();
+                streetsDTO = streets.Select(s => new StreetDTO { IdStreet = s.IdStreet, Name = s.Name }).ToList();
                 return Ok(streetsDTO);                
             }
-            return NoContent();
+            return Ok(streetsDTO);
         }
 
         [HttpPost("searchHouse")]
         public IActionResult SearchHouse(StreetDTO streetSelected)
         {
             List<House> houses = _context.House.Where(h => h.StreetId == streetSelected.IdStreet).ToList<House>();
-
+            List<HouseDTO> housesDTO = new List<HouseDTO>();
             if (houses.Any())
             {
-                List<HouseDTO> housesDTO = houses.Select(h => new HouseDTO { IdHouse = h.IdHouse, Name = h.Name }).ToList();
+                housesDTO = houses.Select(h => new HouseDTO { IdHouse = h.IdHouse, Name = h.Name }).ToList();
                 return Ok(housesDTO);
             }
-            return NoContent();
+            return Ok(housesDTO);
         }
 
         [HttpPost("searchPollingStations/city")]
@@ -258,6 +271,30 @@ namespace voteCollector.Controllers
             else { return NoContent(); }
         }
 
+        [HttpPost("searchStations/streetAndhouse")]
+        public IActionResult SearchStationsByStreetAndHouse(StreetHouseDTO streetHouseDTO)
+        {
+            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.StreetId == streetHouseDTO.IdStreet && ps.HouseId == streetHouseDTO.IdHouse).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+
+            if (pollingStations.Any())
+            {
+                int[] stationsId = pollingStations.Select(p => p.StationId ?? 0).ToArray();
+
+                if (stationsId.Any())
+                {
+                    List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                    List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                    return Ok(stationDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else { return NoContent(); }
+        }
+
+
         [HttpPost("searchElectoraldistrict/station")]
         public IActionResult SearchElectoralDistrictByStation(StationDTO stationDTO)
         {
@@ -283,6 +320,94 @@ namespace voteCollector.Controllers
             {
                 return NoContent();
             }
+        }
+
+        [HttpPost("searchElectoraldistrict/stations")]
+        public IActionResult SearchElectoralDistrictByStations(StationDTO [] stationDTOs)
+        {
+
+            if (stationDTOs != null && stationDTOs.Length>0)
+            {
+                List<int> idStationsSearch = stationDTOs.Select(s => s.IdStation).ToList();
+                List<District> districts = _context.District.Where(d => idStationsSearch.Contains(d.StationId ?? 0)).ToList();
+                List<int> idElectralDistrictsSearh = districts.Select(ed => ed.IdDistrict).ToList();
+                List<ElectoralDistrict> electoralDistrict = _context.ElectoralDistrict.Where(ed => idElectralDistrictsSearh.Contains(ed.IdElectoralDistrict)).ToList();
+
+                if (electoralDistrict.Any())
+                {
+
+                    List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict = ed.IdElectoralDistrict, Name = ed.Name }).ToList();
+
+                    return Ok(electoralDistrictDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+
+        [HttpGet("getAllElectoraldistrict")]
+        public IActionResult GetAllElectoraldistrict()
+        {
+                List<ElectoralDistrict> electoralDistrict = _context.ElectoralDistrict.ToList();
+
+                if (electoralDistrict.Any())
+                {
+
+                    List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict = ed.IdElectoralDistrict, Name = ed.Name }).ToList();
+
+                    return Ok(electoralDistrictDTOs);
+                }
+                else
+                {
+                    return NoContent();
+                }
+        }
+
+        [HttpPost("CountNumberVoters")]
+        public IActionResult CountNumberVoters(StationDTO[] stationDTOs)
+        {
+
+            return Ok();
+        }
+
+
+        [HttpGet("RegenerateQRCodes")]
+        public IActionResult RegenerateQRCodes()
+        {
+            List<string> errors = new List<string>();
+            List<Friend> friends = _context.Friend.ToList();
+
+            foreach (Friend frnd in friends)
+            {                
+                frnd.ByteQrcode = QRcodeServices.GenerateQRcodeFile(frnd.FamilyName + " " + frnd.Name + " " + frnd.PatronymicName, frnd.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + frnd.TextQRcode, "png", WayPathQrCodes);
+
+                try
+                {
+                    _context.Update(frnd);
+                     _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    errors.Add("Ошибка: "+frnd.IdFriend.ToString());
+                    continue;
+                }
+            }
+
+            return Ok(errors);
+        }
+
+        [HttpGet("PostRequestQRcodes")]
+        public IActionResult PostRequestQRcodes()
+        {
+
+
+            return Ok();
         }
 
     }

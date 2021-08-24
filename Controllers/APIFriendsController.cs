@@ -19,11 +19,12 @@ namespace CollectVoters.Controllers
     {
         private readonly VoterCollectorContext _context;
         private ServiceFriends _serviceFriends;
+        
 
         public APIFriendsController(VoterCollectorContext context)
         {
             _context = context;
-            _serviceFriends = new ServiceFriends();
+            _serviceFriends = new ServiceFriends();            
         }
 
         // GET: api/APIFriends
@@ -43,7 +44,6 @@ namespace CollectVoters.Controllers
             {
                 return NotFound();
             }
-
             return friend;
         }
 

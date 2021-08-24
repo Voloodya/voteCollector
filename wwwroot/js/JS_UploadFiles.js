@@ -5,9 +5,10 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
 }
 
 async function UploadExcelToWebService(fileSource) {
-    var data = await ExcelToJSON('Freinds', fileSource);
+    var data = await ExcelToJSON('Friends', fileSource);
     data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'Unpinning', 'City', 'CityDistrict', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group', 'LoginUsers','Adress']);
-
+    data = await ReadingWritingEmailAddress(data);
+    document.getElementById('idDivMessage').innerHTML = "<h3>"+ " Идет загрузка!"+ "</h3>";
     $.ajax({
         type: 'POST',
         url: partMyURL+ '/api/FileApi/uploadDataFromFile',
@@ -27,6 +28,8 @@ async function UploadExcelToWebService(fileSource) {
             //}
             //DataFillingDiv(response, 'outText');
             DataFillingTableBody(data, 'fileUploadTable');
+            document.getElementById('idDivMessage').innerHTML = "<h3>" + " Загрузка завершена!" + "</h3>";
+            alert("Загрузка завершена!");
         },
         error: function (result, status, er) {
             alert('error: ' + result + ' status: ' + status + ' er:' + er);
@@ -35,8 +38,8 @@ async function UploadExcelToWebService(fileSource) {
 }
 
 async function UploadExcelToWebServiceMVC(fileSource) {
-    var data = await ExcelToJSON('Freinds', fileSource);
-    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'Unpinning', 'City', 'CityDistrict', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group', 'LoginUsers','Adress']);
+    var data = await ExcelToJSON('Friends', fileSource);
+    data = await removePropertysJsonObjects(data, ['FamilyName', 'Name', 'PatronymicName', 'DateBirth', 'Unpinning', 'City', 'CityDistrict', 'Street', 'House', 'Apartment', 'Telephone', 'ElectiralDistrict', 'PollingStationName', 'Organization', 'FieldActivityName', 'PhoneNumberResponsible', 'DateRegistrationSite', 'VotingDate', 'Vote', 'TextQRcode', 'Email', 'Description', 'Group', 'LoginUsers', 'Adress','FriendStatus']);
 
     $.ajax({
         type: 'POST',
@@ -192,4 +195,29 @@ function createRow(data) {
     trElement += '</tr>';
 
     return trElement;
+}
+
+function ReadingWritingEmailAddress(data) {
+
+    let emailAdress;
+
+    for (var i = 0; i < data.length; i++) {
+        
+        if (i === 0) {
+            emailAdress = data[i].Name;
+        }
+        else if (i > 0) {
+            if (data[i]['FamilyName'] === "" || data[i]['FamilyName'] == undefined || data[i]['FamilyName'] == null) {
+                data.splice(i, 1);
+                i--;
+            }
+            else {
+                data[i]['LoginUsers'] = emailAdress;
+            }
+        }
+    }
+
+    data.splice(0, 2);
+
+    return data;
 }

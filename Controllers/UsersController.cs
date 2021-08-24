@@ -175,6 +175,33 @@ namespace voteCollector.Controllers
             return _context.User.Any(e => e.IdUser == id);
         }
 
+        // GET: Users/Edit/5
+        private async Task<IActionResult> GetChildGroupsUser(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            User user = await _context.User.Include(u => u.Groupus).FirstOrDefaultAsync(u => u.IdUser==id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            Groupu groupuUsers;
+            if (user.Groupus != null) {
+                groupuUsers = user.Groupus.ToList().First();
+            }
+            else
+            {
+                groupuUsers = _context.Groupsusers.Include(gu => gu.GroupU).Where(gu => gu.UserId == id).Select(gu => gu.GroupU).FirstOrDefault();
+            }
+            List<Groupu> groups = _serviceUser.GetAllChildGroupsBFS(groupuUsers,groupuUsers,groupuUsers);
+
+            return View(groups);
+
+        }
+
         private List<Groupu> GetGroupsUser(string userName)
         {
             User userSave = _context.User.Where(u => u.UserName.Equals(userName)).FirstOrDefault();
@@ -185,7 +212,7 @@ namespace voteCollector.Controllers
         [HttpGet]
         public async Task<IActionResult> RedirectTo()
         {
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("LkAdmin", "Admin");
         }
 
     }

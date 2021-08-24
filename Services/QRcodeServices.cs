@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using voteCollector.Models;
 using ZXing;
 using ZXing.Common;
 
@@ -13,26 +14,48 @@ namespace voteCollector.Services
     public class QRcodeServices
     {
         //Generates QR code files
-        public static string GenerateQRcodeFile(string fio, string dateBirth, string QRtext, string typeFile)
+        public static Byte [] GenerateQRcodeFile(string fio, string dateBirth, string QRtext, string typeFile, string wayPath)
         {
             //Generates QR code files
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(QRtext, QRCodeGenerator.ECCLevel.Q);
 
-            string fileName = Transliteration.Front(fio)+"_"+dateBirth.Replace('.','_').Replace(' ', '_').Replace(':', '_').Replace('/', '_');
+            Byte[] QRbytes = qrCodeData.GetRawData(QRCodeData.Compression.Uncompressed);
 
-            qrCodeData.SaveRawData("wwwroot/qr_codes/" + fileName + ".qrr", QRCodeData.Compression.Uncompressed);
+            //string fileName = Transliteration.Front(fio)+"_"+dateBirth.Replace('.','_').Replace(' ', '_').Replace(':', '_').Replace('/', '_');
 
-            SaveQRCodeDataInImageFile(qrCodeData,"wwwroot/qr_codes/" + fileName + "."+typeFile);
+            //qrCodeData.SaveRawData(wayPath + fileName + ".qrr", QRCodeData.Compression.Uncompressed);
 
-            return fileName;
+            //SaveQRCodeDataInImageFile(qrCodeData, wayPath + fileName + "."+typeFile);
+
+            return QRbytes;
         }
 
-        public static Bitmap ReadingQRcodeFromFile(string fileName)
+        public static Bitmap CreateBitmapFromBytes(Byte[] bytesQRcode)
         {
-            
+            QRCodeData qrCodeData = new QRCodeData(bytesQRcode, QRCodeData.Compression.Uncompressed);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+            //var imgType = Base64QRCode.ImageType.Jpeg;
+            //Base64QRCode qrCode64 = new Base64QRCode(qrCodeData);
+
+            return qrCodeImage;
+        }
+
+        public static Byte[] BitmapToBytes(Bitmap img)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream.ToArray();
+            }
+        }
+
+        public static Bitmap ReadingQRcodeFromFile(string way,string fileName)
+        {            
             // Чтение файла с сохраненным qr-кода
-            QRCodeData qrCodeDataSave = new QRCodeData("wwwroot/qr_codes/" + fileName + ".qrr", QRCodeData.Compression.Uncompressed);
+            QRCodeData qrCodeDataSave = new QRCodeData(way + fileName + ".qrr", QRCodeData.Compression.Uncompressed);
 
             QRCode qrCode = new QRCode(qrCodeDataSave);
             // Converting byte array qr-code in Bitmap
@@ -48,14 +71,6 @@ namespace voteCollector.Services
             qrCodeImage.Save(nameFile);
         }
 
-        public static Byte[] BitmapToBytes(Bitmap img)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                return stream.ToArray();
-            }
-        }
 
         public static string DecoderFromImage(Bitmap image)
         {

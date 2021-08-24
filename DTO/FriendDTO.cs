@@ -36,6 +36,7 @@ namespace voteCollector.DTO
         public string UserName { get; set; }
         public string LoginUsers { get; set; }
         public string Adress { get; set; }
+        public string FriendStatus { get; set; }
 
     }
 }

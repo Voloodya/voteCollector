@@ -45,7 +45,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Unpinning" class="control-label"></label>
-                <input id="boolUnpinning" asp-for="Unpinning" class="form-control" onchange="HideShowBlocks('boolUnpinning', 'divCityDistrict','divStreet','divHouse','divApartment','divAdessText');"/>
+                <input id="boolUnpinning" asp-for="Unpinning" class="form-control" onchange="HideShowBlocks('boolUnpinning', 'divCityDistrict','divStreet','divHouse','divApartment','divAdessText');" />
                 <span asp-validation-for="Unpinning" class="text-danger"></span>
             </div>
             <div class="form-row" id="divAdressFull">
@@ -54,7 +54,7 @@
                     <select id="CityId" asp-for="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
                     <span asp-validation-for="CityId" class="text-danger"></span>
                 </div>
-                <div id="divCityDistrict" class="form-group col-md-6" >
+                <div id="divCityDistrict" class="form-group col-md-6">
                     <label asp-for="CityDistrictId" class="control-label"></label>
                     <select id="CityDistrictId" asp-for="CityDistrictId" class="form-control" asp-items="ViewBag.CityDistrictId"></select>
                     <span asp-validation-for="CityDistrictId" class="text-danger"></span>
@@ -87,12 +87,12 @@
             </div>
             <div id="divAdessText" class="form-group" style="display:none">
                 <label asp-for="Adress" class="control-label"></label>
-                <input id="AdressId" asp-for="Adress" class="form-control"/>
+                <input id="AdressId" asp-for="Adress" class="form-control" />
                 <span asp-validation-for="Adress" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Telephone" class="control-label"></label>
-                <input id="phoneNumber" asp-for="Telephone" class="form-control" value="+7"/>
+                <input id="phoneNumber" asp-for="Telephone" class="form-control" />
                 <span asp-validation-for="Telephone" class="text-danger"></span>
             </div>
             <div class="form-row">
@@ -159,11 +159,6 @@
                 <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="GroupUId" class="control-label"></label>
-                <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
-                <span asp-validation-for="GroupUId" class="text-danger"></span>
-            </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label asp-for="FieldActivityId" class="control-label"></label>
@@ -172,13 +167,18 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label asp-for="OrganizationId" class="control-label"></label>
-                    <select asp-for="OrganizationId" class="form-control" asp-items="ViewBag.OrganizationId"></select>
+                    <select id="organizationSelectId" asp-for="OrganizationId" class="form-control" asp-items="ViewBag.OrganizationId"></select>
                     <span asp-validation-for="OrganizationId" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
+                <label asp-for="GroupUId" class="control-label"></label>
+                <select id="SelectGroupId" asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
+                <span asp-validation-for="GroupUId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="TextQRcode" class="control-label"></label>
-                <input asp-for="TextQRcode" class="form-control" disabled="disabled" />
+                <input asp-for="TextQRcode" class="form-control"/>
                 <span asp-validation-for="TextQRcode" class="text-danger"></span>
             </div>
 
@@ -187,7 +187,7 @@
                     <input type="submit" value="Сохранить" class="btn btn-primary btn-block" />
                 </div>
                 <div class="form-group col-md-6">
-                    <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+                    <a asp-action="LkAdmin" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
                 </div>
             </div>
         </form>
