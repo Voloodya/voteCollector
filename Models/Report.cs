@@ -26,11 +26,11 @@ namespace voteCollector.Models
         [DisplayName("Численность сотрудников")]
         public int NumberEmployees { get; set; }
         [DisplayName("Процент избирателей к численности")]
-        public int PersentVotersByEmploees { get; set; }
+        public double PersentVotersByEmploees { get; set; }
         [DisplayName("Процент проголосовавших к избирателям")]
-        public int PersentVotedByVoters { get; set; }
+        public double PersentVotedByVoters { get; set; }
         [DisplayName("Процент проголосовавших к численности")]
-        public int PersentVotedByEmploees { get; set; }
+        public double PersentVotedByEmploees { get; set; }
         public int IdParent { get; set; }
 
         [DisplayName("Вышестоящая структурная единица")]

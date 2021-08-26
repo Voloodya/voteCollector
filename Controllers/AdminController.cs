@@ -26,6 +26,7 @@ namespace CollectVoters.Controllers
         private string WayController;
         private string NameQRcodeParametrs;
         private ServiceUser _serviceUser;
+        private ServiceGroup _serviceGroup;
         private string MinNameElectoralDistrict;
         private string WayPathQrCodes;
 
@@ -34,6 +35,7 @@ namespace CollectVoters.Controllers
             _context = context;
             _logger = logger;
             _serviceFriends = new ServiceFriends();
+            _serviceGroup = new ServiceGroup(context);
             NameServer = "http://оренбургвсе.рф";
            // WayController = "/CollectVoters/api/QRcodeСheckAPI/checkqrcode";
             WayController = "/api/QRcodeСheckAPI/checkqrcode";
@@ -47,20 +49,64 @@ namespace CollectVoters.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends)
-                .Where(g => g.Level == 1).Distinct().Select(g => new Report
+
+            List<Groupu> groupusLvl1 = _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends)
+                .Where(g => g.Level == 1).Distinct().ToList();
+
+            List<Report> reports = new List<Report>();
+            
+             
+            foreach (Groupu grpLvl1 in groupusLvl1)
             {
-                Responseble = g.UserResponsible.FamilyName +" "+ g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
-                IdOdject = g.FieldActivityId ?? 0,
-                NameObject = g.FieldActivity.Name,
-                Level = g.Level ?? 0,
-                NumberEmployees = g.NumberEmployees ?? 0,
-                NumberVoters = g.Friends.Count,
-                NumberVoted = g.Friends.Select(f => f.Voter==true).Count(),
-            }).Distinct().ToListAsync();
+                Report report = new Report
+                {
+                    Responseble = grpLvl1.UserResponsible != null ? grpLvl1.UserResponsible.FamilyName + " " + grpLvl1.UserResponsible.Name + " " + grpLvl1.UserResponsible.PatronymicName + " (" + grpLvl1.UserResponsible.Telephone + ")" : "",
+                    IdOdject = grpLvl1.FieldActivityId ?? 0,
+                    NameObject = grpLvl1.FieldActivity.Name,
+                    Level = grpLvl1.Level ?? 0,
+                    NumberEmployees = grpLvl1.NumberEmployees ?? 0
+                };
+                int numberVoters = 0;
+                int numberVoted = 0;
+
+                List <Groupu> groupsChild = _serviceGroup.GetAllChildGroupsBFS(grpLvl1, grpLvl1, grpLvl1);
+
+                foreach(Groupu groupu in groupsChild)
+                {
+                    numberVoters += groupu.Friends.Count();
+                    numberVoted += groupu.Friends.Where(f => f.Voter == true).Count();
+                }
+                report.NumberVoters = numberVoters;
+                report.NumberVoted = numberVoted;
+                if (numberVoters != 0)
+                {
+                    report.PersentVotedByVoters = Math.Round((double) numberVoted / numberVoters *100, 2);
+                }
+                if (report.NumberEmployees != 0)
+                {
+                    report.PersentVotedByEmploees = Math.Round((double) numberVoted / report.NumberEmployees *100, 2);
+                }
+                if (report.NumberEmployees!=0) 
+                {
+                    report.PersentVotersByEmploees = Math.Round((double) numberVoters / report.NumberEmployees *100, 2);
+                }
+                reports.Add(report);
+            }
+
+            //List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends)
+            //    .Where(g => g.Level == 1).Distinct().Select(g => new Report
+            //{
+            //    Responseble = g.UserResponsible.FamilyName +" "+ g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
+            //    IdOdject = g.FieldActivityId ?? 0,
+            //    NameObject = g.FieldActivity.Name,
+            //    Level = g.Level ?? 0,
+            //    NumberEmployees = g.NumberEmployees ?? 0,
+            //    NumberVoters = g.Friends.Count,
+            //    NumberVoted = g.Friends.Select(f => f.Voter==true).Count(),
+            //}).Distinct().ToListAsync();
 
 
-            return View(report);
+            return View(reports);
         }
 
         [HttpPost]
