@@ -330,7 +330,7 @@ namespace voteCollector.Controllers
             {
                 List<int> idStationsSearch = stationDTOs.Select(s => s.IdStation).ToList();
                 List<District> districts = _context.District.Where(d => idStationsSearch.Contains(d.StationId ?? 0)).ToList();
-                List<int> idElectralDistrictsSearh = districts.Select(ed => ed.IdDistrict).ToList();
+                List<int> idElectralDistrictsSearh = districts.Select(ed => ed.ElectoralDistrictId ?? 0).ToList();
                 List<ElectoralDistrict> electoralDistrict = _context.ElectoralDistrict.Where(ed => idElectralDistrictsSearh.Contains(ed.IdElectoralDistrict)).ToList();
 
                 if (electoralDistrict.Any())

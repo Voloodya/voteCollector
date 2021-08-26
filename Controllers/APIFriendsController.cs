@@ -10,7 +10,7 @@ using voteCollector.DTO;
 using voteCollector.Models;
 using voteCollector.Services;
 
-namespace CollectVoters.Controllers
+namespace voteCollector.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,12 +19,16 @@ namespace CollectVoters.Controllers
     {
         private readonly VoterCollectorContext _context;
         private ServiceFriends _serviceFriends;
-        
+        private ServiceUser _serviceUser;
+
+
 
         public APIFriendsController(VoterCollectorContext context)
         {
             _context = context;
-            _serviceFriends = new ServiceFriends();            
+            _serviceFriends = new ServiceFriends();
+            _serviceUser = new ServiceUser(context);
+
         }
 
         // GET: api/APIFriends
@@ -159,6 +163,85 @@ namespace CollectVoters.Controllers
 
             return friendDTOs;
         }
+
+        [HttpPost("CountAllFriends")]
+        public async Task<IActionResult> CountAllFriends()
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.FirstOrDefault(g => g.Name.Equals("Main"));
+            NumberFriendsDTO numberFriendsDTO;
+
+            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberAllFriends();
+            }
+            else
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberAllFriendsByGroupsUsers(groupsUser);
+            }
+
+            return Ok(numberFriendsDTO);
+        }
+
+        [HttpPost("CountFriendsByFieldActivity")]
+        public async Task<IActionResult> CountFriendsByFieldActivity([FromBody] FieldActivityDTO fieldActivityDTO)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.FirstOrDefault(g => g.Name.Equals("Main"));
+            NumberFriendsDTO numberFriendsDTO;
+
+            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberFriendsByFieldActivite(fieldActivityDTO);
+            }
+            else
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberFriendsByFieldActiviteAndGroupsUsers(fieldActivityDTO, groupsUser);
+            }
+
+            return Ok(numberFriendsDTO);
+        }
+
+
+        [HttpPost("CountFriendsByOrganization")]
+        public async Task<IActionResult> CountFriendsByOrganization([FromBody] OrganizationDTO organizationDTO)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.FirstOrDefault(g => g.Name.Equals("Main"));
+            NumberFriendsDTO numberFriendsDTO;
+
+            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberFriendsByOrganization(organizationDTO);
+            }
+            else
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberFriendsByOrganizationAndGroupsUsers(organizationDTO, groupsUser);
+            }
+
+            return Ok(numberFriendsDTO);
+        }
+
+        [HttpPost("CountFriendsByGroup")]
+        public async Task<IActionResult> CountFriendsByGroup([FromBody] GroupDTO groupDTO)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.FirstOrDefault(g => g.Name.Equals("Main"));
+            NumberFriendsDTO numberFriendsDTO;
+
+            if (mainGroup != null && groupsUser.Contains(mainGroup))
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberFriendsByGroup(groupDTO);
+            }
+            else
+            {
+                numberFriendsDTO = _serviceFriends.CountNumberFriendsByGroupAndGroupsUsers(groupDTO, groupsUser);
+            }
+
+            return Ok(numberFriendsDTO);
+        }
+
+
 
 
         private bool FriendExists(long id)

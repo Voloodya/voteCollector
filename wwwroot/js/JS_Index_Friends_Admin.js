@@ -1,5 +1,5 @@
 ﻿
-let limitUpload = 3;
+let limitUpload = 100;
 let partMyURL = "";
 if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = "";
@@ -33,7 +33,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([8, 9]).every(function () {
+            this.api().columns([7, 8, 9]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -70,6 +70,7 @@ $(document).ready(function () {
     UploadAllOrganization();
     UploadAllGroups();
     UploadAllElectoralDistrict();
+    CountAllVoters();
 });
 
 // Действия при перерисовки таблицы
@@ -88,7 +89,7 @@ function UpdateTablePlagin () {
         },
 
         initComplete: function () {
-            this.api().columns([8, 9]).every(function () {
+            this.api().columns([7, 8, 9]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -215,8 +216,40 @@ $(function () {
         else {
             UpdateListVotersByGroup(limitUpload);
         }
+
     });
 });
+
+function UploadAllFieldActivity() {
+
+    $.ajax({
+        // url: "http://localhost:18246/api/API/getElectoralDistrict",
+        url: partMyURL + "/api/API/getfieldactivite",
+        //url: "/CollectVoters/api/API/getElectoralDistrict",
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        type: 'GET',
+        dataType: "json",
+        success: function (data) {
+
+            if (data != undefined) {
+                var dataSort = data.sort(function (a, b) {
+                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                });
+            }
+            DataFillingSelect(dataSort, 'idFieldActivity', 'name', 'SelectFieldActivityId', '<option/>');
+
+            //GeneratingChangeEvent('SelectFieldActivityId');
+        },
+        error: function (result, status, er) {
+            alert("error: " + result + " status: " + status + " er:" + er);
+        }
+    });
+}
 
 function UploadAllOrganization() {
     $.ajax({
@@ -306,39 +339,8 @@ function UploadAllElectoralDistrict() {
     });
 }
 
-function UploadAllFieldActivity() {
-
-    $.ajax({
-        // url: "http://localhost:18246/api/API/getElectoralDistrict",
-        url: partMyURL + "/api/API/getfieldactivite",
-        //url: "/CollectVoters/api/API/getElectoralDistrict",
-        headers:
-        {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': $('#RequestVerificationToken').val()
-        },
-        type: 'GET',
-        dataType: "json",
-        success: function (data) {
-
-            if (data != undefined) {
-                var dataSort = data.sort(function (a, b) {
-                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                });
-            }
-            DataFillingSelect(dataSort, 'idFieldActivity', 'name', 'SelectFieldActivityId', '<option/>');
-
-            //GeneratingChangeEvent('SelectFieldActivityId');
-        },
-        error: function (result, status, er) {
-            alert("error: " + result + " status: " + status + " er:" + er);
-        }
-    });
-}
 
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
-document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
 document.getElementById('totalFriends').innerHTML = nrows;
 
 $('friendTable').ready(CountVoters('friendTable', numberColumnWhithVote));
@@ -422,11 +424,15 @@ function UpdateListVotersByFieldActivity(limit) {
 
                 UpdateTablePlagin();
                 CountVoters('friendTable', numberColumnWhithVote);
+
+                OnOffButton('buttonUploadAll', true);
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
             }
         });
+
+        CountVotersByFieldActivity(formData);
     }
     else {
         $.ajax({
@@ -460,6 +466,8 @@ function UpdateListVotersByFieldActivity(limit) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
             }
         });
+
+        CountAllVoters();
     }
 }
 
@@ -503,11 +511,14 @@ function UpdateListVotersByOrganization(limit) {
 
                 UpdateTablePlagin();
                 CountVoters('friendTable', numberColumnWhithVote);
+
+                OnOffButton('buttonUploadAll', true);
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
             }
         });
+        CountVotersByOrganization(formData);
     }
     else {
         UpdateListVotersByFieldActivity(limit);
@@ -555,14 +566,118 @@ function UpdateListVotersByGroup(limit) {
 
                 UpdateTablePlagin();
                 CountVoters('friendTable', numberColumnWhithVote);
+
+                OnOffButton('buttonUploadAll', true);
+            },
+            error: function (result, status, er) {
+                alert('error: ' + result + ' status: ' + status + ' er:' + er);
+            }
+        });
+        CountVotersByGroup(formData);
+    }
+    else {
+        UpdateListVotersByOrganization(limit);
+    }
+}
+
+// Подсчет списка избирателей и проголосовавшим со всеми фильтрами "Все"
+function CountAllVoters() {
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/APIFriends/CountAllFriends/',
+            headers:
+            {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            data: JSON.stringify(),
+            success: function (data) {
+
+                document.getElementById('totalFriendsServ').innerHTML = data.numberFriends;
+                document.getElementById('totalVoteServ').innerHTML = data.numberVoter;
+
+            },
+            error: function (result, status, er) {
+                alert('error: ' + result + ' status: ' + status + ' er:' + er);
+            }
+        });
+}
+
+// Подсчет списка избирателей и проголосовавших по сфере деятельности
+function CountVotersByFieldActivity(formDataFieldActivity) {
+
+    if (formDataFieldActivity != undefined) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/APIFriends/CountFriendsByFieldActivity/',
+            headers:
+            {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            data: JSON.stringify(formDataFieldActivity),
+            success: function (data) {
+
+                document.getElementById('totalFriendsServ').innerHTML = data.numberFriends;
+                document.getElementById('totalVoteServ').innerHTML = data.numberVoter;
+
             },
             error: function (result, status, er) {
                 alert('error: ' + result + ' status: ' + status + ' er:' + er);
             }
         });
     }
-    else {
-        UpdateListVotersByOrganization(limit);
+}
+
+// Подсчет списка избирателей и проголосовавших по организации
+function CountVotersByOrganization(formDataOrganization) {
+
+    if (formDataOrganization != undefined) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/APIFriends/CountFriendsByOrganization/',
+            headers:
+            {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            data: JSON.stringify(formDataOrganization),
+            success: function (data) {
+
+                document.getElementById('totalFriendsServ').innerHTML = data.numberFriends;
+                document.getElementById('totalVoteServ').innerHTML = data.numberVoter;
+            },
+            error: function (result, status, er) {
+                alert('error: ' + result + ' status: ' + status + ' er:' + er);
+            }
+        });
+    }
+}
+
+// Подсчет списка избирателей и проголосовавших по группе
+function CountVotersByGroup(formDataGroup) {
+
+    if (formDataGroup != undefined) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/APIFriends/CountFriendsByGroup/',
+            headers:
+            {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('#RequestVerificationToken').val()
+            },
+            data: JSON.stringify(formDataGroup),
+            success: function (data) {
+
+                document.getElementById('totalFriendsServ').innerHTML = data.numberFriends;
+                document.getElementById('totalVoteServ').innerHTML = data.numberVoter;
+
+            },
+            error: function (result, status, er) {
+                alert('error: ' + result + ' status: ' + status + ' er:' + er);
+            }
+        });
     }
 }
 
@@ -574,8 +689,10 @@ function UpdateVotersFullFilters() {
     //// '/Admin/SearchFriendsByOrganization/'
     //UpdateListVotersByOrganization();
 
-    // '/Admin/SearchFriendsByGroup/'
+    // '/Admin/SearchFriendsByGroup/'    
     UpdateListVotersByGroup();
+
+    OnOffButton('buttonUploadAll', false);
 }
 
 function GetNumbersVoters() {
@@ -601,10 +718,6 @@ function deleteTrTableBody(idObject, jsonMasId) {
 
 function UpdatingFields(idObjectSelect, idObjectUpdate, idObjectUpdate2) {
     let nrows = document.getElementById(idObjectSelect).tBodies[0].rows.length;
-
-    if (idObjectUpdate2 != undefined) {
-        document.getElementById(idObjectUpdate).innerHTML = "Количество избирателей: " + (nrows);
-    }
 
     if (idObjectUpdate2 != undefined) {
         document.getElementById(idObjectUpdate2).innerHTML = nrows;
@@ -692,3 +805,9 @@ $(function () {
         }
     });
 });
+
+// Включение отключение кнопки
+function OnOffButton(idButton, onOff) {
+
+    document.getElementById(idButton).disabled = !onOff;
+}

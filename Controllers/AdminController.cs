@@ -47,7 +47,8 @@ namespace CollectVoters.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends).Where(g => g.Level == 1).Distinct().Select(g => new Report
+            List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends)
+                .Where(g => g.Level == 1).Distinct().Select(g => new Report
             {
                 Responseble = g.UserResponsible.FamilyName +" "+ g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
                 IdOdject = g.FieldActivityId ?? 0,
@@ -271,7 +272,7 @@ namespace CollectVoters.Controllers
         // POST: Friends/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
+        public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,CityDistrictId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,UserId,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
         {
             int selectedIndexCityDistrict = 1;
 
@@ -415,7 +416,7 @@ namespace CollectVoters.Controllers
         // POST: Friends/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
+        public async Task<IActionResult> Edit(long id, [Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,CityDistrictId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Description,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
         {
             if (id != friend.IdFriend)
             {

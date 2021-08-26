@@ -54,7 +54,6 @@
 @if (User.Identity.IsAuthenticated)
 {
     <p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
-    <p id="numberRecords"><font size="4" color="black" face="Arial"></font></p>
 
     <p>
         <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
@@ -79,7 +78,7 @@ else
 
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
-    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',20)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
+    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',21)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
 </p>
 
 <div class="row">
@@ -112,6 +111,69 @@ else
         </div>*@
 </div>
 
+
+<table class="table" id="resultVotersDbTable">
+    <tbody>
+        <tr>
+            <td>
+            </td>
+            <td width="200">
+                <font size="3" color="black" face="Arial"><b>Всего избирателей:</b></font>
+            </td>
+            <td id="totalFriendsServ" align="left">
+                <font size="4" color="black" face="Arial"><b></b></font>
+            </td>
+            <td width="80">
+                <font size="3" color="black" face="Arial"><b>Проголосовавших:</b></font>
+            </td>
+            <td id="totalVoteServ">
+                <font size="4" color="black" face="Arial"><b></b></font>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="display:none">
+            </td>
+            <td style="display:none">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="display:none">
+            </td>
+            <td style="display:none">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="display:none">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="display:none">
+            </td>
+            <td style="display:none">
+            </td>
+            <td align="center">
+            </td>
+        </tr>
+    </tbody>
+</table>
 <table class="table" id="friendTable">
     <thead>
         <tr>
@@ -340,7 +402,7 @@ else
         <tr>
             <td>
                 <p>
-                    <a class="btn btn-outline-success" onclick="UpdateVotersFullFilters()"><i class="far fa-plus-square"></i>Показать всех</a>
+                    <a id="buttonUploadAll" class="btn btn-secondary btn-block" onclick="UpdateVotersFullFilters()"><i class="far fa-plus-square"></i>Показать всех</a>
                 </p>
             </td>
             <td>
@@ -381,15 +443,15 @@ else
             </td>
             <td style="display:none">
             </td>
-            <td>
+            <td style="display:none">
                 <font size="3" color="black" b face="Arial"><b>Итого проголосовавших:</b></font>
             </td>
-            <td id="totalVoter">
+            <td id="totalVoter" style="display:none">
             </td>
-            <td>
+            <td style="display:none">
                 <font size="3" color="black" b face="Arial"><b>Всего избирателей:</b></font>
             </td>
-            <td id="totalFriends" align="center">
+            <td id="totalFriends" align="center" style="display:none">
                 <font size="3" color="black" b face="Arial"></font>
             </td>
             <td style="display:none">

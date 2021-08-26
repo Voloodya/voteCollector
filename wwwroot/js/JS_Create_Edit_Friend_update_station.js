@@ -307,7 +307,7 @@ function UploadStationByCitydistrictAndStreetAndHouse() {
                             return (Number.parseInt(a) - Number.parseInt(b));
                         });
                     }
-                    dataFilling(dataSort, 'idStation', 'name', '#StationId', '<option/>');
+                    DataFillingSelect(dataSort, 'idStation', 'name', '#StationId', '<option/>');
 
                     // Генерация события для элемента Select
                     let elemSelectPollingStation = document.querySelector('#StationId')

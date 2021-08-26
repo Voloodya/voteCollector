@@ -329,6 +329,7 @@ namespace voteCollector.Controllers
                             //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
                             //friend.StationId = pollingStationSearch.StationId;
                             ////???
+                            
                         }
                         else
                         {

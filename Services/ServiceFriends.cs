@@ -92,14 +92,21 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberAllFriends()
+        {
+            IQueryable<Friend> friends = _context.Friend;
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
+
         public IQueryable<Friend> GetAllFriendsLimit(int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_);
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Take(limit);
 
             return friends;
         }
-
 
         public IQueryable<Friend> GetAllFriendsByGroupUsers(List<Groupu> groupsUser)
         {
@@ -109,10 +116,18 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberAllFriendsByGroupsUsers(List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Where(f => groupsUser.Contains(f.GroupU));
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
+
         public IQueryable<Friend> GetAllFriendsByGroupUsersLimit(List<Groupu> groupsUser, int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(f => groupsUser.Contains(f.GroupU));
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(f => groupsUser.Contains(f.GroupU)).Take(limit);
 
             return friends;
         }
@@ -125,10 +140,18 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberFriendsByFieldActivite(FieldActivityDTO fieldActivityDTO)
+        {
+            IQueryable<Friend> friends = _context.Friend.Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity);
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
+
         public IQueryable<Friend> SearchFriendsByFieldActiviteLimit(FieldActivityDTO fieldActivityDTO, int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity);
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity).Take(limit);
 
             return friends;
         }
@@ -141,14 +164,21 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberFriendsByFieldActiviteAndGroupsUsers(FieldActivityDTO fieldActivityDTO, List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity && groupsUser.Contains(frnd.GroupU));
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
+
         public IQueryable<Friend> SearchFriendsByFieldActiviteAndGroupsUsersLimit(FieldActivityDTO fieldActivityDTO, List<Groupu> groupsUser, int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity && groupsUser.Contains(frnd.GroupU));
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.FieldActivityId == fieldActivityDTO.IdFieldActivity && groupsUser.Contains(frnd.GroupU)).Take(limit);
 
             return friends;
         }
-
 
         public IQueryable<Friend> SearchFriendsByOrganization(OrganizationDTO organizationDTO)
         {
@@ -159,15 +189,22 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberFriendsByOrganization(OrganizationDTO organizationDTO)
+        {
+            //
+            IQueryable<Friend> friends = _context.Friend.Where(frnd => frnd.OrganizationId == organizationDTO.IdOrganization);
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
         public IQueryable<Friend> SearchFriendsByOrganizationLimit(OrganizationDTO organizationDTO, int limit)
         {
             //
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.OrganizationId == organizationDTO.IdOrganization);
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.OrganizationId == organizationDTO.IdOrganization).Take(limit);
 
             return friends;
         }
-
 
         public IQueryable<Friend> SearchFriendsByOrganizationAndGroupsUsers(OrganizationDTO organizationDTO, List<Groupu> groupsUser)
         {
@@ -177,14 +214,21 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberFriendsByOrganizationAndGroupsUsers(OrganizationDTO organizationDTO, List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Where(frnd => frnd.OrganizationId == organizationDTO.IdOrganization && groupsUser.Contains(frnd.GroupU));
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
+
         public IQueryable<Friend> SearchFriendsByOrganizationAndGroupsUsersLimit(OrganizationDTO organizationDTO, List<Groupu> groupsUser, int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.OrganizationId == organizationDTO.IdOrganization && groupsUser.Contains(frnd.GroupU));
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.OrganizationId == organizationDTO.IdOrganization && groupsUser.Contains(frnd.GroupU)).Take(limit);
 
             return friends;
         }
-
 
         public IQueryable<Friend> SearchFriendsByGroup(GroupDTO groupDTO)
         {
@@ -194,10 +238,19 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberFriendsByGroup(GroupDTO groupDTO)
+        {
+            IQueryable<Friend> friends = _context.Friend.Where(frnd => frnd.GroupUId == groupDTO.IdGroup);
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            return numberFriendsDTO;
+        }
+
+
         public IQueryable<Friend> SearchFriendsByGroupLimit(GroupDTO groupDTO, int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.GroupUId == groupDTO.IdGroup);
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.GroupUId == groupDTO.IdGroup).Take(limit);
 
             return friends;
         }
@@ -210,10 +263,20 @@ namespace voteCollector.Services
             return friends;
         }
 
+        public NumberFriendsDTO CountNumberFriendsByGroupAndGroupsUsers(GroupDTO groupDTO, List<Groupu> groupsUser)
+        {
+            IQueryable<Friend> friends = _context.Friend.Where(frnd => frnd.GroupUId == groupDTO.IdGroup && groupsUser.Contains(frnd.GroupU));
+
+            NumberFriendsDTO numberFriendsDTO = new NumberFriendsDTO { NumberFriends = friends.Count(), NumberVoter = friends.Where(f => f.Voter == true).Count() };
+            
+            return numberFriendsDTO;
+        }
+
+
         public IQueryable<Friend> SearchFriendsByGroupAndGroupsUsersLimit(GroupDTO groupDTO, List<Groupu> groupsUser, int limit)
         {
-            IQueryable<Friend> friends = _context.Friend.Take(limit).Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
-                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.GroupUId == groupDTO.IdGroup && groupsUser.Contains(frnd.GroupU));
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.GroupUId == groupDTO.IdGroup && groupsUser.Contains(frnd.GroupU)).Take(limit);
 
             return friends;
         }

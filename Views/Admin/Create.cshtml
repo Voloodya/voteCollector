@@ -42,11 +42,16 @@
                     <span asp-validation-for="DateBirth" class="text-danger"></span>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="Unpinning" class="control-label"></label>
-                <input id="boolUnpinning" asp-for="Unpinning" class="form-control" onchange="HideShowBlocks('boolUnpinning', 'divCityDistrict','divStreet','divHouse','divApartment','divAdessText');" />
+                <input id="boolUnpinningServ" asp-for="Unpinning" class="form-control" />
                 <span asp-validation-for="Unpinning" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label class="control-label">Откреплен</label>
+                <input type="checkbox" id="boolUnpinning" class="form-control" onchange="HideShowBlocks('boolUnpinning', 'divCityDistrict','divStreet','divHouse','divApartment','divAdessText');" />
+            </div>
+
             <div class="form-row" id="divAdressFull">
                 <div class="form-group col-md-6">
                     <label asp-for="CityId" class="control-label"></label>
@@ -179,7 +184,7 @@
                     <input type="submit" value="Добавить" class="btn btn-primary btn-block" />
                 </div>
                 <div class="form-group col-md-6">
-                    <a asp-action="LkAdmin" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+                    <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
                 </div>
             </div>
         </form>

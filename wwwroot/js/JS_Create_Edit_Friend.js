@@ -31,6 +31,13 @@ function stateDate(idObject) {
 }
 
 $(document).ready(function () {
+
+    // Устанавливаем статус Откреплен/неоткреплен пришедший с сервера во фронт checkbox
+    chboxFront = document.getElementById('boolUnpinning');
+    chboxServ = document.getElementById('boolUnpinningServ');
+    chboxFront.checked = chboxServ.checked;
+
+    // Скрываем/отображаем блоки согласно статуса Откреплен/неоткреплен
     HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
 
 //    $(function () {
@@ -217,7 +224,13 @@ $(function () {
 
 
 function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible)
-{   
+{  
+    chbox = document.getElementById(idchbox);
+
+    // Устанавливаем статус в серверный checkbox Откреплен/Неоткреплен из фронтального checkbox
+    var chboxServ = document.getElementById('boolUnpinningServ');
+    chboxServ.checked = chbox.checked;
+
     if ($('#CityId>option:selected').text() !== 'Оренбург') {
 
         let hideObj1 = document.getElementById(idObjectHidden1);
@@ -226,7 +239,9 @@ function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidde
         let hideObj4 = document.getElementById(idObjectHidden4);
         let showObj = document.getElementById(idObjectVisible);
 
-        chbox = document.getElementById(idchbox);
+        document.getElementById('boolUnpinning').checked = true;
+        document.getElementById('boolUnpinning').disabled = true;
+
         if (chbox.checked) {
 
             hideObj1.style.display = 'none';
@@ -236,6 +251,7 @@ function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidde
             showObj.style.display = 'block';
 
             UpdateStationByCityAfterSelect();
+            UploadElectoralDistrictsAll();
         }
         else {
 
@@ -245,16 +261,22 @@ function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidde
             hideObj4.style.display = 'block';
             showObj.style.display = 'none';
 
-            UpdateStationByCityAfterSelect();
-            UploadElectoralDistrictsAll();
+            UpdateStationByCityAfterSelect();            
         }
     }
     else {
 
-        UpdateStationByCityAfterSelect();
-        UploadElectoralDistrictsAll();
-        ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
-        //UploadStationByCitydistrictAndStreetAndHouse();
+        if (chbox.checked) {
+
+            UpdateStationByCityAfterSelect();
+            UploadElectoralDistrictsAll();
+            ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+
+        }
+        else {
+
+            UploadStationByCitydistrictAndStreetAndHouse();
+        }
     }
 }
 
@@ -266,7 +288,9 @@ function ShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidden3, 
     let hideObj4 = document.getElementById(idObjectHidden4);
     let showObj = document.getElementById(idObjectVisible);
 
-    chbox = document.getElementById(idchbox);
+    // Устанавливаем статус в серверный checkbox Откреплен/Неоткреплен из фронтального checkbox
+    var chboxServ = document.getElementById('boolUnpinningServ');
+    chboxServ.checked = chbox.checked;
 
         hideObj1.style.display = 'block';
         hideObj2.style.display = 'block';
