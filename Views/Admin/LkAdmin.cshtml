@@ -56,8 +56,8 @@
     <p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
 
     <p>
-        <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
-        <a asp-action="LkAdmin">Избиратели</a> |
+        <a asp-controller="Admin" asp-action="Index">ОТЧЕТЫ</a> |
+        <a asp-action="LkAdmin">Участники</a> |
         <a asp-controller="Users" asp-action="Index">Пользователи</a> |
         <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
         <a asp-controller="Groupus" asp-action="Index">Группы</a> |
@@ -71,14 +71,13 @@ else
     <a asp-controller="Account" asp-action="Login">Вход</a>
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
-
-
-
-<h1>Избиратели</h1>
+<br />
+<h1>Участники</h1>
+<hr />
 
 <p>
-    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
-    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',21)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить участника</a>
+    <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable', 21)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
 </p>
 
 <div class="row">
@@ -118,13 +117,13 @@ else
             <td>
             </td>
             <td width="200">
-                <font size="3" color="black" face="Arial"><b>Всего избирателей:</b></font>
+                <font size="3" color="black" face="Arial"><b>Всего участников:</b></font>
             </td>
             <td id="totalFriendsServ" align="left">
                 <font size="4" color="black" face="Arial"><b></b></font>
             </td>
             <td width="80">
-                <font size="3" color="black" face="Arial"><b>Проголосовавших:</b></font>
+                <font size="3" color="black" face="Arial"><b>Зарегистрированных:</b></font>
             </td>
             <td id="totalVoteServ">
                 <font size="4" color="black" face="Arial"><b></b></font>

@@ -33,7 +33,7 @@ $(document).ready(function () {
         },
 
         initComplete: function () {
-            this.api().columns([7, 8, 9]).every(function () {
+            this.api().columns([7, 8, 9, 10]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())
@@ -89,7 +89,7 @@ function UpdateTablePlagin () {
         },
 
         initComplete: function () {
-            this.api().columns([7, 8, 9]).every(function () {
+            this.api().columns([7, 8, 9, 10]).every(function () {
                 var column = this;
                 var select = $('<select><option value="">Все</option></select>')
                     .appendTo($($(column.header()))) //$(column.footer().empty())

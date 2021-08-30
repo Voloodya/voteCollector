@@ -56,12 +56,12 @@ else
     <a asp-controller="Account" asp-action="Login">Вход</a>
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
-
-
-<h1>Избиратели</h1>
+<br />
+<h1>Участники</h1>
+<hr />
 
 <p>
-    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить избирателя</a>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить участника</a>
     <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable',24)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
     | <a asp-controller="UploadFiles" asp-action="Index">Загрузка файла</a>  |
 </p>
@@ -362,12 +362,12 @@ else
             <td style="display:none">
             </td>
             <td>
-                <font size="3" color="black" b face="Arial"><b>Итого проголосовавших:</b></font>
+                <font size="3" color="black" b face="Arial"><b>Зарегистрированных:</b></font>
             </td>
             <td id="totalVoter">
             </td>
             <td>
-                <font size="3" color="black" b face="Arial"><b>Всего избирателей:</b></font>
+                <font size="3" color="black" b face="Arial"><b>Всего участников:</b></font>
             </td>
             <td align="center">
                 <font size="3" color="black" b face="Arial">@Model.Count()</font>

@@ -39,15 +39,20 @@
         }
 </style>
 
-<p>
-    <a asp-action="LkAdmin">Личный кабинет администратора</a>
-</p>
 
 <p>
-    <a asp-action="Index">Организации</a>
+    <a asp-action="Index">Организации</a> |
+    <a asp-action="LkAdmin">Участники</a> |
+    <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+    <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+    <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+    <a asp-controller="Stations" asp-action="Index">Участки</a> |
+    <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+    <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
+
 </p>
 
-<h1>Отчет по подразделениям @Html.DisplayNameFor(model => model.NameParent)</h1>
+<h4>Отчет по подразделениям организации "@Html.DisplayFor(model => Model.First().NameParent)"</h4>
 
 <table class="table" id="reportOrganizationTable">
     <thead>
@@ -76,6 +81,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PersentVotedByEmploees)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberQRcodesText)
             </th>
             <th></th>
         </tr>
@@ -109,7 +117,10 @@
                 @Html.DisplayFor(modelItem => item.PersentVotedByEmploees)
             </td>
             <td>
-                <a asp-action="ReportGroup" asp-route-id="@item.IdOdject">Подведомственные учреждения</a> |
+                @Html.DisplayFor(modelItem => item.NumberQRcodesText)
+            </td>
+            <td>
+                <a asp-action="ReportGroup" asp-route-id="@item.IdOdject">Подведомственные учреждения</a>
             </td>
         </tr>
 }

@@ -19,18 +19,20 @@ namespace voteCollector.Models
         public string NameObject { get; set; }
         [DisplayName("Ответственный")]
         public string Responseble { get; set; }
-        [DisplayName("Кол-во избирателей")]
+        [DisplayName("Кол-во участников")]
         public int NumberVoters { get; set; }
-        [DisplayName("Кол-во проголосовавших")]
+        [DisplayName("Кол-во зарегистрированных")]
         public int NumberVoted { get; set; }
         [DisplayName("Численность сотрудников")]
         public int NumberEmployees { get; set; }
-        [DisplayName("Процент избирателей к численности")]
+        [DisplayName("Процент участников к численности")]
         public double PersentVotersByEmploees { get; set; }
-        [DisplayName("Процент проголосовавших к избирателям")]
+        [DisplayName("Процент зарегистрированных к участникам")]
         public double PersentVotedByVoters { get; set; }
-        [DisplayName("Процент проголосовавших к численности")]
+        [DisplayName("Процент зарегистрированных к численности")]
         public double PersentVotedByEmploees { get; set; }
+        [DisplayName("Количество QR-кодов")]
+        public int NumberQRcodesText { get; set; }
         public int IdParent { get; set; }
 
         [DisplayName("Вышестоящая структурная единица")]

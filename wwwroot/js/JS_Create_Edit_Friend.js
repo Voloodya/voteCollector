@@ -125,7 +125,7 @@ $(function () {
 
         if (idorganization !== 0 && !Number.isNaN(idorganization) && idorganization !== undefined && idorganization !== null) {
             $.ajax({
-                url: partMyURL + "/api/API/getgroupsbyorganization" + "/" + idorganization,
+                url: partMyURL + "/api/API/GetGroupsMaxLvlByOrganization" + "/" + idorganization,
                 headers:
                 {
                     'Accept': 'application/json',

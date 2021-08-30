@@ -41,11 +41,18 @@
 </style>
 
 @*<div>
-    <a asp-action="RedirectTo">Вернуться на главную</a>
-</div>*@
+        <a asp-action="RedirectTo">Вернуться на главную</a>
+    </div>*@
+<div id="buttonsright">
+    <p>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
+    </p>
+</div>
+
+<p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
 <p>
     <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
-    <a asp-controller="Admin" asp-action="LkAdmin">Избиратели</a> |
+    <a asp-controller="Admin" asp-action="LkAdmin">Участники</a> |
     <a asp-controller="Users" asp-action="Index">Пользователи</a> |
     <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
     <a asp-controller="Groupus" asp-action="Index">Группы</a> |
@@ -53,10 +60,9 @@
     <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
     <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
 </p>
-
 <br />
-
 <h1>Группы пользователей</h1>
+<hr />
 
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить</a>
@@ -65,22 +71,13 @@
     <thead>
         <tr>
             @*<th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>*@
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.GroupU)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User.FamilyName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User.PatronymicName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User.Telephone)
+                @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.GroupU.FieldActivity)
@@ -91,33 +88,26 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            @*<td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.GroupU.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.FamilyName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.PatronymicName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Telephone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
-            </td>
-        </tr>
+            <tr>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.GroupU.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.FamilyName)
+                    @Html.DisplayFor(modelItem => item.User.Name)
+                    @Html.DisplayFor(modelItem => item.User.PatronymicName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

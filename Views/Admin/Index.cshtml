@@ -39,15 +39,19 @@
         }
 </style>
 
+<div id="buttonsright">
+    <p>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
+    </p>
+</div>
 
 @if (User.Identity.IsAuthenticated)
 {
     <p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
-    <p id="numberRecords"><font size="4" color="black" face="Arial"></font></p>
 
     <p>
         <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
-        <a asp-action="LkAdmin">Избиратели</a> |
+        <a asp-action="LkAdmin">Участники</a> |
         <a asp-controller="Users" asp-action="Index">Пользователи</a> |
         <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
         <a asp-controller="Groupus" asp-action="Index">Группы</a> |
@@ -61,8 +65,9 @@ else
     <a asp-controller="Account" asp-action="Login">Вход</a>
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
-
+<br />
 <h1>Отчет</h1>
+<hr />
 
 <table class="table" id="reportFieldActivityTable">
     <thead>
@@ -92,42 +97,49 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.PersentVotedByEmploees)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberQRcodesText)
+            </th>
+
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td align="center"></td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Responseble)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NameObject)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NumberVoters)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NumberVoted)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NumberEmployees)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PersentVotersByEmploees)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PersentVotedByVoters)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PersentVotedByEmploees)
-                </td>
-                <td>
-                    <a asp-action="ReportOrganization" asp-route-id="@item.IdOdject">Отчет по подразделениям</a>
-                </td>
-            </tr>
+        <tr>
+            <td align="center"></td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Responseble)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NameObject)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberVoters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberVoted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberEmployees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotersByEmploees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotedByVoters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotedByEmploees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberQRcodesText)
+            </td>
+            <td>
+                <a asp-action="ReportOrganization" asp-route-id="@item.IdOdject">Отчет по подразделениям</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

@@ -40,12 +40,18 @@
 </style>
 
 @*<div>
-    <a asp-action="RedirectTo">Вернуться на главную</a>
-</div>*@
+        <a asp-action="RedirectTo">Вернуться на главную</a>
+    </div>*@
+<div id="buttonsright">
+    <p>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
+    </p>
+</div>
 
+<p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
 <p>
     <a asp-controller="Admin" asp-action="Index">ОТЧЕТ</a> |
-    <a asp-controller="Admin" asp-action="LkAdmin">Избиратели</a> |
+    <a asp-controller="Admin" asp-action="LkAdmin">Участники</a> |
     <a asp-controller="Users" asp-action="Index">Пользователи</a> |
     <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
     <a asp-controller="Groupus" asp-action="Index">Группы</a> |
@@ -53,9 +59,9 @@
     <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
     <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
 </p>
-
 <br />
-
+<h1>Пользователи</h1>
+<hr />
 <p>
     <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить пользователя</a>
 </p>

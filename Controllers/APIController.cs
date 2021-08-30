@@ -75,8 +75,8 @@ namespace voteCollector.Controllers
         [HttpGet("getorganization/{idFielfActivity}")]
         public IActionResult GetOrganizationActivity(int idFielfActivity)
         {
-            List<Groupu> groups = _context.Groupu.Include(g => g.Organization).Where(g => g.FieldActivityId == idFielfActivity && g.Level == 2).ToList();
-            List<int> idOrganizations = groups.Select(g => g.Organization.IdOrganization).ToList().Distinct().ToList();
+            List<Groupu> groups = _context.Groupu.Where(g => g.FieldActivityId == idFielfActivity && g.Level == 2).ToList();
+            List<int> idOrganizations = groups.Select(g => g.OrganizationId ?? 0).ToList().Distinct().ToList(); //??
             List<OrganizationDTO> organizationDTOs = new List<OrganizationDTO>();
 
             if (idOrganizations.Count>0)
@@ -108,13 +108,31 @@ namespace voteCollector.Controllers
         [HttpGet("getgroupsbyorganization/{idorganization}")]
         public IActionResult GetGroupsByOrganization(int idorganization)
         {
-            List<Groupu> groups = _context.Groupu.Where(g => g.OrganizationId == idorganization && g.Level>=3).ToList();
+            List<Groupu> groups = _context.Groupu.Where(g => g.OrganizationId == idorganization).ToList();
+            int maxLevel = groups.Max(g => g.Level ?? 0);
+            List<Groupu> groupsSearch = groups.Where(g => g.Level>=maxLevel).ToList();
             List<GroupDTO> groupDTOs = new List<GroupDTO>();
 
-            if (groups.Count > 0)
+            if (groupsSearch.Count > 0)
             {
-                groupDTOs = groups.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
+                groupDTOs = groupsSearch.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
                 groupDTOs.Add( new GroupDTO { IdGroup = 0, Name = " Все" });
+                return Ok(groupDTOs);
+            }
+            return Ok(groupDTOs);
+        }
+
+        [HttpGet("GetGroupsMaxLvlByOrganization/{idorganization}")]
+        public IActionResult GetGroupsMaxLvlByOrganization(int idorganization)
+        {
+            List<Groupu> groups = _context.Groupu.Where(g => g.OrganizationId == idorganization).ToList();
+            int maxLevel = groups.Max(g => g.Level ?? 0);
+            List<Groupu> groupsSearch = groups.Where(g => g.Level >= maxLevel).ToList();
+            List<GroupDTO> groupDTOs = new List<GroupDTO>();
+
+            if (groupsSearch.Count > 0)
+            {
+                groupDTOs = groupsSearch.Select(g => new GroupDTO { IdGroup = g.IdGroup, Name = g.Name }).ToList();
                 return Ok(groupDTOs);
             }
             return Ok(groupDTOs);

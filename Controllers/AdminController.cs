@@ -50,9 +50,11 @@ namespace CollectVoters.Controllers
         public async Task<IActionResult> Index()
         {
 
-            List<Groupu> groupusLvl1 = _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends)
+            List<Groupu> groupusLvl1 = _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.InverseGroupParents)
                 .Where(g => g.Level == 1).Distinct().ToList();
 
+            IQueryable<Friend> IQfriends = _context.Friend;
+            List<Friend> friends = IQfriends.ToList();
             List<Report> reports = new List<Report>();
             
              
@@ -61,23 +63,31 @@ namespace CollectVoters.Controllers
                 Report report = new Report
                 {
                     Responseble = grpLvl1.UserResponsible != null ? grpLvl1.UserResponsible.FamilyName + " " + grpLvl1.UserResponsible.Name + " " + grpLvl1.UserResponsible.PatronymicName + " (" + grpLvl1.UserResponsible.Telephone + ")" : "",
-                    IdOdject = grpLvl1.FieldActivityId ?? 0,
+                    IdOdject = grpLvl1.IdGroup,
                     NameObject = grpLvl1.FieldActivity.Name,
                     Level = grpLvl1.Level ?? 0,
                     NumberEmployees = grpLvl1.NumberEmployees ?? 0
                 };
                 int numberVoters = 0;
                 int numberVoted = 0;
+                int numberQRcodes = 0;
 
                 List <Groupu> groupsChild = _serviceGroup.GetAllChildGroupsBFS(grpLvl1, grpLvl1, grpLvl1);
-
+                
                 foreach(Groupu groupu in groupsChild)
                 {
-                    numberVoters += groupu.Friends.Count();
-                    numberVoted += groupu.Friends.Where(f => f.Voter == true).Count();
+                    // _context.Entry(groupu).Collection(g => g.Friends).Load();
+                    //numberVoters += groupu.Friends.Count();
+                    //numberVoted += groupu.Friends.Where(f => f.Voter == true).Count();
+
+                    numberVoters += friends.Where(f => f.GroupUId == groupu.IdGroup).Count();
+                    numberVoted += friends.Where(f => f.GroupUId == groupu.IdGroup && f.Voter == true).Count();
+                    numberQRcodes += friends.Where(f => f.GroupUId == groupu.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
                 }
                 report.NumberVoters = numberVoters;
                 report.NumberVoted = numberVoted;
+                report.NumberQRcodesText = numberQRcodes;
+
                 if (numberVoters != 0)
                 {
                     report.PersentVotedByVoters = Math.Round((double) numberVoted / numberVoters *100, 2);
@@ -93,19 +103,6 @@ namespace CollectVoters.Controllers
                 reports.Add(report);
             }
 
-            //List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Include(g => g.Friends)
-            //    .Where(g => g.Level == 1).Distinct().Select(g => new Report
-            //{
-            //    Responseble = g.UserResponsible.FamilyName +" "+ g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
-            //    IdOdject = g.FieldActivityId ?? 0,
-            //    NameObject = g.FieldActivity.Name,
-            //    Level = g.Level ?? 0,
-            //    NumberEmployees = g.NumberEmployees ?? 0,
-            //    NumberVoters = g.Friends.Count,
-            //    NumberVoted = g.Friends.Select(f => f.Voter==true).Count(),
-            //}).Distinct().ToListAsync();
-
-
             return View(reports);
         }
 
@@ -113,36 +110,86 @@ namespace CollectVoters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index([Bind("UserName", "Password", "ReturnUrl")] LoginModel loginViewModel)
         {
-            List<Report> report = await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.UserResponsible).Where(g => g.Level == 1).Distinct().Select(g => new Report
-            {
-                Responseble = g.UserResponsible.FamilyName + " " + g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
-                IdOdject = g.FieldActivityId ?? 0,
-                NameObject = g.FieldActivity.Name,
-                Level = g.Level ?? 0,
-                NumberEmployees = g.NumberEmployees ?? 0,
-            }).Distinct().ToListAsync();
-
-            return View(report);
+            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> ReportOrganization(int id)
         {
-            List<Groupu> groupus = _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Where(g => g.Level == 2 && g.FieldActivityId == id).ToList()
-                .GroupBy(g => g.OrganizationId).Select(g => g.First()).ToList();
+            Groupu parentGroupu = _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Include(g => g.InverseGroupParents)
+                .Where(g => g.IdGroup == id).FirstOrDefault();
 
-            List<Groupu> groupus1 = groupus;
+            List<Report> reports = new List<Report>();
 
-            List<Report> reports = groupus.Select(g => new Report
+            if (parentGroupu != null)
             {
-                Responseble = g.UserResponsible.FamilyName+" "+ g.UserResponsible.Name + " "+ g.UserResponsible.PatronymicName,
-                IdOdject = g.OrganizationId ?? 0,
-                NameObject = g.Organization.Name,
-                Level = g.Level ?? 0,
-                NumberEmployees = g.NumberEmployees ?? 0,
-                IdParent = id,
-                NameParent = g.FieldActivity.Name
-            }).ToList();
+                List<Friend> friends = _context.Friend.ToList();
+                string nameParent = parentGroupu.Name;
+
+                if (parentGroupu.InverseGroupParents != null && parentGroupu.InverseGroupParents.Count > 0)
+                {
+
+                    foreach (Groupu grpLvl2 in parentGroupu.InverseGroupParents)
+                    {
+                        Report report = new Report
+                        {
+                            Responseble = grpLvl2.UserResponsible != null ? grpLvl2.UserResponsible.FamilyName + " " + grpLvl2.UserResponsible.Name + " " + grpLvl2.UserResponsible.PatronymicName + " (" + grpLvl2.UserResponsible.Telephone + ")" : "",
+                            IdOdject = grpLvl2.IdGroup,
+                            NameObject = grpLvl2.Organization != null ? grpLvl2.Organization.Name : grpLvl2.Name,
+                            Level = grpLvl2.Level ?? 0,
+                            NumberEmployees = grpLvl2.NumberEmployees ?? 0,
+                            NameParent = nameParent
+                        };
+                        int numberVoters = 0;
+                        int numberVoted = 0;
+                        int numberQRcodes = 0;
+
+
+                        _context.Entry(grpLvl2).Collection(g => g.InverseGroupParents).Load();
+                        List<Groupu> groupsChild = _serviceGroup.GetAllChildGroupsBFS(grpLvl2, grpLvl2, grpLvl2);
+
+                        if (groupsChild != null && groupsChild.Count > 0)
+                        {
+                            foreach (Groupu groupu in groupsChild)
+                            {
+                                numberVoters += friends.Where(f => f.GroupUId == groupu.IdGroup).Count();
+                                numberVoted += friends.Where(f => f.GroupUId == groupu.IdGroup && f.Voter == true).Count();
+                                numberQRcodes += friends.Where(f => f.GroupUId == groupu.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
+                            }
+                        }
+                        else
+                        {
+                            numberVoters += friends.Where(f => f.GroupUId == grpLvl2.IdGroup).Count();
+                            numberVoted += friends.Where(f => f.GroupUId == grpLvl2.IdGroup && f.Voter == true).Count();
+                            numberQRcodes += friends.Where(f => f.GroupUId == grpLvl2.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
+                        }
+                        report.NumberVoters = numberVoters;
+                        report.NumberVoted = numberVoted;
+                        report.NumberQRcodesText = numberQRcodes;
+
+                        if (numberVoters != 0)
+                        {
+                            report.PersentVotedByVoters = Math.Round((double)numberVoted / numberVoters * 100, 2);
+                        }
+                        if (report.NumberEmployees != 0)
+                        {
+                            report.PersentVotedByEmploees = Math.Round((double)numberVoted / report.NumberEmployees * 100, 2);
+                        }
+                        if (report.NumberEmployees != 0)
+                        {
+                            report.PersentVotersByEmploees = Math.Round((double)numberVoters / report.NumberEmployees * 100, 2);
+                        }
+                        reports.Add(report);
+                    }
+                }
+                else
+                {
+                    reports.Add(new Report
+                    {
+                        NameParent = nameParent
+                    });
+                }
+            }
 
             return View(reports);
         }
@@ -150,19 +197,80 @@ namespace CollectVoters.Controllers
         [HttpGet]
         public async Task<IActionResult> ReportGroup(int id)
         {
-            List<Report> report = await _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Where(g => g.Level == 3 && g.OrganizationId == id)
-                .Distinct().Select(g => new Report
-                {
-                    Responseble = g.UserResponsible.FamilyName + " " + g.UserResponsible.Name + " " + g.UserResponsible.PatronymicName,
-                    IdOdject = g.IdGroup,
-                    NameObject = g.Name,
-                    Level = g.Level ?? 0,
-                    NumberEmployees = g.NumberEmployees ?? 0,
-                    IdParent = id,
-                    NameParent = g.Organization.Name
-                }).ToListAsync();
+            Groupu parentGroupu = _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Include(g => g.InverseGroupParents)
+                .Where(g => g.IdGroup == id).FirstOrDefault();
 
-            return View(report);
+            List<Report> reports = new List<Report>();
+
+            if (parentGroupu != null)
+            {
+                List<Friend> friends = _context.Friend.ToList();
+                string nameParent = parentGroupu.Name;
+
+                if (parentGroupu.InverseGroupParents != null && parentGroupu.InverseGroupParents.Count > 0)
+                {
+
+                    foreach (Groupu grpLvl3 in parentGroupu.InverseGroupParents)
+                    {
+                        Report report = new Report
+                        {
+                            Responseble = grpLvl3.UserResponsible != null ? grpLvl3.UserResponsible.FamilyName + " " + grpLvl3.UserResponsible.Name + " " + grpLvl3.UserResponsible.PatronymicName + " (" + grpLvl3.UserResponsible.Telephone + ")" : "",
+                            IdOdject = grpLvl3.OrganizationId ?? 0,
+                            NameObject = grpLvl3.Name != null ? grpLvl3.Name : "",
+                            Level = grpLvl3.Level ?? 0,
+                            NumberEmployees = grpLvl3.NumberEmployees ?? 0,
+                            NameParent = nameParent
+                        };
+                        int numberVoters = 0;
+                        int numberVoted = 0;
+                        int numberQRcodes = 0;
+
+                        List<Groupu> groupsChild = _serviceGroup.GetAllChildGroupsBFS(grpLvl3, grpLvl3, grpLvl3);
+
+                        if (groupsChild != null && groupsChild.Count > 0)
+                        {
+                            foreach (Groupu groupu in groupsChild)
+                            {
+                                numberVoters += friends.Where(f => f.GroupUId == groupu.IdGroup).Count();
+                                numberVoted += friends.Where(f => f.GroupUId == groupu.IdGroup && f.Voter == true).Count();
+                                numberQRcodes += friends.Where(f => f.GroupUId == groupu.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
+                            }
+                            report.NumberVoters = numberVoters;
+                            report.NumberVoted = numberVoted;
+                            report.NumberQRcodesText = numberQRcodes;
+                        }
+                        else
+                        {
+                            report.NumberVoters = friends.Where(f => f.GroupUId == grpLvl3.IdGroup).Count();
+                            report.NumberVoted = friends.Where(f => f.GroupUId == grpLvl3.IdGroup && f.Voter == true).Count();
+                            report.NumberQRcodesText = friends.Where(f => f.GroupUId == grpLvl3.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
+                        }
+
+                        if (numberVoters != 0)
+                        {
+                            report.PersentVotedByVoters = Math.Round((double)numberVoted / numberVoters * 100, 2);
+                        }
+                        if (report.NumberEmployees != 0)
+                        {
+                            report.PersentVotedByEmploees = Math.Round((double)numberVoted / report.NumberEmployees * 100, 2);
+                        }
+                        if (report.NumberEmployees != 0)
+                        {
+                            report.PersentVotersByEmploees = Math.Round((double)numberVoters / report.NumberEmployees * 100, 2);
+                        }
+                        reports.Add(report);
+                    }
+                }
+                else
+                {
+                    reports.Add(new Report
+                    {
+                        NameParent = nameParent
+                    });
+                }
+            }
+
+            return View(reports);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

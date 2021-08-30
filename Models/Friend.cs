@@ -44,7 +44,7 @@ namespace voteCollector.Models
         [DisplayName("Городской округ")]
         [Column("CityDistrict_id")]
         public int? CityDistrictId { get; set; }
-        [DisplayName("Избират. округ")]
+        [DisplayName("Округ")]
         [Column("Electoral_district_id")]
         public int? ElectoralDistrictId { get; set; }
         //[Required(ErrorMessage = "Не указана улица")]
@@ -67,13 +67,13 @@ namespace voteCollector.Models
         [MinLength(11)]
         [MaxLength(12)]
         [RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
-        [DisplayName("Тел. избирателя")]
+        [DisplayName("Тел. участника")]
         [Column(TypeName = "varchar(12)")]
-        [Required(ErrorMessage = "Не указан телефон избирателя")]
+        [Required(ErrorMessage = "Не указан телефон участника")]
         public string Telephone { get; set; }
         //[Required(ErrorMessage = "Не указан участок")]
         [Column("Station_id")]
-        [DisplayName("Избирательн. уч-к")]
+        [DisplayName("Участок")]
         public int? StationId { get; set; }
         [DisplayName("Организация")]
         [Column(TypeName = "varchar(256)")]
@@ -100,12 +100,12 @@ namespace voteCollector.Models
         [DataType(DataType.Date)]
         [Column("Date_registration_site", TypeName = "date")]
         public DateTime? DateRegistrationSite { get; set; }
-        [DisplayName("Дата голосования")]
+        [DisplayName("Дата регистрации")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         [Column("Voting_date", TypeName = "date")]
         public DateTime? VotingDate { get; set; }
-        [DisplayName("Проголос-л")]
+        [DisplayName("Зарегистрировался")]
         [Column("Voter", TypeName = "TINYINT")]
         public bool Voter { get; set; }
         [DisplayName("Адрес")]
@@ -124,11 +124,11 @@ namespace voteCollector.Models
         [DisplayName("Примечание")]
         [Column(TypeName = "varchar(256)")]
         public string Description { get; set; }
-        [DisplayName("Агитатор")]
+        [DisplayName("Внесший")]
         [Column("User_id")]
         public long? UserId { get; set; }
         [Column("FriendStatus_id")]
-        [DisplayName("Статус избирателя")]
+        [DisplayName("Статус участника")]
         public int? FriendStatusId { get; set; }
         [Column("ByteQRcode", TypeName = "mediumblob")]
         public byte[] ByteQrcode { get; set; }
@@ -151,7 +151,7 @@ namespace voteCollector.Models
         [ForeignKey(nameof(FieldActivityId))]
         [InverseProperty(nameof(Fieldactivity.Friends))]
         public virtual Fieldactivity FieldActivity { get; set; }
-        [DisplayName("Статус избирателя")]
+        [DisplayName("Статус участника")]
         [ForeignKey(nameof(FriendStatusId))]
         [InverseProperty("Friends")]
         public virtual FriendStatus FriendStatus { get; set; }
@@ -180,7 +180,7 @@ namespace voteCollector.Models
         [ForeignKey(nameof(StreetId))]
         [InverseProperty("Friends")]
         public virtual Street Street { get; set; }
-        [DisplayName("Агитатор")]
+        [DisplayName("Записавший участника")]
         [ForeignKey(nameof(UserId))]
         [InverseProperty("Friends")]
         public virtual User User { get; set; }

@@ -377,6 +377,7 @@ namespace voteCollector.Controllers
             ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
             ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name",friend.FriendStatusId);
+
             return View(friend);
         }
 
