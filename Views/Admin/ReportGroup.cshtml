@@ -1,0 +1,126 @@
+﻿@model IEnumerable<voteCollector.Models.Report>
+
+@{
+    ViewData["Title"] = "ReportGroup";
+}
+
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    #reportOrganizationTable {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
+
+        #reportOrganizationTable thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /* word-break: break-all; */
+        }
+
+        #reportOrganizationTable tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        #reportOrganizationTable tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
+
+<p>
+    <a asp-action="Index">Организации</a> |
+    <a asp-action="LkAdmin">Участники</a> |
+    <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+    <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+    <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+    <a asp-controller="Stations" asp-action="Index">Участки</a> |
+    <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+    <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
+</p>
+@*<p>
+    <a asp-action="ReportOrganization" asp-route-id="@Html.DisplayNameFor(model => model.IdParent)"></a>
+</p>*@
+
+<h4>Отчет</h4>
+
+<table class="table" id="reportOrganizationTable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Responseble)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NameObject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberVoters)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberVoted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberEmployees)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersentVotersByEmploees)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersentVotedByVoters)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersentVotedByEmploees)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberQRcodesText)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td align="center"></td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Responseble)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NameObject)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberVoters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberVoted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberEmployees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotersByEmploees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotedByVoters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotedByEmploees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberQRcodesText)
+            </td>
+
+        </tr>
+}
+    </tbody>
+</table>

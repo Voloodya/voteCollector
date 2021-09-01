@@ -1,0 +1,64 @@
+﻿@model voteCollector.Models.QRcode
+
+@{
+    ViewData["Title"] = "Index";
+}
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<h4>QR code</h4>
+<hr />
+<div class="row">
+    <input type="hidden" id="RequestVerificationToken"
+           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+    <div class="col-md-4">
+        <form>
+            <dl>
+                <dt>
+                    <label for="uploadFileQRcode">Изображение</label>
+                </dt>
+                <dd>
+                    <input id="uploadFileQRcode" type="file" name="FileUpload.FormFile" />
+                </dd>
+            </dl>
+
+            <input class="btn btn-primary btn-block" type="submit" value="Загрузить QRcode" onclick="RequestUploadImage('uploadFileQRcode');" />
+
+            <div style="margin-top:15px">
+                <output name="result"></output>
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr align="center" width="80%" size="8" color="#ff0000" />
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_UploadFiles.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

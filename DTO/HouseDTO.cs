@@ -9,5 +9,6 @@ namespace voteCollector.DTO
     {
         public int IdHouse { get; set; }
         public string Name { get; set; }
+        public int StreetId { get; set; }
     }
 }

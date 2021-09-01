@@ -1,0 +1,88 @@
+﻿@model voteCollector.DTO.FileExcel
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<h4>Загрузка файла</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Запросить QR-коды" onclick="RequestQRcodes('idDateTime');" />
+            </div>
+        </div>
+        <div class="form-row">
+            <p>
+                <label for="idDateTime">Дата: </label>
+                <input type="datetime" id="idDateTime" name="dateTime" />
+            </p>
+        </div>
+        <div id="idDivMessage" style="color:red"></div>
+    </div>
+ </div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div id="idDivStatus" style="color:black"></div>
+        <div id="idDivError" style="color:darkred"></div>
+        <div id="idDivNumberReceivedCodes" style="color:black"></div>
+        <div id="idDivNumberMarkedCodes" style="color:black"></div>
+        <div id="idDivNumberNotFound" style="color:black"></div>
+        <div id="idDivDateTimeRequest" style="color:black"></div>
+    </div>
+</div>
+
+<h4>Ненайденные QR-кода</h4>
+<hr/>
+
+<div id="outText" class="form-group col-md-6">
+    <output></output>
+</div>
+
+<table class="table" id="qrCodesTable">
+    <thead>
+        <tr>
+            <th>
+               QR-код
+            </th>
+            <th>
+                Время регистрации
+            </th>
+        </tr>
+    </thead>
+    <tbody id="tBodyqrCodes">
+
+    </tbody>
+</table>
+
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_RequestQRcodes.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+                alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

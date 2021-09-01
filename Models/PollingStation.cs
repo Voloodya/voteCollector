@@ -13,20 +13,20 @@ namespace voteCollector.Models
     [Table("polling_station")]
     public partial class PollingStation
     {
-        public PollingStation()
-        {
-            Friends = new HashSet<Friend>();
-        }
-
         [Key]
         [Column("Id_Polling_station")]
         public int IdPollingStation { get; set; }
         [DisplayName("Участок")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
-        [DisplayName("Населен. п-т")]
+        [DisplayName("Номер участка")]
+        [Column("Station_id")]
+        public int? StationId { get; set; }
+
+        [DisplayName("Городской огруг")]
+        [Required(ErrorMessage = "Не указан населен. п-т")]
         [Column("City_id")]
-        public int? CityId { get; set; }
+        public int? CityDistrictId { get; set; }
         [DisplayName("Улица")]
         [Column("Street_id")]
         public int? StreetId { get; set; }
@@ -37,19 +37,26 @@ namespace voteCollector.Models
         [Column("House_id")]
         public int? HouseId { get; set; }
 
-        [ForeignKey(nameof(CityId))]
+        [ForeignKey(nameof(StationId))]
         [InverseProperty("PollingStations")]
-        public virtual City City { get; set; }
+        [DisplayName("Номер участка")]
+        public virtual Station Station { get; set; }
+
+        [ForeignKey(nameof(CityDistrictId))]
+        [InverseProperty("PollingStations")]
+        [DisplayName("Насел. п-т")]
+        public virtual CityDistrict CityDistrict { get; set; }
         [ForeignKey(nameof(HouseId))]
         [InverseProperty("PollingStations")]
+        [DisplayName("Дом")]
         public virtual House House { get; set; }
         [ForeignKey(nameof(MicroDistrictId))]
         [InverseProperty(nameof(Microdistrict.PollingStations))]
+        [DisplayName("Микро р-н")]
         public virtual Microdistrict MicroDistrict { get; set; }
         [ForeignKey(nameof(StreetId))]
         [InverseProperty("PollingStations")]
+        [DisplayName("Улица")]
         public virtual Street Street { get; set; }
-        [InverseProperty("PollingStation")]
-        public virtual ICollection<Friend> Friends { get; set; }
     }
 }

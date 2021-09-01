@@ -16,16 +16,20 @@ namespace voteCollector.Models
         public Fieldactivity()
         {
             Friends = new HashSet<Friend>();
+            Groupus = new HashSet<Groupu>();
         }
 
         [Key]
         [Column("Id_FieldActivity")]
         public int IdFieldActivity { get; set; }
-        [DisplayName("Сфера деятельности")]
+        [DisplayName("Организация")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
 
         [InverseProperty("FieldActivity")]
         public virtual ICollection<Friend> Friends { get; set; }
+        [InverseProperty("FieldActivity")]
+        [DisplayName("Организация")]
+        public virtual ICollection<Groupu> Groupus { get; set; }
     }
 }

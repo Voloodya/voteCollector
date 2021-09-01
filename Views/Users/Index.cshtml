@@ -3,13 +3,69 @@
 @{
     ViewData["Title"] = "Index";
 }
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
 
-<h1>Index</h1>
+    #usersTable {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
 
+        #usersTable thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /*            word-break: break-all;
+    */
+        }
+
+        #usersTable tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        #usersTable tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
+
+@*<div>
+        <a asp-action="RedirectTo">Вернуться на главную</a>
+    </div>*@
+<div id="buttonsright">
+    <p>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
+    </p>
+</div>
+
+<p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
+    <a asp-controller="Admin" asp-action="LkAdmin">Участники</a> |
+    <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+    <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+    <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+    <a asp-controller="Stations" asp-action="Index">Участки</a> |
+    <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+    <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
 </p>
-<table class="table">
+<br />
+<h1>Пользователи</h1>
+<hr />
+<p>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить пользователя</a>
+</p>
+<table class="table" id="usersTable">
     <thead>
         <tr>
             <th>
@@ -40,38 +96,65 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FamilyName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PatronymicName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telephone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdUser">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdUser">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdUser">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FamilyName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PatronymicName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telephone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Role.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdUser">Править</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdUser">Удалить</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Index_Users.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+
+
+

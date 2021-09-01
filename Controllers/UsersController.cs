@@ -6,45 +6,45 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using voteCollector.Data;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
     [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
+        private readonly ILogger<UsersController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceUser _serviceUser;
 
-        public UsersController(VoterCollectorContext context)
+        public UsersController(VoterCollectorContext context, ILogger<UsersController> logger)
         {
             _context = context;
+            _logger = logger;
+            _serviceUser = new ServiceUser(context);
         }
 
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var voterCollectorContext = _context.User.Include(u => u.Role);
-            return View(await voterCollectorContext.ToListAsync());
-        }
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-        // GET: Users/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null)
+            if (groupsUser.Contains(mainGroup))
             {
-                return NotFound();
-            }
+                var voterCollectorContext = _context.User.Include(u => u.Role);
+                return View(await voterCollectorContext.ToListAsync());
 
-            var user = await _context.User
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(m => m.IdUser == id);
-            if (user == null)
+            }
+            else
             {
-                return NotFound();
+                List<User> voterCollectorContext = await _context.User.Include(u => u.Role).ToListAsync();
+                List<User> voterCollector = voterCollectorContext.Where(u => groupsUser.Intersect(_serviceUser.GetGroupsUser(u.UserName)).Count() != 0).ToList();
+                return View(voterCollector);
             }
-
-            return View(user);
         }
 
         // GET: Users/Create
@@ -55,21 +55,32 @@ namespace voteCollector.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdUser,UserName,Password,RoleId,FamilyName,Name,PatronymicName,DateBirth,Telephone")] User user)
         {
+
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                User userDB = _context.User.FirstOrDefault(u => u.UserName.Equals(user.UserName));
+
+                if (userDB == null)
+                {
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Пользователь с данным логином уже существует!");
+                }
             }
             ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
         }
+
+
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(long? id)
@@ -89,8 +100,6 @@ namespace voteCollector.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("IdUser,UserName,Password,RoleId,FamilyName,Name,PatronymicName,DateBirth,Telephone")] User user)
@@ -100,25 +109,32 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
+
             if (ModelState.IsValid)
             {
-                try
+
+                User userDB = _context.User.FirstOrDefault(u => u.UserName.Equals(user.UserName) && u.IdUser != id);
+                if (userDB == null)
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.IdUser))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!UserExists(user.IdUser))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else ModelState.AddModelError("", "Пользователь с данным логином уже существует!");
             }
             ViewData["RoleId"] = new SelectList(_context.Role, "IdRole", "Name", user.RoleId);
             return View(user);
@@ -159,11 +175,45 @@ namespace voteCollector.Controllers
             return _context.User.Any(e => e.IdUser == id);
         }
 
+        // GET: Users/Edit/5
+        private async Task<IActionResult> GetChildGroupsUser(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            User user = await _context.User.Include(u => u.Groupus).FirstOrDefaultAsync(u => u.IdUser==id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            Groupu groupuUsers;
+            if (user.Groupus != null) {
+                groupuUsers = user.Groupus.ToList().First();
+            }
+            else
+            {
+                groupuUsers = _context.Groupsusers.Include(gu => gu.GroupU).Where(gu => gu.UserId == id).Select(gu => gu.GroupU).FirstOrDefault();
+            }
+            List<Groupu> groups = _serviceUser.GetAllChildGroupsBFS(groupuUsers,groupuUsers,groupuUsers);
+
+            return View(groups);
+
+        }
+
         private List<Groupu> GetGroupsUser(string userName)
         {
             User userSave = _context.User.Where(u => u.UserName.Equals(userName)).FirstOrDefault();
             List<Groupsusers> groupsUsers = userSave.Groupsusers.ToList();
             return groupsUsers.Select(g => g.GroupU).ToList();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectTo()
+        {
+            return RedirectToAction("LkAdmin", "Admin");
+        }
+
     }
 }

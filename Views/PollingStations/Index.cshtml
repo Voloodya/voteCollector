@@ -1,0 +1,202 @@
+﻿@model IEnumerable<voteCollector.Models.PollingStation>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    #pollingStationsTable {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
+
+        #pollingStationsTable thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /*            word-break: break-all;
+    */
+        }
+
+        #pollingStationsTable tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        #pollingStationsTable tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
+
+
+@*<div>
+        <a asp-action="RedirectTo">Вернуться на главную</a>
+    </div>*@
+<div id="buttonsright">
+    <p>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
+    </p>
+</div>
+
+
+<p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
+<p>
+    <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
+    <a asp-controller="Admin" asp-action="LkAdmin">Участники</a> |
+    <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+    <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+    <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+    <a asp-controller="Stations" asp-action="Index">Участки</a> |
+    <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+    <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
+</p>
+
+<br />
+<h1>Участки по адресам</h1>
+<hr />
+@*<div class="row">
+        <input type="hidden" id="RequestVerificationToken"
+               name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"></label>
+                <select id="SelectCityId" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <select id="SelictStreetId" class="form-control"></select>
+            </div>
+        </div>
+    </div>*@
+
+
+<p>
+    <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Связать адрес с участком</a>
+</p>
+
+<div class="row">
+    <input type="hidden" id="RequestVerificationToken"
+           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="control-label">Избирательный округ</label>
+            <select id="SelectElectoralDistrictId" class="form-control"></select>
+        </div>
+    </div>
+</div>
+
+<table class="table" id="pollingStationsTable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Station)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CityDistrict)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.House)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru"))
+    {
+        <tbody id="tableBodyPollingStation">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityDistrict.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Street.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.House.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdPollingStation">Править</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody id="tableBodyPollingStation">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityDistrict.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Street.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.House.Name)
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+
+</table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Index_PollingStations.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

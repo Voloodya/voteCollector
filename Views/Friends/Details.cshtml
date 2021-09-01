@@ -4,153 +4,180 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Friend</h4>
+<div class="form-row">
+    <h4>Участник</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FamilyName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FamilyName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PatronymicName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PatronymicName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DateBirth)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DateBirth)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Building)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Building)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Apartment)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Apartment)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Telephone)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Telephone)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Organization)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Organization_)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Organization)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Organization_.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PhoneNumberResponsible)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PhoneNumberResponsible)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DateRegistrationSite)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DateRegistrationSite)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.VotingDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.VotingDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Voter)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Voter)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Qrcode)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FriendStatus)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Qrcode)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FriendStatus.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.City)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.City.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.District)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CityDistrict)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.District.Name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CityDistrict.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ElectoralDistrict)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ElectoralDistrict.Name)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FieldActivity)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FieldActivity.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.GroupU)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.GroupU.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.House)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.House.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MicroDistrict)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.MicroDistrict.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PollingStation)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Station)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PollingStation.Name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Station.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Street)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Street.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Adress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Adress)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.User.FamilyName)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Qrcode)
+        </dt>
+        <dd class="col-sm-10">
+            @*@Html.DisplayFor(model => model.Qrcode)*@
+            @if (Model.QRcodeBytes != null)
+            {
+                //var fileQRcode = "~/qr_codes/" + Model.Qrcode + ".qrr";
+                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.QRcodeBytes))" width="150" height="150" />
+            }
+        </dd>
+
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.IdFriend">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<div class="form-row">
+    <div class="form-group col-md-2">
+        <a asp-action="Edit" asp-route-id="@Model.IdFriend" class="btn btn-primary btn-block">Править</a>
+        </div>
+        <div class="form-group col-md-2">
+            <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+        </div>
+ </div>

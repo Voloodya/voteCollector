@@ -17,6 +17,7 @@ namespace voteCollector.Models
         [Column("Id_GroupsUsers")]
         public long IdGroupsUsers { get; set; }
         [Column("GroupU_id")]
+        [DisplayName("Группа")]
         public int? GroupUId { get; set; }
         [DisplayName("Группа")]
         [Column(TypeName = "varchar(256)")]
@@ -33,5 +34,6 @@ namespace voteCollector.Models
         [ForeignKey(nameof(UserId))]
         [InverseProperty("Groupsusers")]
         public virtual User User { get; set; }
+        
     }
 }

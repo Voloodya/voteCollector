@@ -6,59 +6,45 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using voteCollector.Data;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
     [Authorize(Roles = "admin")]
     public class GroupsusersController : Controller
     {
+        private readonly ILogger<GroupsusersController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceUser _serviceUser;
 
-        public GroupsusersController(VoterCollectorContext context)
+        public GroupsusersController(VoterCollectorContext context, ILogger<GroupsusersController> logger)
         {
             _context = context;
+            _logger = logger;
+            _serviceUser = new ServiceUser(context);
         }
 
         // GET: Groupsusers
         public async Task<IActionResult> Index()
         {
-            var voterCollectorContext = _context.Groupsusers.Include(g => g.GroupU).Include(g => g.User);
-            return View(await voterCollectorContext.ToListAsync());
-        }
-
-        // GET: Groupsusers/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var groupsusers = await _context.Groupsusers
-                .Include(g => g.GroupU)
-                .Include(g => g.User)
-                .FirstOrDefaultAsync(m => m.IdGroupsUsers == id);
-            if (groupsusers == null)
-            {
-                return NotFound();
-            }
-
-            return View(groupsusers);
+            return View(await _serviceUser.FilterGroupsUsers(_serviceUser.GetGroupsUser(User.Identity.Name)).ToListAsync());
         }
 
         // GET: Groupsusers/Create
         public IActionResult Create()
         {
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName");
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber");
+
             return View();
         }
 
         // POST: Groupsusers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdGroupsUsers,GroupUId,Name,UserId")] Groupsusers groupsusers)
@@ -69,8 +55,11 @@ namespace voteCollector.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -87,14 +76,15 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name", groupsusers.GroupUId);
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupsusers.UserId);
             return View(groupsusers);
         }
 
         // POST: Groupsusers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("IdGroupsUsers,GroupUId,Name,UserId")] Groupsusers groupsusers)
@@ -124,8 +114,11 @@ namespace voteCollector.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupUId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupsusers.GroupUId);
-            ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", groupsusers.UserId);
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
+            ViewData["GroupUId"] = new SelectList(_serviceUser.FilterGroups(groupsUser), "IdGroup", "Name");
+            ViewData["UserId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupsusers.UserId);
             return View(groupsusers);
         }
 
@@ -163,6 +156,12 @@ namespace voteCollector.Controllers
         private bool GroupsusersExists(long id)
         {
             return _context.Groupsusers.Any(e => e.IdGroupsUsers == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectTo()
+        {
+            return RedirectToAction("LkAdmin", "Admin");
         }
     }
 }

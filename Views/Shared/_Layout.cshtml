@@ -13,20 +13,23 @@
 
 
 
-<environment include="Development">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <!-- Подключение jQuery плагина Masked Input -->
+        <script src="jquery.maskedinput.min.js"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-</environment>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    </environment>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <h1><a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Агитатор 2021</a></h1>
+                <h1><a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Викторина 2021</a></h1>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -61,9 +64,54 @@
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+
+        <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/dataTables.jqueryui.min.js"></script>
         <link rel="stylesheet" type="text/css" href="~/lib/DataTables/datatables.min.css" />
         <script type="text/javascript" src="~/lib/DataTables/datatables.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json"/>
+        <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/1.10.20/i18n/Russian.json" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.6/xls.min.js"></script>
+
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js"></script>-->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+
+        <!-- Подключение jQuery плагина Masked Input -->
+        <script src="jquery.maskedinput.min.js"></script>
+
+    </environment>
+    <environment include="Production">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+        <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/dataTables.jqueryui.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="~/lib/DataTables/datatables.min.css" />
+        <script type="text/javascript" src="~/lib/DataTables/datatables.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/1.10.25/i18n/Russian.json" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.6/xls.min.js"></script>
+
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js"></script>-->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+
+        <!-- Подключение jQuery плагина Masked Input -->
+        <script src="jquery.maskedinput.min.js"></script>
 
     </environment>
     @RenderSection("Scripts", required: false)

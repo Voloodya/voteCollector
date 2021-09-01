@@ -11,10 +11,7 @@
     }
 }
 
-
-<h1>Create</h1>
-
-<h4>Friend</h4>
+<h4>Участник</h4>
 <hr />
 <div class="row">
     <input type="hidden" id="RequestVerificationToken"
@@ -22,265 +19,192 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FamilyName" class="control-label"></label>
-                <input asp-for="FamilyName" class="form-control" />
-                <span asp-validation-for="FamilyName" class="text-danger"></span>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="FamilyName" class="control-label"></label>
+                    <input asp-for="FamilyName" class="form-control" />
+                    <span asp-validation-for="FamilyName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="PatronymicName" class="control-label"></label>
+                    <input asp-for="PatronymicName" class="form-control" />
+                    <span asp-validation-for="PatronymicName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="DateBirth" class="control-label"></label>
+                    <input asp-for="DateBirth" class="form-control" />
+                    <span asp-validation-for="DateBirth" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="Unpinning" class="control-label"></label>
+                <input id="boolUnpinningServ" asp-for="Unpinning" class="form-control" />
+                <span asp-validation-for="Unpinning" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label class="control-label">Откреплен</label>
+                <input type="checkbox" id="boolUnpinning" class="form-control" onchange="HideShowBlocks('boolUnpinning', 'divCityDistrict','divStreet','divHouse','divApartment','divAdessText');" />
             </div>
-            <div class="form-group">
-                <label asp-for="PatronymicName" class="control-label"></label>
-                <input asp-for="PatronymicName" class="form-control" />
-                <span asp-validation-for="PatronymicName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateBirth" class="control-label"></label>
-                <input asp-for="DateBirth" class="form-control" />
-                <span asp-validation-for="DateBirth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CityId" class="control-label"></label>
-                <select id="CityId" asp-for="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DistrictId" class="control-label"></label>
-                <select asp-for="DistrictId" class="form-control" asp-items="ViewBag.DistrictId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="StreetId" class="control-label"></label>
-                <select id="StreetId" asp-for="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
-            </div>
-            @*<div class="form-group">
+
+            <div class="form-row" id="divAdressFull">
+                <div class="form-group col-md-6">
+                    <label asp-for="CityId" class="control-label"></label>
+                    <select id="CityId" asp-for="CityId" class="form-control" asp-items="ViewBag.CityId"></select>
+                </div>
+                <div id="divCityDistrict" class="form-group col-md-6">
+                    <label asp-for="CityDistrictId" class="control-label"></label>
+                    <select id="CityDistrictId" asp-for="CityDistrictId" class="form-control" asp-items="ViewBag.CityDistrictId"></select>
+                </div>
+                <div id="divStreet" class="form-group col-md-6">
+                    <label asp-for="StreetId" class="control-label"></label>
+                    <select id="StreetId" asp-for="StreetId" class="form-control" asp-items="ViewBag.StreetId" style="width:100%"></select>
+                </div>
+                @*<div class="form-group">
                 <label asp-for="MicroDistrictId" class="control-label"></label>
                 <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
             </div>*@
-            <div id="divHouse" class="form-group">
-                <label asp-for="HouseId" class="control-label"></label>
-                <select class="selectСhoice" id="HouseId" asp-for="HouseId" asp-items="ViewBag.GetHouses" style="width:100%"></select>
-            </div>
-            <div class="form-group">
+                <div id="divHouse" class="form-group col-md-6">
+                    <label asp-for="HouseId" class="control-label"></label>
+                    <select id="HouseId" asp-for="HouseId" class="form-control" asp-items="ViewBag.HouseId" style="width:100%"></select>
+                </div>
+                @*<div class="form-group">
                 <label asp-for="Building" class="control-label"></label>
                 <input asp-for="Building" class="form-control" />
                 <span asp-validation-for="Building" class="text-danger"></span>
+            </div>*@
+                <div id="divApartment" class="form-group col-md-6">
+                    <label asp-for="Apartment" class="control-label"></label>
+                    <input asp-for="Apartment" class="form-control" />
+                    <span asp-validation-for="Apartment" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Apartment" class="control-label"></label>
-                <input asp-for="Apartment" class="form-control" />
-                <span asp-validation-for="Apartment" class="text-danger"></span>
+            <div id="divAdessText" class="form-group" style="display:none">
+                <label asp-for="Adress" class="control-label"></label>
+                <input id="AdressId" asp-for="Adress" class="form-control" />
+                <span asp-validation-for="Adress" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Telephone" class="control-label"></label>
-                <input asp-for="Telephone" class="form-control" />
+                <input id="phoneNumber" asp-for="Telephone" class="form-control" value="+7" />
                 <span asp-validation-for="Telephone" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="ElectoralDistrictId" class="control-label"></label>
+                    <select id="ElectoralDistrictId" asp-for="ElectoralDistrictId" class="form-control" asp-items="ViewBag.ElectoralDistrictId"></select>
+                </div>
+                @*<div class="form-group col-md-6">
                 <label asp-for="PollingStationId" class="control-label"></label>
-                <select id="PollingStationId" asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStations"></select>
+                <select id="PollingStationId" asp-for="PollingStationId" class="form-control" asp-items="ViewBag.PollingStationId"></select>
+            </div>*@
+                <div class="form-group col-md-6">
+                    <label asp-for="StationId" class="control-label"></label>
+                    <select id="StationId" asp-for="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
+                    <span asp-validation-for="StationId" class="text-danger"></span>
+                </div>
+
             </div>
-            <div class="form-group">
+
+            @*<div class="form-row">
+            <div class="form-group col-md-6">
                 <label asp-for="Organization" class="control-label"></label>
                 <input asp-for="Organization" class="form-control" />
                 <span asp-validation-for="Organization" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FieldActivityId" class="control-label"></label>
-                <select asp-for="FieldActivityId" class="form-control" asp-items="ViewBag.FieldActivityId"></select>
-            </div>
-            <div class="form-group">
+        </div>*@
+
+            <div class="form-group" style="display:none">
                 <label asp-for="PhoneNumberResponsible" class="control-label"></label>
                 <input asp-for="PhoneNumberResponsible" class="form-control" />
                 <span asp-validation-for="PhoneNumberResponsible" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DateRegistrationSite" class="control-label"></label>
-                <input asp-for="DateRegistrationSite" class="form-control" />
-                <span asp-validation-for="DateRegistrationSite" class="text-danger"></span>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="DateRegistrationSite" class="control-label"></label>
+                    <input asp-for="DateRegistrationSite" class="form-control" />
+                    <span asp-validation-for="DateRegistrationSite" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="display:none">
+                    <label asp-for="VotingDate" class="control-label"></label>
+                    <input id="dateVoting" asp-for="VotingDate" class="form-control" />
+                    <span asp-validation-for="VotingDate" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="display:none">
+                    <label asp-for="Voter" class="control-label"></label>
+                    <input id="boolVoter" asp-for="Voter" class="form-control" onchange="setDate('boolVoter','dateVoting');" />
+                    <span asp-validation-for="Voter" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="VotingDate" class="control-label"></label>
-                <input id="dateVoting" asp-for="VotingDate" class="form-control" />
-                <span asp-validation-for="VotingDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Voter" class="control-label"></label>
-                <input id="boolVoter" type="checkbox" asp-for="Voter" class="form-control" onchange="setDate('dateVoting')" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Qrcode" class="control-label"></label>
-                <input asp-for="Qrcode" class="form-control" />
-                <span asp-validation-for="Qrcode" class="text-danger"></span>
+                <label asp-for="FriendStatusId" class="control-label"></label>
+                <select asp-for="FriendStatusId" class="form-control" asp-items="ViewBag.FriendStatusId"></select>
+                <span asp-validation-for="FriendStatusId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="UserId" class="control-label"></label>
                 <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="GroupUId" class="control-label"></label>
-                <select asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="FieldActivityId" class="control-label"></label>
+                    <select asp-for="FieldActivityId" class="form-control" asp-items="ViewBag.FieldActivityId"></select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="OrganizationId" class="control-label"></label>
+                    <select id="organizationSelectId" asp-for="OrganizationId" class="form-control" asp-items="ViewBag.OrganizationId"></select>
+                </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="GroupUId" class="control-label"></label>
+                <select id="SelectGroupId" asp-for="GroupUId" class="form-control" asp-items="ViewBag.GroupUId"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TextQRcode" class="control-label"></label>
+                <input asp-for="TextQRcode" class="form-control" />
+                <span asp-validation-for="TextQRcode" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="submit" value="Добавить" class="btn btn-primary btn-block" />
+                </div>
+                <div class="form-group col-md-6">
+                    <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i>Вернуться к списку</a>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 <environment include="Development">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </environment>
 
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
 @section Scripts {
 
-    <script>
+    <script type="text/javascript" src="~/js/JS_Create_Edit_Friend.js"></script>
+    <script type="text/javascript" src="~/js/JS_Create_Edit_Friend_update_station.js"></script>
 
-        //Установка даты голосования
-        function setDate(idObject) {
-
-            chbox = document.getElementById('boolVoter');
-            if (chbox.checked) {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                var yyyy = today.getFullYear();
-                today = yyyy + '-' + mm + '-' + dd;
-                document.getElementById(idObject).value = today;
-            }
-            else {
-                document.getElementById(idObject).value = null;
-            }
-        }
-
-        // Обновление списка улиц после выбора города
-        $(function () {
-            $("#CityId").change(function () {
-                var formData = { 'CityId': Number.parseInt($('#CityId').val()), 'Name': $('#CityId>option:selected').text()};
-                $.ajax({
-                    url: "http://localhost:18246/api/API/searchStreets",
-                    headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': $('#RequestVerificationToken').val()
-                    },
-                    type: 'POST',
-                    dataType: "json",
-                    data: JSON.stringify(formData),
-                    success: function (data) {
-
-                        dataFilling(data, 'idStreet', 'name', '#StreetId', '<option/>');
-                    },
-                    error: function (result, status, er) {
-                        alert("error: " + result + " status: " + status + " er:" + er);
-                    }
-                });
-            });
-        });
-
-        // Обновление списка домов после выбора улицы
-         $(function () {
-             $("#StreetId").change(function () {
-                 var id = $('#StreetId').val();
-                $.ajax({
-                    type: 'GET',
-                    url: '@Url.Action("GetHouses")/' + id,
-                    success: function (data) {
-                        $('#HouseId').replaceWith(data);
-                    },
-                    error: function (result, status, er) {
-                        alert("error: " + result + " status: " + status + " er:" + er);
-                    }
-                });
-            });
-         });
-
-        // Обновление списка участков после выбора улицы
-        $(function () {
-            $("#StreetId").change(function () {
-                var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text()};
-                $.ajax({
-                    url: "http://localhost:18246/api/API/searchPollingStations/street",
-                    headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': $('#RequestVerificationToken').val()
-                    },
-                    type: 'POST',
-                    dataType: "json",
-                    data: JSON.stringify(formData),
-                    success: function (data) {
-                        dataFilling(data, 'idPollingStation', 'name', '#PollingStationId', '<option/>');
-                    },
-                    error: function (result, status, er) {
-                        alert("error: " + result + " status: " + status + " er:" + er);
-                    }
-                });
-            });
-        });
-
-        // Обновление списка участков после выбора номера дома
-        $(function () {
-            $("#HouseId").change(function () {
-                var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text()};
-                $.ajax({
-                    url: "http://localhost:18246/api/API/searchPollingStations/house",
-                    headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': $('#RequestVerificationToken').val()
-                    },
-                    type: 'POST',
-                    dataType: "json",
-                    data: JSON.stringify(formData),
-                    success: function (data) {
-                        dataFilling(data, 'idPollingStation','name', '#PollingStationId', '<option/>');                  
-                    },
-                    error: function (result, status, er) {
-                        alert("error: " + result + " status: " + status + " er:" + er);
-                    }
-                });
-            });
-        });
-
-        //Заполнение объекта html данными из json массива
-        function dataFilling(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
-
-            var objectHtml = $(idObject);
-            objectHtml.empty();
-
-            $.each(data, function (index, dataInstance) {
-                objectHtml.append($(propertyHtml,
-                    {
-                        value: dataInstance[nameProperty1],
-                        text: dataInstance[nameProperty2]
-                    }));
-            });
-        }
-
-        $(document).ready(function () {
-            $('.selectСhoice').select2({
-                dropdownParent: $('#divHouse'),
-                placeholder: "Выберите дом",
-                minimumInputLength: 1, // only start searching when the user has input 3 or more characters
-                maximumInputLength: 5, // only allow terms up to 20 characters long
-                language: "ru"
-            });
-        });
-    </script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 

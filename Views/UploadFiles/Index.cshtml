@@ -1,0 +1,104 @@
+﻿@model voteCollector.DTO.FileExcel
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<h4>Загрузка файла</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <input type="hidden" id="RequestVerificationToken"
+               name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+        <div class="form-group col-md-6">
+            <input type="file" class="file-select" id="uploadFileFriends" name="uploadFileFriends" accept=".xls, .xlsx" /><br /><br />
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Загрузить в сервис" onclick="UploadExcelToWebService('uploadFileFriends');" />
+            </div>
+        </div>
+        <div id="idDivMessage" style="color:red">
+
+        </div>
+        @*<div class="form-row">
+            <div class="form-group col-md-6">
+                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Загрузить в сервис MVC" onclick="UploadExcelToWebServiceMVC('uploadFileFriends');" />
+            </div>
+        </div>*@
+    </div>    
+</div>
+
+<h4>Незагруженные строки</h4>
+<hr/>
+
+<div id="outText" class="form-group col-md-6">
+    <output></output>
+</div>
+
+<table class="table" id="fileUploadTable">
+    <thead>
+        <tr>
+            <th>
+                № строки файла
+            </th>
+            <th>
+                Фамилия
+            </th>
+            <th>
+                Имя
+            </th>
+            <th>
+                Отчество
+            </th>
+            <th>
+                Дата рождения
+            </th>
+            <th>
+                Город
+            </th>
+            <th>
+                Улицы
+            </th>
+            <th>
+                Дом
+            </th>
+            <th>
+                Ошибка
+            </th>
+        </tr>
+    </thead>
+    <tbody id="tBodyUploadFile">
+
+    </tbody>
+</table>
+
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_UploadFiles.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+                alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

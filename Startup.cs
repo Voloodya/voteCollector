@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using voteCollector.Data;
 
 namespace voteCollector
@@ -23,6 +21,7 @@ namespace voteCollector
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // Прописываем сервисы (внедряем зависимости), которые будут инициализироваться при старте приложения
         public void ConfigureServices(IServiceCollection services)
         {
             //Add
@@ -35,6 +34,8 @@ namespace voteCollector
                 });
             //Add
             services.AddDbContext<VoterCollectorContext>();
+            //Add
+            services.AddHttpClient();
 
             services.AddControllersWithViews();
             //Add
@@ -57,6 +58,19 @@ namespace voteCollector
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;
+                
+            });
+
+            //Add ???
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(7);
+
+                options.LoginPath = "/Account/login";
+                options.AccessDeniedPath = "/Account/login";
+                options.SlidingExpiration = true;
             });
 
             //Add
@@ -86,17 +100,33 @@ namespace voteCollector
             //Его вызов позволяет установить значение для свойства HttpContext.User.
             //Аутентификация отвечает на вопрос, кто пользователь.
             app.UseAuthentication();
+
+            ////Add ???
+            //app.UseMvc();
+
             //метод app.UseAuthorization() встраивает в конвейер компонент AuthorizationMiddleware,
             //который управляет авторизацией пользователей и разграничивает доступ к ресурсам.
             //Авторизация отвечает на вопрос, какие права в системе имеет пользователь, позволяет разграничить доступ к ресурсам приложения.
-            app.UseAuthorization();
+            app.UseAuthorization();            
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            //Add ???
+            var cookiePolicyOptions = new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+            };
+            //Add ???
+            app.UseCookiePolicy(cookiePolicyOptions);
+
+            //app.UseCors();
         }
     }
 }

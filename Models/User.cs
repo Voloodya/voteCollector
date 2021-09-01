@@ -17,16 +17,20 @@ namespace voteCollector.Models
         {
             Friends = new HashSet<Friend>();
             Groupsusers = new HashSet<Groupsusers>();
+            Groupus = new HashSet<Groupu>();
         }
 
         [Key]
         [Column("Id_User")]
         public long IdUser { get; set; }
-        [DisplayName("Пользователь")]
-        [Required(ErrorMessage = "Не указано имя")]
+        [DisplayName("Логин (ivanov@gmail.com)")]
+        [Required(ErrorMessage = "Не указан логин")]
         [Column(TypeName = "varchar(100)")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Не указан пароль")]
+        [MinLength(5)]
+        [MaxLength(100)]
+        [RegularExpression(@"(^[A-Za-z0-9]{5,100})"), StringLength(100)]
         [Column(TypeName = "varchar(100)")]
         public string Password { get; set; }
         [DisplayName("Роль")]
@@ -50,7 +54,7 @@ namespace voteCollector.Models
         public DateTime? DateBirth { get; set; }
         [MinLength(11)]
         [MaxLength(12)]
-        [RegularExpression(@"[+]?[0-9]+"), StringLength(12)]
+        [RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
         [DisplayName("Телефон")]
         [Column(TypeName = "varchar(12)")]
         public string Telephone { get; set; }
@@ -62,13 +66,18 @@ namespace voteCollector.Models
         [DisplayName("Друзья")]
         [InverseProperty("User")]
         public virtual ICollection<Friend> Friends { get; set; }
-        [DisplayName("Группы")]
+        [DisplayName("Группы пользователя")]
         [InverseProperty("User")]
         public virtual ICollection<Groupsusers> Groupsusers { get; set; }
+        [DisplayName("Группы ответственного")]
+        [InverseProperty("UserResponsible")]
+        public virtual ICollection<Groupu> Groupus { get; set; }
 
         [DisplayName("Кол-во избирателей")]
         [NotMapped]
         public string numberFriends { get; set; }
+        [NotMapped]
+        public string FioPhoneNumber { get; set; }
 
     }
 }

@@ -6,64 +6,98 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using voteCollector.Data;
 using voteCollector.Models;
+using voteCollector.Services;
 
 namespace voteCollector.Controllers
 {
     [Authorize(Roles = "admin")]
     public class GroupusController : Controller
     {
+        private readonly ILogger<GroupusController> _logger;
         private readonly VoterCollectorContext _context;
+        private ServiceUser _serviceUser;
+        private ServiceGroup _serviceGroup;
 
-        public GroupusController(VoterCollectorContext context)
+        public GroupusController(VoterCollectorContext context, ILogger<GroupusController> logger)
         {
             _context = context;
+            _logger = logger;
+            _serviceUser = new ServiceUser(context);
+            _serviceGroup = new ServiceGroup(context);
         }
 
         // GET: Groupus
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Groupu.ToListAsync());
-        }
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
 
-        // GET: Groupus/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            if (groupsUser.Contains(mainGroup))
             {
-                return NotFound();
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).Include(g => g.GroupParents).Include(g => g.UserResponsible).ToListAsync());
             }
-
-            var groupu = await _context.Groupu
-                .FirstOrDefaultAsync(m => m.IdGroup == id);
-            if (groupu == null)
+            else
             {
-                return NotFound();
-            }
-
-            return View(groupu);
+                return View(await _context.Groupu.Include(g => g.FieldActivity).Include(g => g.Organization).Include(g => g.GroupParents).Include(g => g.UserResponsible).Where(g => groupsUser.Contains(g)).ToListAsync());                
+            }            
         }
 
         // GET: Groupus/Create
         public IActionResult Create()
         {
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber");
+
             return View();
         }
 
         // POST: Groupus/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdGroup,Name")] Groupu groupu)
+        public async Task<IActionResult> Create([Bind("IdGroup,Name,FieldActivityId,OrganizationId,GroupParentsId,UserResponsibleId,NumberEmployees,Level")] Groupu groupu)
         {
+
             if (ModelState.IsValid)
             {
-                _context.Add(groupu);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name));
+
+                if (groupuDB == null)
+                {
+                    User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                    groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
+                    Groupu groupuParent = _context.Groupu.Find(groupu.GroupParentsId);
+                    if (groupuParent.Name.Equals(""))
+                    {
+                        groupu.GroupParentsId = null;
+                    }
+                    _context.Add(groupu);
+                    _context.SaveChanges();
+
+                    Groupsusers groupsusers = new Groupsusers();
+                    groupsusers.GroupUId = groupu.IdGroup;
+                    groupsusers.UserId = currentUser.IdUser;
+                    _context.Add(groupsusers);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
+            //
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name");
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name");
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name");
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber");
+
             return View(groupu);
         }
 
@@ -80,15 +114,21 @@ namespace voteCollector.Controllers
             {
                 return NotFound();
             }
+
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+            
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupu.GroupParents);
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupu.UserResponsible);
+
             return View(groupu);
         }
 
         // POST: Groupus/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name")] Groupu groupu)
+        public async Task<IActionResult> Edit(int id, [Bind("IdGroup,Name,FieldActivityId,OrganizationId,GroupParentsId,UserResponsibleId,NumberEmployees,Level")] Groupu groupu)
         {
             if (id != groupu.IdGroup)
             {
@@ -97,24 +137,45 @@ namespace voteCollector.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                Groupu groupuDB = _context.Groupu.FirstOrDefault(g => g.Name.Equals(groupu.Name) && g.IdGroup!=id);
+                if (groupuDB == null)
                 {
-                    _context.Update(groupu);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GroupuExists(groupu.IdGroup))
+                    Groupu groupuParent = _context.Groupu.Find(groupu.GroupParentsId);
+                    if (groupuParent.Name.Equals(""))
                     {
-                        return NotFound();
+                        groupu.GroupParentsId = null;
                     }
-                    else
+
+                    try
                     {
-                        throw;
+                        User currentUser = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                        groupu.CreatorGroup = currentUser.FamilyName + " " + currentUser.Name + " " + currentUser.PatronymicName;
+
+                        _context.Update(groupu);
+                        await _context.SaveChangesAsync();
                     }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!GroupuExists(groupu.IdGroup))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else ModelState.AddModelError("", "Группа с данным именем уже существует");
             }
+            List<User> users = _context.User.Select(u => new User { IdUser = u.IdUser, FioPhoneNumber = u.FamilyName + " " + u.Name + " " + u.PatronymicName + " " + u.Telephone }).ToList();
+
+            ViewData["OrganizationId"] = new SelectList(_context.Organization, "IdOrganization", "Name", groupu.Organization);
+            ViewData["FieldActivityId"] = new SelectList(_context.Fieldactivity, "IdFieldActivity", "Name", groupu.FieldActivityId);
+            ViewData["GroupParentsId"] = new SelectList(_context.Groupu, "IdGroup", "Name", groupu.GroupParents);
+            ViewData["UserResponsibleId"] = new SelectList(users, "IdUser", "FioPhoneNumber", groupu.UserResponsible);
+
             return View(groupu);
         }
 
@@ -126,13 +187,13 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
-            var groupu = await _context.Groupu
+            var groupu = await _context.Groupu.Include(g => g.FieldActivity)
+                .Include(g => g.Organization)
                 .FirstOrDefaultAsync(m => m.IdGroup == id);
             if (groupu == null)
             {
                 return NotFound();
             }
-
             return View(groupu);
         }
 
@@ -147,9 +208,36 @@ namespace voteCollector.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Groupu/GetChildGroups/5
+        [HttpGet]
+        public async Task<IActionResult> GetChildGroups(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Groupu rootGroup = _context.Groupu.Include(g => g.InverseGroupParents).Include(g => g.GroupParents)
+                .Include(g => g.UserResponsible).FirstOrDefault(g => g.IdGroup==id);
+            if (rootGroup == null)
+            {
+                return NotFound();
+            }
+            List<Groupu> groups = _serviceGroup.GetAllChildGroupsBFS(rootGroup, rootGroup, rootGroup);
+            //groups.Sort((g1, g2) => ((g1.Level ?? 0) - (g2.Level ?? 0)));
+            return View(groups);
+
+        }
+
         private bool GroupuExists(int id)
         {
             return _context.Groupu.Any(e => e.IdGroup == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectTo()
+        {
+            return RedirectToAction("LkAdmin", "Admin");
         }
     }
 }

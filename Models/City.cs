@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,29 +14,19 @@ namespace voteCollector.Models
     {
         public City()
         {
-            Districts = new HashSet<District>();
+            CityDistricts = new HashSet<CityDistrict>();
             Friends = new HashSet<Friend>();
-            Microdistricts = new HashSet<Microdistrict>();
-            PollingStations = new HashSet<PollingStation>();
-            Streets = new HashSet<Street>();
         }
 
         [Key]
         [Column("Id_City")]
         public int IdCity { get; set; }
-        [DisplayName("Насел. п-т")]
         [Column(TypeName = "varchar(256)")]
         public string Name { get; set; }
 
         [InverseProperty("City")]
-        public virtual ICollection<District> Districts { get; set; }
+        public virtual ICollection<CityDistrict> CityDistricts { get; set; }
         [InverseProperty("City")]
         public virtual ICollection<Friend> Friends { get; set; }
-        [InverseProperty("City")]
-        public virtual ICollection<Microdistrict> Microdistricts { get; set; }
-        [InverseProperty("City")]
-        public virtual ICollection<PollingStation> PollingStations { get; set; }
-        [InverseProperty("City")]
-        public virtual ICollection<Street> Streets { get; set; }
     }
 }

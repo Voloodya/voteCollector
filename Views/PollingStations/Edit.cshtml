@@ -1,0 +1,67 @@
+﻿@model voteCollector.Models.PollingStation
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<h4>Участок</h4>
+<hr />
+<div class="row">
+    <input type="hidden" id="RequestVerificationToken"
+           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdPollingStation" />
+            @*<div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="StationId" class="control-label"></label>
+                <select asp-for="StationId" id="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
+                <span asp-validation-for="StationId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CityDistrictId" class="control-label"></label>
+                <select asp-for="CityDistrictId" id="CityId" class="form-control" asp-items="ViewBag.CityDistrictId"></select>
+                <span asp-validation-for="CityDistrictId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StreetId" class="control-label"></label>
+                <select asp-for="StreetId" id="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
+                <span asp-validation-for="StreetId" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+            <label asp-for="MicroDistrictId" class="control-label"></label>
+            <select asp-for="MicroDistrictId" class="form-control" asp-items="ViewBag.MicroDistrictId"></select>
+            <span asp-validation-for="MicroDistrictId" class="text-danger"></span>
+        </div>*@
+            <div class="form-group">
+                <label asp-for="HouseId" class="control-label"></label>
+                <select asp-for="HouseId" id="HouseId" class="form-control" asp-items="ViewBag.HouseId"></select>
+                <span asp-validation-for="HouseId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Вернуться к списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
