@@ -193,12 +193,26 @@ namespace voteCollector.Controllers
 
         [HttpPost]
         [Route("requestqrcodesreceiving")]
-        public async Task<IActionResult> RequestQRcodesReceiving([FromBody] string dateTimeStr)
+        public async Task<IActionResult> RequestQRcodesReceiving([FromBody] DateTimeDTO dateTimeStr)
         {
             string url = "https://etsa.online/app/api/barcodes/get.php";
             ReportQrCodeExchange reportQrCodeExchange = new ReportQrCodeExchange();
             ResponseMessageDataQRCode responseData = null;
-            string dateTimeNow = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            string dateTimeNow;
+            DateTime dateTimeFront;
+
+            if (dateTimeStr != null && dateTimeStr.Date !=null && !dateTimeStr.Date.Equals("") && dateTimeStr.Time != null && !dateTimeStr.Time.Equals(""))
+            {
+                String[] date = dateTimeStr.Date.Split('-');
+                string[] time = dateTimeStr.Time.Split(':');
+                dateTimeFront = new DateTime(Convert.ToInt32(date[0]), Convert.ToInt32(date[1]), Convert.ToInt32(date[2]), Convert.ToInt32(time[0]), Convert.ToInt32(time[1]),0);
+                dateTimeNow = dateTimeFront.ToString("yyyy-MM-dd hh:mm:ss");
+            }
+            else
+            {
+                DateTime dateTimeUTC = DateTime.UtcNow;
+                dateTimeNow = dateTimeUTC.AddHours(3).ToString("yyyy-MM-dd hh:mm:ss");
+            }           
 
 
             Dictionary<string, string> requestMessageDict = new Dictionary<string, string>
@@ -234,15 +248,22 @@ namespace voteCollector.Controllers
             {
                 if (responseData.status.Equals("200") || responseData.status.Equals("OK"))
                 {
-                    if (responseData is ResponseMessageDataQRCode)
+                    try
                     {
-                        reportQrCodeExchange = CheckQrCodes((ResponseMessageDataQRCodeSuccessfully)responseData);
+                        ResponseMessageDataQRCodeSuccessfully responseMessageDataQRCodeSuccessfully = (ResponseMessageDataQRCodeSuccessfully)responseData;
+                        reportQrCodeExchange = CheckQrCodes(responseMessageDataQRCodeSuccessfully);
+                    }catch
+                    {
+                        reportQrCodeExchange.error = responseData.error;
+                        reportQrCodeExchange.status = responseData.status;
+                        reportQrCodeExchange.dateTimeRequest = responseData.date;
                     }
                 }
                 else
                 {
                     reportQrCodeExchange.error = responseData.error;
                     reportQrCodeExchange.status = responseData.status;
+                    reportQrCodeExchange.dateTimeRequest = responseData.date;
                     return Ok(reportQrCodeExchange);
                 }
             }
@@ -274,7 +295,7 @@ namespace voteCollector.Controllers
 
         private async Task<ResponseMessageDataQRCode> PostRequestFormAsync(string url, IEnumerable<KeyValuePair<string, string>> data, string str)
         {
-            ResponseMessageDataQRCode responseData = null;
+            ResponseMessageDataQRCode responseData;
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
@@ -285,7 +306,14 @@ namespace voteCollector.Controllers
             string jsonResponseData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
-                responseData = JsonSerializer.Deserialize<ResponseMessageDataQRCodeSuccessfully>(jsonResponseData);
+                if (!jsonResponseData.Contains("[]"))
+                {
+                    responseData = JsonSerializer.Deserialize<ResponseMessageDataQRCodeSuccessfully>(jsonResponseData);
+                }
+                else
+                {
+                    responseData = JsonSerializer.Deserialize<ResponseMessageDataQRCodeError>(jsonResponseData);
+                }
             }
             else {
                 responseData = JsonSerializer.Deserialize<ResponseMessageDataQRCodeError>(jsonResponseData);
@@ -303,7 +331,7 @@ namespace voteCollector.Controllers
                 error = dataQRcodes.error,
                 numberReceivedCodes = dataQRcodes.items.Count,
                 dateTimeRequest = dataQRcodes.date.ToString(),
-                notFoundQRcodes = new List<string>()
+                notFoundQRcodes = new List<Item>()
             };
 
             int numberMarkedCodes = 0;
@@ -320,8 +348,9 @@ namespace voteCollector.Controllers
                     }
                     else
                     {
+                        numberMarkedCodes++;
                         numberNotFound++;
-                        reportQrCodeExchange.notFoundQRcodes.Add(keyValue.Key);
+                        reportQrCodeExchange.notFoundQRcodes.Add(new Item { qrText = keyValue.Key, date = keyValue.Value });
                     }
                 }
             }
@@ -333,7 +362,7 @@ namespace voteCollector.Controllers
 
         public bool CheckQrCode(string qrCodes, ServiceFriends serviceFriends)
         {
-                Friend friendUpdate = null;
+                Friend friendUpdate;
                 try
                 {
                     friendUpdate = serviceFriends.FindUserByQRtext(qrCodes);

@@ -35,7 +35,7 @@ namespace voteCollector.Services
 
             try
             {
-                friend = _context.Friend.Where(frnd => frnd.TextQRcode.Equals(qrText)).FirstOrDefault();
+                friend = _context.Friend.Where(frnd => frnd.TextQRcode.Trim().Equals(qrText.Trim())).FirstOrDefault();
             }
             catch(Exception ex)
             {

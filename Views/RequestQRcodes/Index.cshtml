@@ -14,13 +14,17 @@
     <div class="col-md-4">
         <div class="form-row">
             <div class="form-group col-md-6">
-                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Запросить QR-коды" onclick="RequestQRcodes('idDateTime');" />
+                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Запросить QR-коды" onclick="RequestQRcodes('idDate','idTime');" />
             </div>
         </div>
         <div class="form-row">
             <p>
-                <label for="idDateTime">Дата: </label>
-                <input type="datetime" id="idDateTime" name="dateTime" />
+                <label for="idDate">Дата: </label>
+                <input type="date" id="idDate" name="date" />
+            </p>
+            <p>
+                <label for="idTime">Время: </label>
+                <input type="time" id="idTime" name="time" />
             </p>
         </div>
         <div id="idDivMessage" style="color:red"></div>

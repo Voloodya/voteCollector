@@ -4,10 +4,12 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = '';
 }
 
-async function RequestQRcodes(idObjectDateTime) {
+async function RequestQRcodes(idObjectDate, idObjectTime) {
 
-    var data = document.getElementById(idObjectDateTime).value;
+    var date = document.getElementById(idObjectDate).value;
+    var time = document.getElementById(idObjectTime).value;
 
+    var formData = { 'date': date, 'time': time };
     $.ajax({
         type: 'POST',
         url: partMyURL + '/api/QRcodeСheckAPI/requestqrcodesreceiving',
@@ -18,10 +20,12 @@ async function RequestQRcodes(idObjectDateTime) {
             'RequestVerificationToken': $('#RequestVerificationToken').val()
         },
         processData: false,
-        data: JSON.stringify(data),
+        data: JSON.stringify(formData),
         success: function (data) {
 
-            DataFillingTableBody(data['notFoundQRcodes'], 'qrCodesTable');
+            if (data['notFoundQRcodes'] != null && data['notFoundQRcodes'] !== undefined) {
+                DataFillingTableBody(data['notFoundQRcodes'], 'qrCodesTable');
+            }
             document.getElementById('idDivMessage').innerHTML = "<h3>" + " Загрузка завершена!" + "</h3>";
             alert("Загрузка завершена!");
             document.getElementById('idDivStatus').innerHTML = "<h4> Статус запроса: " + data['status'] + "</h4>";

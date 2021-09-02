@@ -13,6 +13,16 @@ namespace voteCollector.DTO
         public int numberMarkedCodes { get; set; }
         public int numberNotFound { get; set; }
         public string dateTimeRequest { get; set; }
-        public List<string> notFoundQRcodes { get; set; }
+       // public List<string> notFoundQRcodes { get; set; }
+
+        public List<Item> notFoundQRcodes { get; set; }
+
+        //public Dictionary<string,string> notFoundQRcodes { get; set; }
+    }
+
+    public class Item
+    {
+        public string qrText { get; set; }
+        public string date { get; set; }
     }
 }
