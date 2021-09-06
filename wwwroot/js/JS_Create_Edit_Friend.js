@@ -141,7 +141,7 @@ $(function () {
                             return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
                         });
                     }
-                    DataFillingSelect(dataSort, 'idGroup', 'name', 'SelectGroupId', '<option/>');
+                    DataFillingSelect(dataSort, 'idGroup', 'name', '#SelectGroupId', '<option/>');
 
                 },
                 error: function (result, status, er) {
@@ -198,105 +198,194 @@ function GetSelectedOption(select) {
 $(function () {
     $("#CityId").change(function () {
 
-        var selectCity = $('#CityId>option:selected').text();
-
-        UpdateStationByCityAfterSelect();
+        var selectCity = $('#CityId>option:selected').text();        
 
         if (selectCity !== 'Оренбург') {
 
-            document.getElementById('boolUnpinning').checked = true;
+            //document.getElementById('boolUnpinning').checked = true;
 
-            document.getElementById('boolUnpinning').disabled = true;
+            //document.getElementById('boolUnpinning').disabled = true;
 
             HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+            DisplayInputField('divAdessText', true);
+
+            // Синхронизация
+            chboxFront = document.getElementById('boolUnpinning');
+            chboxServ = document.getElementById('boolUnpinningServ');
+            chboxFront.checked = chboxServ.checked;
+
+            if (chboxServ.checked) {
+
+                UpdateStationByCityAfterSelect();
+                UploadElectoralDistrictsAll();
+            }
 
         }   
         else if (selectCity === 'Оренбург') {
 
-            document.getElementById('boolUnpinning').checked = false;
+            // Генерация события для элемента Select
+            let elemSelectCityDistrict = document.querySelector('#CityDistrictId')
+            elemSelectCityDistrict.selectedIndex = 0;
+            const event = new Event("change");
+            elemSelectCityDistrict.dispatchEvent(event);
 
-            document.getElementById('boolUnpinning').disabled = false;
+            UpdateStationByCityAfterSelect();
+            UploadElectoralDistrictsAll();
+
+            //document.getElementById('boolUnpinning').checked = false;
+
+            //document.getElementById('boolUnpinning').disabled = false;
 
             ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+            DisplayInputField('divAdessText', false);
         }
     });
 });
 
+$(function () {
+    $("#boolUnpinning").change(function () {
+
+        // Синхронизируем статусы Откреплен/неоткреплен серверного и пользовательского елемента
+        chboxFront = document.getElementById('boolUnpinning');
+        chboxServ = document.getElementById('boolUnpinningServ');
+        chboxServ.checked = chboxFront.checked;
+
+        if (chboxFront.checked) {
+            UpdateStationByCityAfterSelect();
+            UploadElectoralDistrictsAll();
+        }
+    });
+});
 
 function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible)
 {  
-    chbox = document.getElementById(idchbox);
+    var chbox = document.getElementById(idchbox);
 
     // Устанавливаем статус в серверный checkbox Откреплен/Неоткреплен из фронтального checkbox
     var chboxServ = document.getElementById('boolUnpinningServ');
-    chboxServ.checked = chbox.checked;
+    //chboxServ.checked = chbox.checked;
 
-    if ($('#CityId>option:selected').text() !== 'Оренбург') {
+    // Если "Откреплен"
+    if (chbox.checked) {
 
-        let hideObj1 = document.getElementById(idObjectHidden1);
-        let hideObj2 = document.getElementById(idObjectHidden2);
-        let hideObj3 = document.getElementById(idObjectHidden3);
-        let hideObj4 = document.getElementById(idObjectHidden4);
-        let showObj = document.getElementById(idObjectVisible);
+        // Не Оренбург
+        if ($('#CityId>option:selected').text() !== 'Оренбург') {
 
-        document.getElementById('boolUnpinning').checked = true;
-        document.getElementById('boolUnpinning').disabled = true;
-
-        if (chbox.checked) {
-
-            hideObj1.style.display = 'none';
-            hideObj2.style.display = 'none';
-            hideObj3.style.display = 'none';
-            hideObj4.style.display = 'none';
-            showObj.style.display = 'block';
-
-            UpdateStationByCityAfterSelect();
-            UploadElectoralDistrictsAll();
+            HideBlocks(idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible);
+            DisplayInputField(idObjectVisible, true);
         }
-        else {
+        else { // Оренбург          
 
-            hideObj1.style.display = 'block';
-            hideObj2.style.display = 'block';
-            hideObj3.style.display = 'block';
-            hideObj4.style.display = 'block';
-            showObj.style.display = 'none';
-
-            UpdateStationByCityAfterSelect();            
+            ShowBlocks(idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible);
+            DisplayInputField(idObjectVisible, false);
         }
+
     }
-    else {
+    else { // Если "Неоткреплен"
 
-        if (chbox.checked) {
+        // Не Оренбург
+        if ($('#CityId>option:selected').text() !== 'Оренбург') {
 
-            UpdateStationByCityAfterSelect();
-            UploadElectoralDistrictsAll();
-            ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
-
+            HideBlocks(idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible);
+            DisplayInputField(idObjectVisible, true);
+            // Поля участок и округ "Пустые"
+            var selectStation = $('#StationId');
+            var selectElectoralDistrict = $('#ElectoralDistrictId');
+            selectStation.empty();
+            selectElectoralDistrict.empty();
         }
-        else {
+        else { // Оренбург
 
+            ShowBlocks(idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible);
+            DisplayInputField(idObjectVisible, false);
             UploadStationByCitydistrictAndStreetAndHouse();
         }
     }
+
+//    if ($('#CityId>option:selected').text() !== 'Оренбург') {
+
+//        document.getElementById('boolUnpinning').checked = true;
+//        document.getElementById('boolUnpinning').disabled = true;
+
+//        if (chbox.checked) {
+
+//            hideObj1.style.display = 'none';
+//            hideObj2.style.display = 'none';
+//            hideObj3.style.display = 'none';
+//            hideObj4.style.display = 'none';
+//            showObj.style.display = 'block';
+
+//            UpdateStationByCityAfterSelect();
+//            UploadElectoralDistrictsAll();
+//        }
+//        else {
+
+//            hideObj1.style.display = 'block';
+//            hideObj2.style.display = 'block';
+//            hideObj3.style.display = 'block';
+//            hideObj4.style.display = 'block';
+//            showObj.style.display = 'none';
+
+//            UpdateStationByCityAfterSelect();            
+//        }
+//    }
+//    else {
+
+//        if (chbox.checked) {
+
+//            UpdateStationByCityAfterSelect();
+//            UploadElectoralDistrictsAll();
+//            ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+
+//        }
+//        else {
+
+//            UploadStationByCitydistrictAndStreetAndHouse();
+//        }
+//    }
+
 }
 
 
-function ShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4, idObjectVisible) {
+function ShowBlocks(idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4) {
+
     let hideObj1 = document.getElementById(idObjectHidden1);
     let hideObj2 = document.getElementById(idObjectHidden2);
     let hideObj3 = document.getElementById(idObjectHidden3);
     let hideObj4 = document.getElementById(idObjectHidden4);
-    let showObj = document.getElementById(idObjectVisible);
-
-    // Устанавливаем статус в серверный checkbox Откреплен/Неоткреплен из фронтального checkbox
-    var chboxServ = document.getElementById('boolUnpinningServ');
-    chboxServ.checked = chbox.checked;
+    
 
         hideObj1.style.display = 'block';
         hideObj2.style.display = 'block';
         hideObj3.style.display = 'block';
         hideObj4.style.display = 'block';
+}
+
+function HideBlocks(idObjectHidden1, idObjectHidden2, idObjectHidden3, idObjectHidden4) {
+
+    let hideObj1 = document.getElementById(idObjectHidden1);
+    let hideObj2 = document.getElementById(idObjectHidden2);
+    let hideObj3 = document.getElementById(idObjectHidden3);
+    let hideObj4 = document.getElementById(idObjectHidden4);
+
+    hideObj1.style.display = 'none';
+    hideObj2.style.display = 'none';
+    hideObj3.style.display = 'none';
+    hideObj4.style.display = 'none';
+
+}
+
+function DisplayInputField(idObjectVisible, display) {
+
+    let showObj = document.getElementById(idObjectVisible);
+
+    if (display) {
+        showObj.style.display = 'block';
+    }
+    else {
         showObj.style.display = 'none';
+    }
+
 }
 
 // Проверка на выбор значений select улицы и дома
@@ -308,7 +397,7 @@ function ValidateSelect(idObjSelect1, idObjSelect2) {
         var selectedStreetValue = selectStreet.options[selectStreet.selectedIndex].value;
         var selectedHouseValue = selectHouse.options[selectHouse.selectedIndex].value;
         if (selectedStreetValue !== '' && selectedStreetValue !== ' ' && selectedHouseValue !== '' && selectedHouseValue !== ' ') {
-            return tru;
+            return true;
         }
         else return false;
     }

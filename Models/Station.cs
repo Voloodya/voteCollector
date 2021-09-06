@@ -40,13 +40,28 @@ namespace voteCollector.Models
         {
             if (y == null) return 1;
             else if (x == null) return -1;
-            else return x.Name.CompareTo(y.Name);
+            else
+            {
+                string s1 = x.Name;
+                string s2 = y.Name;
+                if (x.Name.Trim().Equals("")) s1 = "0";
+                if (y.Name.Trim().Equals("")) s2 = "0";
+                return Convert.ToInt32(s1) - Convert.ToInt32(s2);
+            }
+            
         }
 
         public int CompareTo(Station other)
         {
             if (other == null) return 1;
-            else return this.Name.CompareTo(other.Name);
+            else
+            {
+                string s1 = this.Name;
+                string s2 = other.Name;
+                if (this.Name.Trim().Equals("")) s1 = "0";
+                if (other.Name.Trim().Equals("")) s2 = "0";
+                return Convert.ToInt32(s1) - Convert.ToInt32(s2);
+            }
         }
     }
 }

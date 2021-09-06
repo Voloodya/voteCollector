@@ -25,6 +25,7 @@ namespace voteCollector.Controllers
         private string NameQRcodeParametrs;
         private ServiceUser _serviceUser;
         private string WayPathQrCodes;
+        private ServiceFriends ServiceFriends;
 
         public FriendsController(VoterCollectorContext context, ILogger<FriendsController> logger)
         {
@@ -35,6 +36,7 @@ namespace voteCollector.Controllers
             WayController = "/api/QRcodeСheckAPI/checkqrcode";
             NameQRcodeParametrs = "qrText";
             _serviceUser = new ServiceUser(context);
+            ServiceFriends = new ServiceFriends();
             WayPathQrCodes = "wwwroot/qr_codes/";
 
         }
@@ -123,10 +125,12 @@ namespace voteCollector.Controllers
             List<Organization> organizationSelect = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
             ViewData["OrganizationId"] = new SelectList(organizationSelect, "IdOrganization", "Name");
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name");
-            List<Street> selectStreets =_context.Street.Where(s => s.CityId == selectedIndexCityDistrict).ToList();
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == selectedIndexCityDistrict).ToList();
+            selectStreets.Sort((s1, s2) => s1.Name.CompareTo(s2.Name));
             ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name");
             // ???
-            IQueryable<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet);
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == selectStreets[0].IdStreet).ToList();
+            selectHouse.Sort((h1, h2) => h1.Name.CompareTo(h2.Name));
             ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name");
 
             List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
@@ -137,7 +141,9 @@ namespace voteCollector.Controllers
             ///////
             int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
             List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
-            stations.Sort((s1, s2) => Convert.ToInt32(s1.Name)- Convert.ToInt32(s2.Name));
+            //stations.Sort((s1, s2) => Convert.ToInt32(s1.Name) - Convert.ToInt32(s2.Name));
+            stations.Sort();
+            stations.Insert(0, new Station { IdStation = 0, Name = "" });
             ViewData["StationId"] = new SelectList(stations, "IdStation", "Name");
             //////
 
@@ -154,46 +160,127 @@ namespace voteCollector.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdFriend,FamilyName,Name,PatronymicName,DateBirth,Unpinning,CityId,CityDistrictId,ElectoralDistrictId,StreetId,MicroDistrictId,HouseId,Building,Apartment,Telephone,StationId,PollingStationId,Organization,FieldActivityId,PhoneNumberResponsible,DateRegistrationSite,VotingDate,Voter,Adress,TextQRcode,Qrcode,Email,Description,UserId,GroupUId,FriendStatusId,OrganizationId")] Friend friend)
         {
+            int selectedIndexCityDistrict = 1;
             if (ModelState.IsValid)
             {
-
                 List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
 
                 if (searchFriend.Count == 0)
                 {
-                    friend.DateRegistrationSite = DateTime.Today;
-
-                    //string host = this.HttpContext.Request.Host.ToString();
-                    //string path = this.HttpContext.Request.Host.ToString();
-                    User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                    friend.UserId = userSave.IdUser;
-                    friend.PhoneNumberResponsible = userSave.Telephone;
-                    //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                    friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
-                    //friend.Qrcode = fileNameQRcode;
-                    friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
-
-                    if (friend.Unpinning && friend.CityId != 1)
+                    Friend friendQrText = null;
+                    Friend friendNumberPhone = null;
+                    if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                     {
-                        friend.CityDistrictId = null;
-                        friend.StreetId = null;
-                        friend.HouseId = null;
-                        friend.Apartment = null;
-                        ////???
-                        //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
-                        //friend.StationId = pollingStationSearch.StationId;
-                        ////???
+                        friendQrText = ServiceFriends.FindUserByQRtextForText(friend.TextQRcode);
                     }
-                    else
+                    if (friend.Telephone != null && !friend.Telephone.Trim().Equals(""))
                     {
-                        friend.Adress = null;
+                        friendNumberPhone = ServiceFriends.FindUserByPhoneNumber(ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone));
                     }
 
-                    _context.Add(friend);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    if (friendQrText == null && friendNumberPhone == null)
+                    {
+                        friend.DateRegistrationSite = DateTime.Today;
+
+                        //string host = this.HttpContext.Request.Host.ToString();
+                        //string path = this.HttpContext.Request.Host.ToString();
+                        User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                        friend.UserId = userSave.IdUser;
+                        friend.PhoneNumberResponsible = userSave.Telephone;
+                        //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
+                        friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
+                        //friend.Qrcode = fileNameQRcode;
+                        friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
+
+                        if (friend.CityId != 1)
+                        {
+                            friend.CityDistrictId = null;
+                            friend.StreetId = null;
+                            friend.HouseId = null;
+                            friend.Apartment = null;
+                            ////???
+                            //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
+                            //friend.StationId = pollingStationSearch.StationId;
+                            ////???
+                            if (friend.Adress != null && friend.Adress.Trim().Length > 5)
+                            {
+                                if (friend.Unpinning)
+                                {
+                                    Station station;
+                                    try
+                                    {
+                                        station = _context.Station.Find(friend.StationId);
+                                    }
+                                    catch
+                                    {
+                                        station = null;
+                                    }
+                                    if (station != null)
+                                    {
+                                        _context.Add(friend);
+                                        await _context.SaveChangesAsync();
+                                        return RedirectToAction(nameof(Index));
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError("", "Не указан участок!");
+                                    }
+                                }
+                                else if (!friend.Unpinning)
+                                {
+                                    friend.StationId = null;
+                                    friend.ElectoralDistrictId = null;
+
+                                    _context.Add(friend);
+                                    await _context.SaveChangesAsync();
+                                    return RedirectToAction(nameof(Index));
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Не указан участок!");
+                                }
+
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Не корректно заполнено поле с адресом!");
+                            }
+
+                        }
+                        else
+                        {
+                            friend.Adress = null;
+                            if (friend.HouseId != null && friend.StationId != null)
+                            {
+                                House house;
+                                Station station;
+                                try
+                                {
+                                    house = _context.House.Find(friend.HouseId);
+                                    station = _context.Station.Find(friend.StationId);
+                                }
+                                catch
+                                {
+                                    house = null;
+                                    station = null;
+                                }
+                                if (house != null && house.Name != null && !house.Name.Equals("") && !house.Name.Equals(" ") && station != null && station.Name != null && !station.Name.Equals(""))
+                                {
+                                    _context.Add(friend);
+                                    await _context.SaveChangesAsync();
+                                    return RedirectToAction(nameof(Index));
+                                }
+                                else ModelState.AddModelError("", "Не указан полный адрес или не выбран участок!");
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Не указан полный адрес или не выбран участок!");
+                            }
+                        }
+                    }
+                    else ModelState.AddModelError("", "Участник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
                 }
-                else ModelState.AddModelError("", "Данный избиратель уже был внесен в списки ранее!");
+                else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен в списки ранее!");
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
@@ -208,10 +295,39 @@ namespace voteCollector.Controllers
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
             List<Organization> organizationSelect = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
             ViewData["OrganizationId"] = new SelectList(organizationSelect, "IdOrganization", "Name", friend.OrganizationId);
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
+
+
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == friend.CityDistrictId).ToList();
+            selectStreets.Sort((s1, s2) => s1.Name.CompareTo(s2.Name));
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);
+
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == friend.StreetId).ToList();
+            selectHouse.Sort((h1, h2) => h1.Name.CompareTo(h2.Name));
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
+
+            if (friend.CityDistrictId==null || friend.Unpinning)
+            {
+                List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+                int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
+                List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                //stations.Sort((s1, s2) => Convert.ToInt32(s1.Name) - Convert.ToInt32(s2.Name));
+                stations.Sort();
+                stations.Insert(0, new Station { IdStation = 0, Name = "" });
+                ViewData["StationId"] = new SelectList(stations, "IdStation", "Name", friend.StationId);
+            }
+            else
+            {
+                List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+                int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
+                List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                //stations.Sort((s1, s2) => Convert.ToInt32(s1.Name) - Convert.ToInt32(s2.Name));
+                stations.Sort();
+                stations.Insert(0, new Station { IdStation = 0, Name = "" });
+                ViewData["StationId"] = new SelectList(stations, "IdStation", "Name", friend.StationId);
+            }
+
+
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "FamilyName", friend.UserId);
             ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name", friend.FriendStatusId);
             return View(friend);
@@ -304,6 +420,8 @@ namespace voteCollector.Controllers
                 return NotFound();
             }
 
+            int selectedIndexCityDistrict = 1;
+
             if (ModelState.IsValid)
             {
                 DateTime dateEmpty = new DateTime();
@@ -313,48 +431,154 @@ namespace voteCollector.Controllers
 
                     if (searchFriend.Count == 0)
                     {
-                        User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+                        Friend friendQrText = null;
+                        Friend friendNumberPhone = null;
+                        if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
+                        {
+                            friendQrText = ServiceFriends.FindUserByQRtextForText(friend.TextQRcode);
+                        }
+                        if (friend.Telephone != null && !friend.Telephone.Trim().Equals(""))
+                        {
+                            friendNumberPhone = ServiceFriends.FindUserByPhoneNumber(ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone));
+                        }
+
+                        if ((friendQrText == null || friendQrText.IdFriend==friend.IdFriend) && (friendNumberPhone == null || friendNumberPhone.IdFriend==friend.IdFriend)) {
+
+                            User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                         friend.UserId = userSave.IdUser;
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
                         friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
                         //friend.Qrcode = fileNameQRcode;
 
-                        if (friend.Unpinning && friend.CityId!=1)
+                        if (friend.CityId != 1)
                         {
                             friend.CityDistrictId = null;
                             friend.StreetId = null;
                             friend.HouseId = null;
                             friend.Apartment = null;
-                            ////???
-                            //PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.IdPollingStation == friend.PollingStationId).FirstOrDefault();
-                            //friend.StationId = pollingStationSearch.StationId;
-                            ////???
-                            
+
+                            if (friend.Adress != null && friend.Adress.Trim().Length > 5)
+                            {
+                                if (friend.Unpinning)
+                                {
+                                    Station station;
+                                    try
+                                    {
+                                        station = _context.Station.Find(friend.StationId);
+                                    }
+                                    catch
+                                    {
+                                        station = null;
+                                    }
+                                    if (station != null)
+                                    {
+                                        try
+                                        {
+                                            _context.Update(friend);
+                                            await _context.SaveChangesAsync();
+                                        }
+                                        catch (DbUpdateConcurrencyException)
+                                        {
+                                            if (!FriendExists(friend.IdFriend))
+                                            {
+                                                return NotFound();
+                                            }
+                                            else
+                                            {
+                                                throw;
+                                            }
+                                        }
+                                        return RedirectToAction(nameof(Index));
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError("", "Не указан участок!");
+                                    }
+                                }
+                                else if (!friend.Unpinning)
+                                {
+                                    friend.StationId = null;
+                                    friend.ElectoralDistrictId = null;
+                                    try
+                                    {
+                                        _context.Update(friend);
+                                        await _context.SaveChangesAsync();
+                                    }
+                                    catch (DbUpdateConcurrencyException)
+                                    {
+                                        if (!FriendExists(friend.IdFriend))
+                                        {
+                                            return NotFound();
+                                        }
+                                        else
+                                        {
+                                            throw;
+                                        }
+                                    }
+                                    return RedirectToAction(nameof(Index));
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Не указан участок!");
+                                }
+
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Не корректно заполнено поле с адресом!");
+                            }
+
                         }
                         else
                         {
                             friend.Adress = null;
-                        }
 
-                        try
-                        {
-                            _context.Update(friend);
-                            await _context.SaveChangesAsync();
-                        }
-                        catch (DbUpdateConcurrencyException)
-                        {
-                            if (!FriendExists(friend.IdFriend))
+                            if (friend.HouseId != null && friend.StationId != null)
                             {
-                                return NotFound();
+                                House house;
+                                Station station;
+                                try
+                                {
+                                    house = _context.House.Find(friend.HouseId);
+                                    station = _context.Station.Find(friend.StationId);
+                                }
+                                catch
+                                {
+                                    house = null;
+                                    station = null;
+                                }
+                                if (house != null && house.Name != null && !house.Name.Equals("") && !house.Name.Equals(" ") && station != null && station.Name != null && !station.Name.Equals(""))
+                                {
+                                    try
+                                    {
+                                        _context.Update(friend);
+                                        await _context.SaveChangesAsync();
+                                    }
+                                    catch (DbUpdateConcurrencyException)
+                                    {
+                                        if (!FriendExists(friend.IdFriend))
+                                        {
+                                            return NotFound();
+                                        }
+                                        else
+                                        {
+                                            throw;
+                                        }
+                                    }
+                                    return RedirectToAction(nameof(Index));
+                                }
+                                else ModelState.AddModelError("", "Не указан полный адрес или не выбран участок!");
+
                             }
                             else
                             {
-                                throw;
+                                ModelState.AddModelError("", "Не указан полный адрес или не выбран участок!");
                             }
                         }
-                        return RedirectToAction(nameof(Index));
                     }
-                    else ModelState.AddModelError("", "Данный избиратель уже был внесен в списки ранее!");
+                        else ModelState.AddModelError("", "Участник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
+                    }
+                    else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен в списки ранее!");
                 }
                 else ModelState.AddModelError("", "Не все поля были заполнены");
             }
@@ -371,10 +595,38 @@ namespace voteCollector.Controllers
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
             List<Organization> organizationSelect = _context.Organization.Where(org => idOrganizationUser.Contains(org.IdOrganization)).ToList();
             ViewData["OrganizationId"] = new SelectList(organizationSelect, "IdOrganization", "Name", friend.OrganizationId);
-            ViewData["HouseId"] = new SelectList(_context.House, "IdHouse", "Name", friend.HouseId);
             ViewData["MicroDistrictId"] = new SelectList(_context.Microdistrict, "IdMicroDistrict", "Name", friend.MicroDistrictId);
-            ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", friend.StationId);
-            ViewData["StreetId"] = new SelectList(_context.Street, "IdStreet", "Name", friend.StreetId);
+
+            List<Street> selectStreets = _context.Street.Where(s => s.CityId == friend.CityDistrictId).ToList();
+            selectStreets.Sort((s1, s2) => s1.Name.CompareTo(s2.Name));
+            ViewData["StreetId"] = new SelectList(selectStreets, "IdStreet", "Name", friend.StreetId);
+
+            List<House> selectHouse = _context.House.Where(h => h.StreetId == friend.StreetId).ToList();
+            selectHouse.Sort((h1, h2) => h1.Name.CompareTo(h2.Name));
+            ViewData["HouseId"] = new SelectList(selectHouse, "IdHouse", "Name", friend.HouseId);
+
+            if (friend.CityDistrictId == null || friend.Unpinning)
+            {
+                List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == selectedIndexCityDistrict).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+                int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
+                List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                //stations.Sort((s1, s2) => Convert.ToInt32(s1.Name) - Convert.ToInt32(s2.Name));
+                stations.Sort();
+                stations.Insert(0, new Station { IdStation = 0, Name = "" });
+                ViewData["StationId"] = new SelectList(stations, "IdStation", "Name", friend.StationId);
+            }
+            else
+            {
+                List<PollingStation> polingStations = _context.PollingStation.Where(p => p.CityDistrictId == friend.CityDistrictId).ToList().GroupBy(p => p.Name).Select(grp => grp.FirstOrDefault()).ToList();
+                int[] stationsId = polingStations.Select(p => p.StationId ?? 0).ToArray();
+                List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
+                //stations.Sort((s1, s2) => Convert.ToInt32(s1.Name) - Convert.ToInt32(s2.Name));
+                stations.Sort();
+                stations.Insert(0, new Station { IdStation = 0, Name = "" });
+                ViewData["StationId"] = new SelectList(stations, "IdStation", "Name", friend.StationId);
+            }
+
+
             ViewData["UserId"] = new SelectList(_context.User, "IdUser", "UserName", friend.UserId);
             ViewData["FriendStatusId"] = new SelectList(_context.FriendStatus, "IdFriendStatus", "Name",friend.FriendStatusId);
 

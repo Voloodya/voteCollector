@@ -29,15 +29,24 @@ namespace voteCollector.Services
             WayPathQrCodes = "/wwwroot/qr_codes/";
         }
 
+        public Friend FindUserByQRtextForText(string qrText)
+        {
+            Friend friend = null;
+
+            friend = _context.Friend.FirstOrDefault(frnd => frnd.TextQRcode.Equals(qrText));
+
+            return friend;
+        }
+
         public Friend FindUserByQRtext(string qrText)
         {
             Friend friend = null;
 
             try
             {
-                friend = _context.Friend.Where(frnd => frnd.TextQRcode.Trim().Equals(qrText.Trim())).FirstOrDefault();
+                friend = _context.Friend.Where(frnd => Convert.ToInt32(frnd.TextQRcode.Trim()) == Convert.ToInt32(qrText.Trim())).FirstOrDefault();
             }
-            catch(Exception ex)
+            catch
             {
                 throw new Exception("Пользователь с данным QR кодом не найден!");
             }
@@ -45,7 +54,6 @@ namespace voteCollector.Services
             {
                 throw new Exception("Пользователь с данным QR кодом не найден!");
             }
-
             return friend;
         }
 
@@ -53,17 +61,18 @@ namespace voteCollector.Services
         {
             Friend friend = null;
 
+            string phone_10Number = phoneNumber.Substring(1, 10);
             try
             {
-                friend = _context.Friend.Where(frnd => frnd.Telephone.Substring(1,10).Equals(phoneNumber)).FirstOrDefault();
+                friend = _context.Friend.Where(frnd => frnd.Telephone.Substring(1,10).Equals(phone_10Number)).FirstOrDefault();
             }
             catch (Exception ex)
             {
-                throw new Exception("Пользователь с данным номером телефона не найден!");
+                //throw new Exception("Пользователь с данным номером телефона не найден!");
             }
             if (friend==null)
             {
-                throw new Exception("Пользователь с данным номером телефона не найден!");
+                //throw new Exception("Пользователь с данным номером телефона не найден!");
             }
 
             return friend;

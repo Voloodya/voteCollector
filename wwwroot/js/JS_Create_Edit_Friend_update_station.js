@@ -23,7 +23,11 @@ $(function () {
                     var dataSort = [];
                     if (data != undefined) {
                         dataSort = data.sort(function (a, b) {
-                            return (Number.parseInt(a) - Number.parseInt(b));
+                            var a_number = a['name'];
+                            var b_number = b['name'];
+                            if (Number.isNaN(a_number)) a_number = '0';
+                            if (Number.isNaN(b_number)) b_number = '0';
+                            return (Number.parseInt(a_number) - Number.parseInt(b_number));
                         });
                     }
                     DataFillingSelect(dataSort, 'idStation', 'name', '#StationId', '<option/>');
@@ -57,7 +61,11 @@ function UpdateStationByCityAfterSelect() {
             var dataSort = [];
             if (data != undefined) {
                 dataSort = data.sort(function (a, b) {
-                    return (Number.parseInt(a) - Number.parseInt(b));
+                    var a_number = a['name'];
+                    var b_number = b['name'];
+                    if (Number.isNaN(a_number)) a_number = '0';
+                    if (Number.isNaN(b_number)) b_number = '0';
+                    return (Number.parseInt(a_number) - Number.parseInt(b_number));
                 });
             }
             DataFillingSelect(dataSort, 'idStation', 'name', '#StationId', '<option/>');
@@ -98,7 +106,11 @@ $(function () {
                         var dataSort = [];
                         if (data != undefined) {
                             dataSort = data.sort(function (a, b) {
-                                return (Number.parseInt(a) - Number.parseInt(b));
+                                var a_number = a['name'];
+                                var b_number = b['name'];
+                                if (Number.isNaN(a_number)) a_number = '0';
+                                if (Number.isNaN(b_number)) b_number = '0';
+                                return (Number.parseInt(a_number) - Number.parseInt(b_number));
                             });
                         }
                         UploadElectoralDistrictsByStation(data);
@@ -141,7 +153,11 @@ $(function () {
                         var dataSort = [];
                         if (data != undefined) {
                             dataSort = data.sort(function (a, b) {
-                                return (Number.parseInt(a) - Number.parseInt(b));
+                                var a_number = a['name'];
+                                var b_number = b['name'];
+                                if (Number.isNaN(a_number)) a_number = '0';
+                                if (Number.isNaN(b_number)) b_number = '0';
+                                return (Number.parseInt(a_number) - Number.parseInt(b_number));
                             });
                         }
                         DataFillingSelect(dataSort, 'idStation', 'name', '#StationId', '<option/>');
@@ -164,7 +180,9 @@ $(function () {
 // Обновление списка округов после установления участка
 $(function () {
     $('#StationId').change(function () {
-        var formData = { 'IdStation': Number.parseInt($('#StationId').val()), 'Name': $('#StationId>option:selected').text() };
+
+        if ($('#StationId>option:selected').text() !== '') {
+            var formData = { 'IdStation': Number.parseInt($('#StationId').val()), 'Name': $('#StationId>option:selected').text() };
 
             $.ajax({
                 url: partMyURL + "/api/API/searchElectoraldistrict/station",
@@ -182,7 +200,11 @@ $(function () {
                     var dataSort = [];
                     if (data != undefined) {
                         dataSort = data.sort(function (a, b) {
-                            return (Number.parseInt(a) - Number.parseInt(b));
+                            var a_number = a['name'];
+                            var b_number = b['name'];
+                            if (Number.isNaN(a_number)) a_number = '0';
+                            if (Number.isNaN(b_number)) b_number = '0';
+                            return (Number.parseInt(a_number) - Number.parseInt(b_number));
                         });
                     }
                     DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', '#ElectoralDistrictId', '<option/>');
@@ -192,7 +214,9 @@ $(function () {
                     alert("error: " + result + " status: " + status + " er:" + er);
                 }
             });
+        }
     });
+
 });
 
 // Обновление списка округов после выбора УЛИЦЫ
@@ -215,7 +239,11 @@ function UploadElectoralDistrictsByStation(masStation) {
                 var dataSort = data;
                 if (data != undefined) {
                     dataSort = data.sort(function (a, b) {
-                        return (Number.parseInt(a) - Number.parseInt(b));
+                        var a_number = a['name'];
+                        var b_number = b['name'];
+                        if (Number.isNaN(a_number)) a_number = '0';
+                        if (Number.isNaN(b_number)) b_number = '0';
+                        return (Number.parseInt(a_number) - Number.parseInt(b_number));
                     });
                 }
                 DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', '#ElectoralDistrictId', '<option/>');
@@ -249,7 +277,11 @@ function UploadElectoralDistrictsAll() {
             var dataSort = data;
             if (data != undefined) {
                 dataSort = data.sort(function (a, b) {
-                    return (Number.parseInt(a) - Number.parseInt(b));
+                    var a_number = a['name'];
+                    var b_number = b['name'];
+                    if (Number.isNaN(a_number)) a_number = '0';
+                    if (Number.isNaN(b_number)) b_number = '0';
+                    return (Number.parseInt(a_number) - Number.parseInt(b_number));
                 });
             }
             DataFillingSelect(dataSort, 'idElectoralDistrict', 'name', '#ElectoralDistrictId', '<option/>');
@@ -304,7 +336,11 @@ function UploadStationByCitydistrictAndStreetAndHouse() {
                     var dataSort = [];
                     if (data != undefined) {
                         dataSort = data.sort(function (a, b) {
-                            return (Number.parseInt(a) - Number.parseInt(b));
+                            var a_number = a['name'];
+                            var b_number = b['name'];
+                            if (Number.isNaN(a_number)) a_number = '0';
+                            if (Number.isNaN(b_number)) b_number = '0';
+                            return (Number.parseInt(a_number) - Number.parseInt(b_number));
                         });
                     }
                     DataFillingSelect(dataSort, 'idStation', 'name', '#StationId', '<option/>');

@@ -8,6 +8,44 @@
     }
 }
 
+<style>
+    #buttonsright input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    .table {
+        counter-reset: rowNumber;
+        font-size: 14px;
+    }
+
+        .table thead {
+            background: Gainsboro;
+            word-wrap: break-word;
+            /*            word-break: break-all;
+    */
+        }
+
+        .table tbody tr {
+            counter-increment: rowNumber;
+            font-size: 14px;
+        }
+
+        .table tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+            font-size: 14px;
+        }
+</style>
+
+
+
 <h4>Загрузка файла</h4>
 <hr />
 <div class="row">
@@ -29,7 +67,7 @@
         </div>
         <div id="idDivMessage" style="color:red"></div>
     </div>
- </div>
+</div>
 
 <div class="row">
     <div class="col-md-4">
@@ -42,18 +80,21 @@
     </div>
 </div>
 
+<br />
+<hr />
 <h4>Ненайденные QR-кода</h4>
-<hr/>
+<hr />
 
 <div id="outText" class="form-group col-md-6">
     <output></output>
 </div>
 
-<table class="table" id="qrCodesTable">
+<table  id="qrCodesNotFoundTable" class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
-               QR-код
+                QR-код
             </th>
             <th>
                 Время регистрации
@@ -61,7 +102,32 @@
         </tr>
     </thead>
     <tbody id="tBodyqrCodes">
+        <td></td>
+        <td></td>
+        <td></td>
+    </tbody>
+</table>
+<br />
+<hr />
 
+<h4>Найденные QR-кода</h4>
+<hr />
+<table class="table" id="qrCodesFoundTable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                QR-код
+            </th>
+            <th>
+                Время регистрации
+            </th>
+        </tr>
+    </thead>
+    <tbody id="tBodyqrCodes">
+        <td></td>
+        <td></td>
+        <td></td>
     </tbody>
 </table>
 

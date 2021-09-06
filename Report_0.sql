@@ -4,17 +4,17 @@ SELECT `friend`.`Id_Friend`,
     `friend`.`Patronymic_name`,
     `friend`.`Date_birth`,
     `friend`.`Unpinning`,
-	`City`.`Name` as 'Город',
-    `city_district`.`Name` as 'Округ',
-    `electoral_district`.`Name` as 'Избират. Округ',
-    `street`.`Name` as 'Улица',
-    `House`.`Name` as 'Дом',
+	`City`.`Name`,
+    `city_district`.`Name`,
+    `electoral_district`.`Name`,
+    `street`.`Name`,
+    `House`.`Name`,
     `friend`.`Apartment`,
     `friend`.`Telephone`,
-    `station`.`Name` as 'Участок',
-	`fieldactivity`.`Name` as 'Организация',
-    `organization`.`Name` as 'Подразделение',
-	`groupu`.`Name` as 'Подвед',
+    `station`.`Name`,
+	`fieldactivity`.`Name`,
+    `organization`.`Name`,
+	`groupu`.`Name`,
     `friend`.`Phone_number_responsible`,
     `friend`.`Date_registration_site`,
     `friend`.`Voting_date`,
@@ -28,7 +28,7 @@ SELECT `friend`.`Id_Friend`,
     `user`.`Patronymic_name`,
     `user`.`Telephone`,
     `friend_status`.`Name` 
-    FROM friend Inner Join city_district ON friend.City_id=city_district.Id_CityDistrict
+    FROM friend left join Join city_district ON friend.CityDistrict_id=city_district.Id_CityDistrict
 	left join City ON City.Id_City=friend.City_id
     left Join street ON street.Id_Street=friend.Street_id
     left Join House ON house.Id_House=friend.House_id
@@ -38,5 +38,4 @@ SELECT `friend`.`Id_Friend`,
     left Join fieldactivity ON fieldactivity.Id_FieldActivity=friend.FieldActivity_id
     left Join groupu ON groupu.Id_Group=friend.GroupU_id
     left Join user ON user.Id_User=friend.User_id
-    left join friend_status ON friend_status.Id_friend_status=friend.Station_id    
-    where friend.FieldActivity_id=4;
+    left join friend_status ON friend_status.Id_friend_status=friend.Station_id;

@@ -101,9 +101,9 @@ namespace voteCollector.Models
         [Column("Date_registration_site", TypeName = "date")]
         public DateTime? DateRegistrationSite { get; set; }
         [DisplayName("Дата регистрации")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [DataType(DataType.Date)]
-        [Column("Voting_date", TypeName = "date")]
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.DateTime)]
+        [Column("Voting_date", TypeName = "DATETIME")]
         public DateTime? VotingDate { get; set; }
         [DisplayName("Зарегистрировался")]
         [Column("Voter", TypeName = "TINYINT")]

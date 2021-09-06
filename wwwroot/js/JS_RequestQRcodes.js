@@ -24,7 +24,7 @@ async function RequestQRcodes(idObjectDate, idObjectTime) {
         success: function (data) {
 
             if (data['notFoundQRcodes'] != null && data['notFoundQRcodes'] !== undefined) {
-                DataFillingTableBody(data['notFoundQRcodes'], 'qrCodesTable');
+                DataFillingTableBody(data['notFoundQRcodes'], 'qrCodesNotFoundTable');
             }
             document.getElementById('idDivMessage').innerHTML = "<h3>" + " Загрузка завершена!" + "</h3>";
             alert("Загрузка завершена!");
@@ -35,6 +35,9 @@ async function RequestQRcodes(idObjectDate, idObjectTime) {
             document.getElementById('idDivNumberNotFound').innerHTML = "<h4> Ненайдено QR-кодов: " + data['numberNotFound'] + "</h4>";
             document.getElementById('idDivDateTimeRequest').innerHTML = "<h4> Время запроса: " + data['dateTimeRequest'] + "</h4>";
 
+            if (data['foundQRcodes'] != null && data['foundQRcodes'] !== undefined) {
+                DataFillingTableBody(data['foundQRcodes'], 'qrCodesFoundTable');
+            }
         },
         error: function (result, status, er) {
             alert('error: ' + result + ' status: ' + status + ' er:' + er);

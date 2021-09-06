@@ -16,6 +16,8 @@ namespace voteCollector.DTO
        // public List<string> notFoundQRcodes { get; set; }
 
         public List<Item> notFoundQRcodes { get; set; }
+        public List<Item> foundQRcodes { get; set; }
+
 
         //public Dictionary<string,string> notFoundQRcodes { get; set; }
     }

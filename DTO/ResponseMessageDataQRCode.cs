@@ -10,6 +10,7 @@ namespace voteCollector.DTO
         public string status { get; set; }
         public string error { get; set; }
         public int region { get; set; }
+        public int amount { get; set; }
         //public string date { get; set; }
         //public Items [] items { get; set; }
         public string date { get; set; }

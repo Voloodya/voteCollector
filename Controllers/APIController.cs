@@ -194,6 +194,7 @@ namespace voteCollector.Controllers
             if (pollingStations.Any())
             {
                 List<PollingStationDTO> pollingStationsDTO = pollingStations.Select(p => new PollingStationDTO { IdPollingStation = p.IdPollingStation, Name = p.Name }).ToList();
+                pollingStationsDTO.Insert(0, new PollingStationDTO { IdPollingStation = 0, Name = "" });
                 return Ok(pollingStationsDTO);
             }
             return NoContent();
@@ -212,6 +213,7 @@ namespace voteCollector.Controllers
                 {
                     List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
                     List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                    stationDTOs.Insert(0, new StationDTO { IdStation = 0, Name = "" });
                     return Ok(stationDTOs);
                 }
                 else
@@ -248,6 +250,7 @@ namespace voteCollector.Controllers
                 {
                     List<Station> stations = _context.Station.Where(s => stationsId.Contains(s.IdStation)).ToList();
                     List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                    stationDTOs.Insert(0, new StationDTO { IdStation = 0, Name = "" });
                     return Ok(stationDTOs);
                 }
                 else
@@ -361,6 +364,7 @@ namespace voteCollector.Controllers
                 {
 
                     List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict = ed.IdElectoralDistrict, Name = ed.Name }).ToList();
+                    electoralDistrictDTOs.Insert(0, new ElectoralDistrictDTO { IdElectoralDistrict = 0, Name = "" });
 
                     return Ok(electoralDistrictDTOs);
                 }
@@ -385,8 +389,9 @@ namespace voteCollector.Controllers
                 {
 
                     List<ElectoralDistrictDTO> electoralDistrictDTOs = electoralDistrict.Select(ed => new ElectoralDistrictDTO { IdElectoralDistrict = ed.IdElectoralDistrict, Name = ed.Name }).ToList();
+                    electoralDistrictDTOs.Insert(0, new ElectoralDistrictDTO { IdElectoralDistrict = 0, Name = "" });
 
-                    return Ok(electoralDistrictDTOs);
+                return Ok(electoralDistrictDTOs);
                 }
                 else
                 {
@@ -425,6 +430,74 @@ namespace voteCollector.Controllers
             }
 
             return Ok(errors);
+        }
+
+        [HttpGet("CheackStationsAndDistricts")]
+        public IActionResult CheackStationsAndDistricts()
+        {
+            int countSeccefful = 0;
+            int countError = 0;
+
+            List<FriendDTOShot> friendDTOs = new List<FriendDTOShot>();
+
+            List<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.Street).Include(f => f.House).Include(f => f.FieldActivity)
+                .Include(f => f.Organization_).Include(f => f.GroupU).Where(f => f.CityDistrictId != 1 && f.Unpinning==false).ToList();
+
+            foreach(Friend friend in friends)
+            {
+                int idStation = 0;
+                int idElectoralDistrict = 0;
+                try
+                {
+                    PollingStation pollingStation = _context.PollingStation.FirstOrDefault(p => p.HouseId==friend.HouseId);
+                    if (pollingStation != null)
+                    {
+                        idStation = pollingStation.StationId ?? 0;
+
+                        idElectoralDistrict = _context.District.FirstOrDefault(d => d.StationId == idStation).ElectoralDistrictId ?? 0;
+                    }
+                }
+                catch
+                {
+                    friendDTOs.Add(new FriendDTOShot { Name = friend.Name, FamilyName = friend.FamilyName, PatronymicName = friend.PatronymicName,
+                        FieldActivityName = friend.FieldActivity.Name, Organization = friend.Organization_.Name, Group = friend.GroupU.Name,
+                         City = friend.City.Name, Street = friend.Street.Name, House = friend.House.Name});
+                    countError++;
+                }
+
+                if(idStation!=0 && idElectoralDistrict != 0)
+                {
+                    friend.StationId = idStation;
+                    friend.ElectoralDistrictId = idElectoralDistrict;
+                    try
+                    {
+                        _context.Update(friend);
+                        _context.SaveChangesAsync();
+                        countSeccefful++;
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        countError++;
+                        friendDTOs.Add(new FriendDTOShot
+                        {
+                            Name = friend.Name,
+                            FamilyName = friend.FamilyName,
+                            PatronymicName = friend.PatronymicName,
+                            FieldActivityName = friend.FieldActivity.Name,
+                            Organization = friend.Organization_.Name,
+                            Group = friend.GroupU.Name,
+                            City = friend.City.Name,
+                            Street = friend.Street.Name,
+                            House = friend.House.Name
+                        });
+
+                    }
+                }
+
+            }
+           // return Ok("Успешно обновленных записей: "+countSeccefful.ToString()+ " Необновленных: "+countError.ToString());
+            return Ok(friendDTOs);
+
         }
 
         [HttpGet("PostRequestQRcodes")]

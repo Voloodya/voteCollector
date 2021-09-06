@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using voteCollector.DTO;
 using voteCollector.Models;
@@ -81,7 +82,7 @@ namespace voteCollector.Controllers
             {
                 ServiceFriends serviceFriends = new ServiceFriends();
 
-                string clearPhoneNumber = ServicePhoneNumber.LeaveOnlyNumbers(phoneNumber).Substring(1,10);
+                string clearPhoneNumber = ServicePhoneNumber.LeaveOnlyNumbers(phoneNumber);
                 Friend friendUpdate = null;
                 try
                 {
@@ -161,7 +162,7 @@ namespace voteCollector.Controllers
 
                 foreach (string phoneNumber in phoneNumberDTOs) {
 
-                    string clearPhoneNumber = ServicePhoneNumber.LeaveOnlyNumbers(phoneNumber).Substring(1, 10);
+                    string clearPhoneNumber = ServicePhoneNumber.LeaveOnlyNumbers(phoneNumber);
                     Friend friendUpdate;
                     try
                     {
@@ -254,6 +255,12 @@ namespace voteCollector.Controllers
                         reportQrCodeExchange = CheckQrCodes(responseMessageDataQRCodeSuccessfully);
                     }catch
                     {
+                        ResponseMessageDataQRCodeError responseMessageDataQRCodeError = (ResponseMessageDataQRCodeError)responseData;
+
+                        foreach(string str in responseMessageDataQRCodeError.items)
+                        {
+                            responseMessageDataQRCodeError.items.Append(str);
+                        }
                         reportQrCodeExchange.error = responseData.error;
                         reportQrCodeExchange.status = responseData.status;
                         reportQrCodeExchange.dateTimeRequest = responseData.date;
@@ -295,7 +302,7 @@ namespace voteCollector.Controllers
 
         private async Task<ResponseMessageDataQRCode> PostRequestFormAsync(string url, IEnumerable<KeyValuePair<string, string>> data, string str)
         {
-            ResponseMessageDataQRCode responseData;
+            ResponseMessageDataQRCode responseData = null;
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
@@ -306,11 +313,15 @@ namespace voteCollector.Controllers
             string jsonResponseData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
-                if (!jsonResponseData.Contains("[]"))
+                //int indxF = jsonResponseData.IndexOf('[');
+                //int indxL = jsonResponseData.IndexOf(']');
+                //Regex regexMas = new Regex(@"^.+\[.+\].+\}.+$");
+
+                if (FindItemsToken(jsonResponseData)== JsonTokenType.StartObject) //indxF==-1 && indxL==-1 && indxF>=indxL
                 {
                     responseData = JsonSerializer.Deserialize<ResponseMessageDataQRCodeSuccessfully>(jsonResponseData);
                 }
-                else
+                else if(FindItemsToken(jsonResponseData) == JsonTokenType.StartArray)
                 {
                     responseData = JsonSerializer.Deserialize<ResponseMessageDataQRCodeError>(jsonResponseData);
                 }
@@ -331,7 +342,8 @@ namespace voteCollector.Controllers
                 error = dataQRcodes.error,
                 numberReceivedCodes = dataQRcodes.items.Count,
                 dateTimeRequest = dataQRcodes.date.ToString(),
-                notFoundQRcodes = new List<Item>()
+                notFoundQRcodes = new List<Item>(),
+                foundQRcodes = new List<Item>()
             };
 
             int numberMarkedCodes = 0;
@@ -342,9 +354,20 @@ namespace voteCollector.Controllers
             {
                 if (keyValue.Key != null && keyValue.Key != "")
                 {
-                    if (CheckQrCode(keyValue.Key, serviceFriends))
+                    DateTime dateTimeCheck;
+                    try
+                    {
+                        dateTimeCheck = Convert.ToDateTime(keyValue.Value);
+                    }
+                    catch
+                    {
+                        dateTimeCheck = DateTime.UtcNow.AddHours(5);
+                    }
+
+                    if (CheckQrCode(keyValue.Key, dateTimeCheck, serviceFriends).Result)
                     {
                         numberMarkedCodes++;
+                        reportQrCodeExchange.foundQRcodes.Add(new Item { qrText = keyValue.Key, date = keyValue.Value });
                     }
                     else
                     {
@@ -360,29 +383,43 @@ namespace voteCollector.Controllers
             return reportQrCodeExchange;
         }
 
-        public bool CheckQrCode(string qrCodes, ServiceFriends serviceFriends)
+        public async Task<bool> CheckQrCode(string qrCodes, DateTime dateTime, ServiceFriends serviceFriends)
         {
                 Friend friendUpdate;
                 try
                 {
                     friendUpdate = serviceFriends.FindUserByQRtext(qrCodes);
                     friendUpdate.Voter = true;
-                    friendUpdate.VotingDate = DateTime.Now.Date;
+                    friendUpdate.VotingDate = dateTime;
                 }
-                catch (Exception ex)
+                catch
                 {
                     return false;
                 }
 
                 try
                 {
-                    serviceFriends.SaveFriends(friendUpdate);
+                    await serviceFriends.SaveFriends(friendUpdate);
                     return true;
                 }
-                catch (Exception ex)
+                catch
                 {
                     return false;
                 }            
+        }
+
+        //Проверка типа объекта в JSON после имени свойства "items"
+        private static JsonTokenType FindItemsToken(string json)
+        {
+            var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json));
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.PropertyName && reader.GetString() == "items")
+                    break;
+            }
+            if (!reader.Read()) return JsonTokenType.None;
+
+            return reader.TokenType;
         }
 
     }

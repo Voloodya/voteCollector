@@ -241,9 +241,6 @@ namespace voteCollector.Controllers
             return Ok(numberFriendsDTO);
         }
 
-
-
-
         private bool FriendExists(long id)
         {
             return _context.Friend.Any(e => e.IdFriend == id);

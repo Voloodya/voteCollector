@@ -10,12 +10,16 @@
   <ItemGroup>
     <Compile Remove="bin\**" />
     <Compile Remove="obj\**" />
+    <Compile Remove="wwwroot\qr_codes\**" />
     <Content Remove="bin\**" />
     <Content Remove="obj\**" />
+    <Content Remove="wwwroot\qr_codes\**" />
     <EmbeddedResource Remove="bin\**" />
     <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="wwwroot\qr_codes\**" />
     <None Remove="bin\**" />
     <None Remove="obj\**" />
+    <None Remove="wwwroot\qr_codes\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -253,11 +257,6 @@
 
   <ItemGroup>
     <Folder Include="node_modules\.bin\" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <Folder Include="wwwroot\qr_codes\" />
   </ItemGroup>
 
   
