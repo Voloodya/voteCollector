@@ -231,6 +231,45 @@ CREATE TABLE `friend` (
   CONSTRAINT `FK_Friend_User` FOREIGN KEY (`User_id`) REFERENCES `user` (`Id_User`) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=7832 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `electoral_district_gov_duma` (
+  `Id_electoral_district_gov_duma` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`Id_electoral_district_gov_duma`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `electoral_district_assembly_law` (
+  `Id_electoral_district_assembly_law` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`Id_electoral_district_assembly_law`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `votercollector`.`district` 
+DROP FOREIGN KEY `FK_District_Street`;
+ALTER TABLE `votercollector`.`district` 
+DROP COLUMN `Street_id`,
+DROP INDEX `FK_District_Street`;
+
+ALTER TABLE `votercollector`.`district` 
+ADD COLUMN `Electoral_district_gov_duma_id` INT NULL DEFAULT NULL AFTER `Electoral_District_id`,
+ADD COLUMN `Electoral_district_assembly_law_id` INT NULL DEFAULT NULL AFTER `Electoral_district_gov_duma_id`;
+
+ALTER TABLE `votercollector`.`district` 
+ADD INDEX `FK_District_ElectoralDistrictGovDuma` (`Electoral_district_gov_duma_id` ASC) VISIBLE,
+ADD INDEX `FK_District_ElectoralDistrictAssemblyLaw` (`Electoral_district_assembly_law_id` ASC) VISIBLE;
+;
+ALTER TABLE `votercollector`.`district` 
+ADD CONSTRAINT `FK_District_ElectoralDistrictGovDuma`
+  FOREIGN KEY (`Electoral_district_gov_duma_id`)
+  REFERENCES `votercollector`.`electoral_district_gov_duma` (`Id_electoral_district_gov_duma`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_District_ElectoralDistrictAssemblyLaw`
+  FOREIGN KEY (`Electoral_district_assembly_law_id`)
+  REFERENCES `votercollector`.`electoral_district_assembly_law` (`Id_electoral_district_assembly_law`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
 
 
 

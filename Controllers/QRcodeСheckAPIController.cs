@@ -36,7 +36,7 @@ namespace voteCollector.Controllers
 
         // "/api/QRcodeСheckAPI/checkqrcode?qrText="
         [HttpGet]
-        [Route("checkqrcode")]
+        [Route("checkqrcode0")]
         public async Task<IActionResult> CheckQRcode(String qrText)
         {
             if (qrText != null && qrText != "")
@@ -75,7 +75,7 @@ namespace voteCollector.Controllers
 
         // "/api/QRcodeСheckAPI/checphonenumber?phoneNumber="
         [HttpGet]
-        [Route("checkphonenumber")]
+        [Route("checkphonenumber0")]
         public async Task<IActionResult> CheckPhoneNumber(String phoneNumber)
         {
             if (phoneNumber != null && phoneNumber != "")
@@ -114,7 +114,7 @@ namespace voteCollector.Controllers
 
         //"/api/QRcodeСheckAPI/checkmasjsonqrcode"
         [HttpPost]
-        [Route("checkmasjsonqrcode")]
+        [Route("checkmasjsonqrcode0")]
         public void CheckMasjsonqrcode(string[] qrCodeDTOs)
         {
             if (qrCodeDTOs.Length > 0)
@@ -152,7 +152,7 @@ namespace voteCollector.Controllers
 
         //"/api/QRcodeСheckAPI/checkmasjsonphonenumber"
         [HttpPost]
-        [Route("checkmasjsonphonenumber")]
+        [Route("checkmasjsonphonenumber0")]
         public void CheckMasjsonPhonenumber(string[] phoneNumberDTOs)
         {
 
@@ -193,7 +193,7 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost]
-        [Route("requestqrcodesreceiving")]
+        [Route("requestqrcodesreceivingadm")]
         public async Task<IActionResult> RequestQRcodesReceiving([FromBody] DateTimeDTO dateTimeStr)
         {
             string url = "https://etsa.online/app/api/barcodes/get.php";

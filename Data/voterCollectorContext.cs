@@ -22,7 +22,10 @@ namespace voteCollector.Data
 
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<CityDistrict> CityDistrict { get; set; }
+        public virtual DbSet<ElectoralDistrict> ElectoralDistrict { get; set; }
         public virtual DbSet<District> District { get; set; }
+        public virtual DbSet<ElectoralDistrictAssemblyLaw> ElectoralDistrictAssemblyLaw { get; set; }
+        public virtual DbSet<ElectoralDistrictGovDuma> ElectoralDistrictGovDuma { get; set; }
         public virtual DbSet<Fieldactivity> Fieldactivity { get; set; }
         public virtual DbSet<Friend> Friend { get; set; }
         public virtual DbSet<Groupsusers> Groupsusers { get; set; }
@@ -34,7 +37,6 @@ namespace voteCollector.Data
         public virtual DbSet<Street> Street { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Station> Station { get; set; }
-        public virtual DbSet<ElectoralDistrict> ElectoralDistrict { get; set; }
         public virtual DbSet<FriendStatus> FriendStatus { get; set; }
         public virtual DbSet<Organization> Organization { get; set; }
 
@@ -44,8 +46,8 @@ namespace voteCollector.Data
             if (!optionsBuilder.IsConfigured)
             {
                 //optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=voterCollector; default command timeout=30", x => x.ServerVersion("8.0.22-mysql"));
-                //optionsBuilder.UseMySql("server=37.140.192.100;port=3306;user=u1451597_root;password=@volodyaadmin01;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=u1451597_root;password=@volodyaadmin01;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
+                //optionsBuilder.UseMySql("server=37.140.192.100;port=3306;user=u1451597_root;password=@volodyaadmin001;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=u1451597_root;password=@volodyaadmin001;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
                 //optionsBuilder.UseMySql("server=195.226.209.40;port=3306;user=volodya;password=volodyaroot;database=voterCollector; default command timeout=30", x => x.ServerVersion("8.0.22-mysql"));
             }
         }
@@ -88,14 +90,17 @@ namespace voteCollector.Data
                 entity.HasIndex(e => e.ElectoralDistrictId)
                     .HasName("FK_District_Electoral_District");
 
+                entity.HasIndex(e => e.ElectoralDistrictAssemblyLawId)
+    .HasName("FK_District_ElectoralDistrictAssemblyLaw");
+
+                entity.HasIndex(e => e.ElectoralDistrictGovDumaId)
+                    .HasName("FK_District_ElectoralDistrictGovDuma");
+
                 entity.HasIndex(e => e.StationId)
                     .HasName("FK_District_Station");
 
                 entity.HasIndex(e => e.CityId)
                     .HasName("FK_District_City");
-
-                entity.HasIndex(e => e.StreetId)
-                    .HasName("FK_District_Street");
 
                 entity.Property(e => e.Name)
                     .HasCharSet("utf8mb4")
@@ -105,6 +110,16 @@ namespace voteCollector.Data
                     .WithMany(p => p.Districts)
                     .HasForeignKey(d => d.ElectoralDistrictId)
                     .HasConstraintName("FK_District_Electoral_District");
+
+                entity.HasOne(d => d.ElectoralDistrictAssemblyLaw)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.ElectoralDistrictAssemblyLawId)
+                    .HasConstraintName("FK_District_ElectoralDistrictAssemblyLaw");
+
+                entity.HasOne(d => d.ElectoralDistrictGovDuma)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.ElectoralDistrictGovDumaId)
+                    .HasConstraintName("FK_District_ElectoralDistrictGovDuma");
 
                 entity.HasOne(d => d.Station)
                     .WithMany(p => p.Districts)
@@ -118,10 +133,6 @@ namespace voteCollector.Data
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_District_City");
 
-                entity.HasOne(d => d.Street)
-                    .WithMany(p => p.Districts)
-                    .HasForeignKey(d => d.StreetId)
-                    .HasConstraintName("FK_District_Street");
             });
 
             modelBuilder.Entity<ElectoralDistrict>(entity =>
@@ -595,5 +606,7 @@ namespace voteCollector.Data
         }
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
         public DbSet<voteCollector.Models.Report> Report { get; set; }
+        public DbSet<voteCollector.Models.ReportDistrict> ReportDistrict { get; set; }
+        public DbSet<voteCollector.Models.ReportCity> ReportCity { get; set; }
     }
 }

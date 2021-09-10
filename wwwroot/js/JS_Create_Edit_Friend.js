@@ -45,74 +45,168 @@ $(document).ready(function () {
 //    });
 });
 
-// Обновление списка улиц после выбора города
+// Обновление списка городских округов после выбора города
+// Проверка откреплен/неоткреплен. Установка галочки, обновление списка участков
 $(function () {
-    $("#CityDistrictId").change(function () {
-        var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text() };
-        $.ajax({
-           // url: "http://localhost:18246/api/API/searchStreets",
-            url: partMyURL+"/api/API/searchStreets",
-           // url: "/CollectVoters/api/API/searchStreets",
-            headers:
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            type: 'POST',
-            dataType: "json",
-            data: JSON.stringify(formData),
-            success: function (data) {
-                var dataSort = [];
-                if (data != undefined) {
-                    dataSort = data.sort(function (a, b) {
-                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                    });
-                }
-                DataFillingSelect(dataSort, 'idStreet', 'name', '#StreetId', '<option/>');
+    $('#CityId').change(function () {
 
-                // Генерация события для элемента Select
-                let elemSelectStreet = document.querySelector('#StreetId')
-                elemSelectStreet.selectedIndex = 0;
-                const event = new Event("change");
-                elemSelectStreet.dispatchEvent(event);
-            },
-            error: function (result, status, er) {
-                alert("error: " + result + " status: " + status + " er:" + er);
-            }
-        });
-    });    
+        var idCity = Number.parseInt($('#CityId').val());
+
+        if (idCity !== 0 && !Number.isNaN(idCity) && idCity !== undefined && idCity !== null) {
+            $.ajax({
+                url: partMyURL + "/api/API/GetSitiesDistricts" + "/" + idCity,
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    var dataSort = []
+                    if (data != undefined) {
+                        dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    DataFillingSelect(dataSort, 'idCity', 'name', '#CityDistrictId', '<option/>');
+
+                    // Генерация события для элемента Select
+                    let elemSelectCity = document.querySelector('#CityDistrictId')
+                    elemSelectCity.selectedIndex = 0;
+                    const event = new Event("change");
+                    elemSelectCity.dispatchEvent(event);
+
+                    UpdateStateFieldsAndStationAndDistricts();
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
+                }
+            });
+        }        
+    });
 });
+
+function UpdateStateFieldsAndStationAndDistricts() {
+
+    var selectCity = $('#CityId>option:selected').text();
+
+    if (selectCity !== 'Оренбург') {
+
+        //document.getElementById('boolUnpinning').checked = true;
+
+        //document.getElementById('boolUnpinning').disabled = true;
+
+        HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+        DisplayInputField('divAdessText', true);
+
+        // Синхронизация
+        chboxFront = document.getElementById('boolUnpinning');
+        chboxServ = document.getElementById('boolUnpinningServ');
+        chboxFront.checked = chboxServ.checked;
+
+        if (chboxServ.checked) {
+
+            UpdateStationByCityAfterSelect();
+            UploadElectoralDistrictsAll();
+        }
+    }
+    else if (selectCity === 'Оренбург') {
+
+        // Генерация события для элемента Select
+        //let elemSelectCityDistrict = document.querySelector('#CityDistrictId')
+        //elemSelectCityDistrict.selectedIndex = 0;
+        //const event = new Event("change");
+        //elemSelectCityDistrict.dispatchEvent(event);
+
+        UpdateStationByCityAfterSelect();
+        UploadElectoralDistrictsAll();
+
+        //document.getElementById('boolUnpinning').checked = false;
+
+        //document.getElementById('boolUnpinning').disabled = false;
+
+        ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
+        DisplayInputField('divAdessText', false);
+    }
+}
+
+// Обновление списка улиц после выбора городского округа
+//$(function () {
+//    $("#CityDistrictId").change(function () {
+//        var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text() };
+//        $.ajax({
+//           // url: "http://localhost:18246/api/API/searchStreets",
+//            url: partMyURL+"/api/API/searchStreets",
+//           // url: "/CollectVoters/api/API/searchStreets",
+//            headers:
+//            {
+//                'Accept': 'application/json',
+//                'Content-Type': 'application/json',
+//                'RequestVerificationToken': $('#RequestVerificationToken').val()
+//            },
+//            type: 'POST',
+//            dataType: "json",
+//            data: JSON.stringify(formData),
+//            success: function (data) {
+//                var dataSort = [];
+//                if (data != undefined) {
+//                    dataSort = data.sort(function (a, b) {
+//                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+//                    });
+//                }
+//                DataFillingSelect(dataSort, 'idStreet', 'name', '#StreetId', '<option/>');
+
+//                // Генерация события для элемента Select
+//                let elemSelectStreet = document.querySelector('#StreetId')
+//                elemSelectStreet.selectedIndex = 0;
+//                const event = new Event("change");
+//                elemSelectStreet.dispatchEvent(event);
+//            },
+//            error: function (result, status, er) {
+//                alert("error: " + result + " status: " + status + " er:" + er);
+//            }
+//        });
+//    });    
+//});
 
 // Обновление списка домов после выбора улицы
 $(function () {
     $("#StreetId").change(function () {
         var formData = { 'IdStreet': Number.parseInt($('#StreetId').val()), 'Name': $('#StreetId>option:selected').text() };
-        $.ajax({
-            url: partMyURL + "/api/API/searchHouse",
-            //url: "/CollectVoters/api/API/searchHouse",
-            headers:
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': $('#RequestVerificationToken').val()
-            },
-            type: 'POST',
-            dataType: "json",
-            data: JSON.stringify(formData),
-            success: function (data) {
-                var dataSort = [];
-                if (data != undefined) {
-                    dataSort = data.sort(function (a, b) {
-                    return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
-                    });
+
+        if (!Number.isNaN(formData['IdStreet'])) {
+            $.ajax({
+                url: partMyURL + "/api/API/searchHouse",
+                //url: "/CollectVoters/api/API/searchHouse",
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'POST',
+                dataType: "json",
+                data: JSON.stringify(formData),
+                success: function (data) {
+                    var dataSort = [];
+                    if (data != undefined) {
+                        dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    DataFillingSelect(dataSort, 'idHouse', 'name', '#HouseId', '<option/>');
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
                 }
-                DataFillingSelect(dataSort, 'idHouse', 'name', '#HouseId', '<option/>');
-            },
-            error: function (result, status, er) {
-                alert("error: " + result + " status: " + status + " er:" + er);
-            }
-        });
+            });
+        }
+        else {
+            var objectHtml = $('#HouseId');
+            objectHtml.empty();
+        }
     });
 });
 
@@ -151,7 +245,6 @@ $(function () {
         }
     });
 });
-
 
 //Заполнение объекта html данными из json массива
 function DataFillingSelect(data, nameProperty1, nameProperty2, idObject, propertyHtml) {
@@ -193,54 +286,6 @@ function GetSelectedOption(select) {
         //        language: "ru"
         //    });
         //});
-
-// Проверка откреплен/неоткреплен. Установка галочки, обновление списка участков
-$(function () {
-    $("#CityId").change(function () {
-
-        var selectCity = $('#CityId>option:selected').text();        
-
-        if (selectCity !== 'Оренбург') {
-
-            //document.getElementById('boolUnpinning').checked = true;
-
-            //document.getElementById('boolUnpinning').disabled = true;
-
-            HideShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
-            DisplayInputField('divAdessText', true);
-
-            // Синхронизация
-            chboxFront = document.getElementById('boolUnpinning');
-            chboxServ = document.getElementById('boolUnpinningServ');
-            chboxFront.checked = chboxServ.checked;
-
-            if (chboxServ.checked) {
-
-                UpdateStationByCityAfterSelect();
-                UploadElectoralDistrictsAll();
-            }
-
-        }   
-        else if (selectCity === 'Оренбург') {
-
-            // Генерация события для элемента Select
-            let elemSelectCityDistrict = document.querySelector('#CityDistrictId')
-            elemSelectCityDistrict.selectedIndex = 0;
-            const event = new Event("change");
-            elemSelectCityDistrict.dispatchEvent(event);
-
-            UpdateStationByCityAfterSelect();
-            UploadElectoralDistrictsAll();
-
-            //document.getElementById('boolUnpinning').checked = false;
-
-            //document.getElementById('boolUnpinning').disabled = false;
-
-            ShowBlocks('boolUnpinning', 'divCityDistrict', 'divStreet', 'divHouse', 'divApartment', 'divAdessText');
-            DisplayInputField('divAdessText', false);
-        }
-    });
-});
 
 $(function () {
     $("#boolUnpinning").change(function () {
@@ -343,7 +388,6 @@ function HideShowBlocks(idchbox, idObjectHidden1, idObjectHidden2, idObjectHidde
 //            UploadStationByCitydistrictAndStreetAndHouse();
 //        }
 //    }
-
 }
 
 

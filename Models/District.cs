@@ -23,18 +23,32 @@ namespace voteCollector.Models
         [Column("Electoral_District_id")]
         [DisplayName("Избирательный округ")]
         public int? ElectoralDistrictId { get; set; }
+        [Column("Electoral_district_gov_duma_id")]
+        [DisplayName("Округ гос. думы")]
+        public int? ElectoralDistrictGovDumaId { get; set; }
+        [Column("Electoral_district_assembly_law_id")]
+        [DisplayName("Округ зак. собрания")]
+        public int? ElectoralDistrictAssemblyLawId { get; set; }
+
         [Column("Station_id")]
         [DisplayName("Избират. участок")]
         public int? StationId { get; set; }
         [Column("City_id")]
         public int? CityId { get; set; }
-        [Column("Street_id")]
-        public int? StreetId { get; set; }
 
         [ForeignKey(nameof(ElectoralDistrictId))]
         [InverseProperty("Districts")]
         [DisplayName("Избирательный округ")]
         public virtual ElectoralDistrict ElectoralDistrict { get; set; }
+        [ForeignKey(nameof(ElectoralDistrictAssemblyLawId))]
+        [InverseProperty("Districts")]
+        [DisplayName("Округ зак. собрания")]
+        public virtual ElectoralDistrictAssemblyLaw ElectoralDistrictAssemblyLaw { get; set; }
+        [ForeignKey(nameof(ElectoralDistrictGovDumaId))]
+        [InverseProperty("Districts")]
+        [DisplayName("Округ гос. думы")]
+        public virtual ElectoralDistrictGovDuma ElectoralDistrictGovDuma { get; set; }
+
         [ForeignKey(nameof(StationId))]
         [InverseProperty("Districts")]
         [DisplayName("Избират. участок")]
@@ -42,7 +56,5 @@ namespace voteCollector.Models
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Districts")]
         public virtual CityDistrict CityDistrict { get; set; }
-        [InverseProperty("Districts")]
-        public virtual Street Street { get; set; }
     }
 }

@@ -115,200 +115,6 @@ namespace CollectVoters.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ReportOrganization(int id)
-        {
-            Groupu parentGroupu = _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Include(g => g.InverseGroupParents)
-                .Where(g => g.IdGroup == id).FirstOrDefault();
-
-            List<Report> reports = new List<Report>();
-
-            if (parentGroupu != null)
-            {
-                List<Friend> friends = _context.Friend.ToList();
-                string nameParent = parentGroupu.Name;
-
-                if (parentGroupu.InverseGroupParents != null && parentGroupu.InverseGroupParents.Count > 0)
-                {
-
-                    foreach (Groupu grpLvl2 in parentGroupu.InverseGroupParents)
-                    {
-                        _context.Entry(grpLvl2).Collection(g => g.InverseGroupParents).Load();
-                        _context.Entry(grpLvl2).Reference(g => g.UserResponsible).Load();
-
-                        Report report = new Report
-                        {
-                            Responseble = grpLvl2.UserResponsible != null ? grpLvl2.UserResponsible.FamilyName + " " + grpLvl2.UserResponsible.Name + " " + grpLvl2.UserResponsible.PatronymicName + " (" + grpLvl2.UserResponsible.Telephone + ")" : "",
-                            IdOdject = grpLvl2.IdGroup,
-                            NameObject = grpLvl2.Organization != null ? grpLvl2.Organization.Name : grpLvl2.Name,
-                            Level = grpLvl2.Level ?? 0,
-                            NumberEmployees = grpLvl2.NumberEmployees ?? 0,
-                            NameParent = nameParent,
-                            childGroup = false
-                        };
-                        int numberVoters = 0;
-                        int numberVoted = 0;
-                        int numberQRcodes = 0;
-
-                        List<Groupu> groupsChild = _serviceGroup.GetAllChildGroupsBFS(grpLvl2, grpLvl2, grpLvl2);
-
-                        if (groupsChild != null && groupsChild.Count > 0)
-                        {
-                            
-                            foreach (Groupu groupu in groupsChild)
-                            {
-                                if (groupu.IdGroup != grpLvl2.IdGroup) report.childGroup = true;
-
-                                numberVoters += friends.Where(f => f.GroupUId == groupu.IdGroup).Count();
-                                numberVoted += friends.Where(f => f.GroupUId == groupu.IdGroup && f.Voter == true).Count();
-                                numberQRcodes += friends.Where(f => f.GroupUId == groupu.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
-                            }
-                        }
-                        else
-                        {
-                            numberVoters += friends.Where(f => f.GroupUId == grpLvl2.IdGroup).Count();
-                            numberVoted += friends.Where(f => f.GroupUId == grpLvl2.IdGroup && f.Voter == true).Count();
-                            numberQRcodes += friends.Where(f => f.GroupUId == grpLvl2.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
-                        }
-                        report.NumberVoters = numberVoters;
-                        report.NumberVoted = numberVoted;
-                        report.NumberQRcodesText = numberQRcodes;
-
-                        if (numberVoters != 0)
-                        {
-                            report.PersentVotedByVoters = Math.Round((double)numberVoted / numberVoters * 100, 2);
-                        }
-                        if (report.NumberEmployees != 0)
-                        {
-                            report.PersentVotedByEmploees = Math.Round((double)numberVoted / report.NumberEmployees * 100, 2);
-                        }
-                        if (report.NumberEmployees != 0)
-                        {
-                            report.PersentVotersByEmploees = Math.Round((double)numberVoters / report.NumberEmployees * 100, 2);
-                        }
-                        reports.Add(report);
-                    }
-                }
-                else
-                {
-                    reports.Add(new Report
-                    {
-                        NameParent = nameParent
-                    });
-                }
-            }
-            reports.Sort((r1, r2) => r1.NameObject.CompareTo(r2.NameObject));
-            return View(reports);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ReportGroup(int id)
-        {
-            Groupu parentGroupu = _context.Groupu.Include(g => g.Organization).Include(g => g.UserResponsible).Include(g => g.InverseGroupParents)
-                .Where(g => g.IdGroup == id).FirstOrDefault();
-
-            List<Report> reports = new List<Report>();
-
-            if (parentGroupu != null)
-            {
-                List<Friend> friends = _context.Friend.ToList();
-                string nameParent = parentGroupu.Name;
-
-                Report reportOwner = new Report
-                {
-                    Responseble = parentGroupu.UserResponsible != null ? parentGroupu.UserResponsible.FamilyName + " " + parentGroupu.UserResponsible.Name + " " + parentGroupu.UserResponsible.PatronymicName + " (" + parentGroupu.UserResponsible.Telephone + ")" : "",
-                    IdOdject = parentGroupu.OrganizationId ?? 0,
-                    NameObject = parentGroupu.Name != null ? parentGroupu.Name : "",
-                    Level = parentGroupu.Level ?? 0,
-                    NumberEmployees = parentGroupu.NumberEmployees ?? 0,
-                    NameParent = nameParent,
-                    NumberVoters = friends.Where(f => f.GroupUId == parentGroupu.IdGroup).Count(),
-                    NumberVoted = friends.Where(f => f.GroupUId == parentGroupu.IdGroup && f.Voter == true).Count(),
-                    NumberQRcodesText = friends.Where(f => f.GroupUId == parentGroupu.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count()
-                };
-
-                if (reportOwner.NumberVoters != 0)
-                {
-                    reportOwner.PersentVotedByVoters = Math.Round((double)reportOwner.NumberVoted / reportOwner.NumberVoters * 100, 2);
-                }
-                if (reportOwner.NumberEmployees != 0)
-                {
-                    reportOwner.PersentVotedByEmploees = Math.Round((double)reportOwner.NumberVoted / reportOwner.NumberEmployees * 100, 2);
-                }
-                if (reportOwner.NumberEmployees != 0)
-                {
-                    reportOwner.PersentVotersByEmploees = Math.Round((double)reportOwner.NumberVoters / reportOwner.NumberEmployees * 100, 2);
-                }                
-
-                if (parentGroupu.InverseGroupParents != null && parentGroupu.InverseGroupParents.Count > 0)
-                {
-
-                    foreach (Groupu grpLvl3 in parentGroupu.InverseGroupParents)
-                    {
-                        _context.Entry(grpLvl3).Reference(g => g.UserResponsible).Load();
-
-                        Report report = new Report
-                        {
-                            Responseble = grpLvl3.UserResponsible != null ? grpLvl3.UserResponsible.FamilyName + " " + grpLvl3.UserResponsible.Name + " " + grpLvl3.UserResponsible.PatronymicName + " (" + grpLvl3.UserResponsible.Telephone + ")" : "",
-                            IdOdject = grpLvl3.OrganizationId ?? 0,
-                            NameObject = grpLvl3.Name != null ? grpLvl3.Name : "",
-                            Level = grpLvl3.Level ?? 0,
-                            NumberEmployees = grpLvl3.NumberEmployees ?? 0,
-                            NameParent = nameParent
-                        };
-                        int numberVoters = 0;
-                        int numberVoted = 0;
-                        int numberQRcodes = 0;
-
-                        List<Groupu> groupsChild = _serviceGroup.GetAllChildGroupsBFS(grpLvl3, grpLvl3, grpLvl3);
-
-                        if (groupsChild != null && groupsChild.Count > 0)
-                        {
-                            foreach (Groupu groupu in groupsChild)
-                            {
-                                numberVoters += friends.Where(f => f.GroupUId == groupu.IdGroup).Count();
-                                numberVoted += friends.Where(f => f.GroupUId == groupu.IdGroup && f.Voter == true).Count();
-                                numberQRcodes += friends.Where(f => f.GroupUId == groupu.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
-                            }
-                            report.NumberVoters = numberVoters;
-                            report.NumberVoted = numberVoted;
-                            report.NumberQRcodesText = numberQRcodes;
-                        }
-                        else
-                        {
-                            report.NumberVoters = friends.Where(f => f.GroupUId == grpLvl3.IdGroup).Count();
-                            report.NumberVoted = friends.Where(f => f.GroupUId == grpLvl3.IdGroup && f.Voter == true).Count();
-                            report.NumberQRcodesText = friends.Where(f => f.GroupUId == grpLvl3.IdGroup && f.TextQRcode != null && !f.TextQRcode.Equals("")).Count();
-                        }
-
-                        if (numberVoters != 0)
-                        {
-                            report.PersentVotedByVoters = Math.Round((double)numberVoted / numberVoters * 100, 2);
-                        }
-                        if (report.NumberEmployees != 0)
-                        {
-                            report.PersentVotedByEmploees = Math.Round((double)numberVoted / report.NumberEmployees * 100, 2);
-                        }
-                        if (report.NumberEmployees != 0)
-                        {
-                            report.PersentVotersByEmploees = Math.Round((double)numberVoters / report.NumberEmployees * 100, 2);
-                        }
-                        reports.Add(report);
-                    }
-                }
-                else
-                {
-                    reports.Add(new Report
-                    {
-                        NameParent = nameParent
-                    });
-                }
-                reports.Sort((r1,r2)=> r1.NameObject.CompareTo(r2.NameObject));
-                reports.Insert(0, reportOwner);
-            }
-
-            return View(reports);
-        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         [HttpGet]
@@ -428,7 +234,8 @@ namespace CollectVoters.Controllers
 
             ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name");
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectIndexCity);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", selectedIndexCityDistrict);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == selectIndexCity).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", selectedIndexCityDistrict);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
             List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", groupsUser[0].FieldActivityId);
@@ -469,15 +276,24 @@ namespace CollectVoters.Controllers
 
             if (ModelState.IsValid)
             {
-                List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
+                friend.FamilyName = friend.FamilyName != null ? friend.FamilyName.Trim() : null;
+                friend.Name = friend.Name != null ? friend.Name.Trim() : null;
+                friend.PatronymicName = friend.PatronymicName != null ? friend.PatronymicName.Trim() : null;
+                friend.TextQRcode = friend.TextQRcode != null ? friend.TextQRcode.Trim() : null;
 
-                if (searchFriend.Count == 0)
+                List<Friend> searchFriend = _context.Friend.Include(f => f.GroupU).Where(frnd => frnd.Name.Trim().Equals(friend.Name) && frnd.FamilyName.Trim().Equals(friend.FamilyName) && frnd.PatronymicName.Trim().Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date && frnd.IdFriend != friend.IdFriend).ToList();
+
+                if (friend.DateBirth.Value.Year < 1900 || friend.DateBirth.Value.Year > 2003)
+                {
+                    ModelState.AddModelError("", "Дата рождения меньше 1900 или больше 2003!");
+                }
+                else if (searchFriend.Count == 0)
                 {
                     Friend friendQrText = null;
                     Friend friendNumberPhone = null;
                     if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                     {
-                        friendQrText = _serviceFriends.FindUserByQRtextForText(friend.TextQRcode);
+                        friendQrText = _serviceFriends.FindUserByQRtext(friend.TextQRcode);
                     }
                     if (friend.Telephone != null && !friend.Telephone.Trim().Equals(""))
                     {
@@ -535,7 +351,7 @@ namespace CollectVoters.Controllers
 
                                     _context.Add(friend);
                                     await _context.SaveChangesAsync();
-                                    return RedirectToAction(nameof(Index));
+                                    return RedirectToAction(nameof(LkAdmin));
                                 }
                                 else
                                 {
@@ -583,7 +399,7 @@ namespace CollectVoters.Controllers
                     else ModelState.AddModelError("", "Учасник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
 
                 }
-                else ModelState.AddModelError("", "Учасник с данными ФИО и датаой рождения уже был внесен в списки ранее!");
+                else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен ранее в списки в " + searchFriend[0].GroupU.Name + "!");
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
@@ -594,6 +410,8 @@ namespace CollectVoters.Controllers
 
             ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == friend.CityId).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -660,7 +478,8 @@ namespace CollectVoters.Controllers
 
             ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == friend.CityId).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -710,22 +529,31 @@ namespace CollectVoters.Controllers
                 DateTime dateEmpty = new DateTime();
                 if (!friend.Name.Equals("") && !friend.FamilyName.Equals("") && friend.DateBirth != dateEmpty)
                 {
-                    List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date && frnd.IdFriend != friend.IdFriend).ToList();
+                    friend.FamilyName = friend.FamilyName != null ? friend.FamilyName.Trim() : null;
+                    friend.Name = friend.Name != null ? friend.Name.Trim() : null;
+                    friend.PatronymicName = friend.PatronymicName != null ? friend.PatronymicName.Trim() : null;
+                    friend.TextQRcode = friend.TextQRcode != null ? friend.TextQRcode.Trim() : null;
 
-                    if (searchFriend.Count == 0)
+                    List<Friend> searchFriend = _context.Friend.Include(f => f.GroupU).Where(frnd => frnd.Name.Trim().Equals(friend.Name) && frnd.FamilyName.Trim().Equals(friend.FamilyName) && frnd.PatronymicName.Trim().Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date && frnd.IdFriend != friend.IdFriend).ToList();
+
+                    if (friend.DateBirth.Value.Year < 1900 || friend.DateBirth.Value.Year > 2003)
+                    {
+                        ModelState.AddModelError("", "Дата рождения меньше 1900 или больше 2003!");
+                    }
+                    else if (searchFriend.Count == 0)
                     {
                         Friend friendQrText = null;
                         Friend friendNumberPhone = null;
                         if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                         {
-                            friendQrText = _serviceFriends.FindUserByQRtextForText(friend.TextQRcode);
+                            friendQrText = _serviceFriends.FindUserByQRtext(friend.TextQRcode);
                         }
                         if (friend.Telephone != null && !friend.Telephone.Trim().Equals(""))
                         {
                             friendNumberPhone = _serviceFriends.FindUserByPhoneNumber(ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone));
                         }
 
-                        if (friendQrText == null && friendNumberPhone == null) { 
+                        if ((friendQrText == null || friendQrText.IdFriend == friend.IdFriend) && (friendNumberPhone == null || friendNumberPhone.IdFriend == friend.IdFriend)) { 
 
                             User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                         //friend.UserId = userSave.IdUser;
@@ -797,13 +625,12 @@ namespace CollectVoters.Controllers
                                             throw;
                                         }
                                     }
-                                    return RedirectToAction(nameof(Index));
+                                    return RedirectToAction(nameof(LkAdmin));
                                 }
                                 else
                                 {
                                     ModelState.AddModelError("", "Не указан участок!");
                                 }
-
                             }
                             else
                             {
@@ -858,11 +685,11 @@ namespace CollectVoters.Controllers
                             }
                         }
                     }
-
+                        else ModelState.AddModelError("", "Участник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
                     }
-                    else ModelState.AddModelError("", "Учасник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
+                    else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен ранее в списки в " + searchFriend[0].GroupU.Name + "!");
                 }
-                else ModelState.AddModelError("", "Учасник с данными ФИО и датаой рождения уже был внесен в списки ранее!");
+                else ModelState.AddModelError("", "Не все поля были заполнены");
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
@@ -872,7 +699,8 @@ namespace CollectVoters.Controllers
 
             ViewData["GroupUId"] = new SelectList(filterGroupUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == friend.CityId).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivities = _context.Fieldactivity.Where(f => idFieldActivityUser.Contains(f.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivities, "IdFieldActivity", "Name", friend.FieldActivityId);

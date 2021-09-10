@@ -1,12 +1,13 @@
 ﻿
 // Обновление списка участков после выбора городского округа
+// Обновление списка улиц после выбора городского округа
 $(function () {
     $("#CityDistrictId").change(function () {
 
         chbox = document.getElementById('boolUnpinning');
+        var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text() };
 
-        if (!chbox.checked) {
-            var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text() };
+        if (!chbox.checked && !Number.isNaN(formData['IdCity'])) {
             $.ajax({
                 url: partMyURL + "/api/API/searchStations/city",
                 // url: "/CollectVoters/api/API/searchPollingStations/city",
@@ -37,6 +38,49 @@ $(function () {
                 }
             });
         }
+
+        // Обновление списка улиц после выбора городского округа
+        var formData = { 'IdCity': Number.parseInt($('#CityDistrictId').val()), 'Name': $('#CityDistrictId>option:selected').text() };
+
+        if (!Number.isNaN(formData['IdCity'])) {
+            $.ajax({
+                // url: "http://localhost:18246/api/API/searchStreets",
+                url: partMyURL + "/api/API/searchStreets",
+                // url: "/CollectVoters/api/API/searchStreets",
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('#RequestVerificationToken').val()
+                },
+                type: 'POST',
+                dataType: "json",
+                data: JSON.stringify(formData),
+                success: function (data) {
+                    var dataSort = [];
+                    if (data != undefined) {
+                        dataSort = data.sort(function (a, b) {
+                            return ((a.name === b.name) ? 0 : ((a.name > b.name) ? 1 : -1));
+                        });
+                    }
+                    DataFillingSelect(dataSort, 'idStreet', 'name', '#StreetId', '<option/>');
+
+                    // Генерация события для элемента Select
+                    let elemSelectStreet = document.querySelector('#StreetId')
+                    elemSelectStreet.selectedIndex = 0;
+                    const event = new Event("change");
+                    elemSelectStreet.dispatchEvent(event);
+                },
+                error: function (result, status, er) {
+                    alert("error: " + result + " status: " + status + " er:" + er);
+                }
+            });
+        }
+        else {
+            var objectHtml = $('#StreetId');
+            objectHtml.empty();
+        }
+
     });
 });
 
@@ -133,7 +177,7 @@ $(function () {
 
         if (!chbox.checked) {
 
-        var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text() };
+            var formData = { 'IdHouse': Number.parseInt($('#HouseId').val()), 'Name': $('#HouseId>option:selected').text()};
             let select = document.getElementById('HouseId');
 
             if ($('#HouseId').has('option').length != 0) {

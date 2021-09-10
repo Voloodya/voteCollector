@@ -15,7 +15,6 @@ namespace voteCollector.Models
     {
         public Street()
         {
-            Districts = new HashSet<District>();
             Friends = new HashSet<Friend>();
             Houses = new HashSet<House>();
             PollingStations = new HashSet<PollingStation>();
@@ -33,8 +32,6 @@ namespace voteCollector.Models
         [ForeignKey(nameof(CityId))]
         [InverseProperty("Streets")]
         public virtual CityDistrict CityDistrict { get; set; }
-        [InverseProperty("Street")]
-        public virtual ICollection<District> Districts { get; set; }
         [InverseProperty("Street")]
         public virtual ICollection<Friend> Friends { get; set; }
         [InverseProperty("Street")]

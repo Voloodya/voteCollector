@@ -118,7 +118,8 @@ namespace voteCollector.Controllers
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name");
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", selectIndexCity);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", selectedIndexCityDistrict);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == selectIndexCity).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", selectedIndexCityDistrict);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => idFieldActivityUser.Contains(fac.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name");
@@ -163,15 +164,25 @@ namespace voteCollector.Controllers
             int selectedIndexCityDistrict = 1;
             if (ModelState.IsValid)
             {
-                List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date).ToList();
+                friend.FamilyName = friend.FamilyName != null ? friend.FamilyName.Trim() : null;
+                friend.Name = friend.Name != null ? friend.Name.Trim() : null;
+                friend.PatronymicName = friend.PatronymicName != null ? friend.PatronymicName.Trim() : null ;
+                friend.TextQRcode = friend.TextQRcode != null ? friend.TextQRcode.Trim() : null;
 
-                if (searchFriend.Count == 0)
+                List<Friend> searchFriend = _context.Friend.Include(f => f.GroupU).Where(frnd => frnd.Name.Trim().Equals(friend.Name) && frnd.FamilyName.Trim().Equals(friend.FamilyName) && frnd.PatronymicName.Trim().Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date && frnd.IdFriend != friend.IdFriend).ToList();
+
+                if (friend.DateBirth.Value.Year < 1900 || friend.DateBirth.Value.Year > 2003)
+                {
+                    ModelState.AddModelError("", "Дата рождения меньше 1900 или больше 2003!");
+                }
+                else if (searchFriend.Count == 0)
                 {
                     Friend friendQrText = null;
                     Friend friendNumberPhone = null;
+                    string group = "";
                     if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                     {
-                        friendQrText = ServiceFriends.FindUserByQRtextForText(friend.TextQRcode);
+                        friendQrText = ServiceFriends.FindUserByQRtext(friend.TextQRcode);
                     }
                     if (friend.Telephone != null && !friend.Telephone.Trim().Equals(""))
                     {
@@ -239,13 +250,11 @@ namespace voteCollector.Controllers
                                 {
                                     ModelState.AddModelError("", "Не указан участок!");
                                 }
-
                             }
                             else
                             {
                                 ModelState.AddModelError("", "Не корректно заполнено поле с адресом!");
                             }
-
                         }
                         else
                         {
@@ -280,7 +289,7 @@ namespace voteCollector.Controllers
                     }
                     else ModelState.AddModelError("", "Участник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
                 }
-                else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен в списки ранее!");
+                else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен ранее в списки в " + searchFriend[0].GroupU.Name + "!");
             }
 
             List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
@@ -289,7 +298,8 @@ namespace voteCollector.Controllers
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == friend.CityId).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => idFieldActivityUser.Contains(fac.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -362,7 +372,8 @@ namespace voteCollector.Controllers
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == friend.CityId).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => idFieldActivityUser.Contains(fac.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);
@@ -427,15 +438,24 @@ namespace voteCollector.Controllers
                 DateTime dateEmpty = new DateTime();
                 if (!friend.Name.Equals("") && !friend.FamilyName.Equals("") && friend.DateBirth != dateEmpty)
                 {
-                    List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friend.Name) && frnd.FamilyName.Equals(friend.FamilyName) && frnd.PatronymicName.Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date && frnd.IdFriend != friend.IdFriend).ToList();
+                    friend.FamilyName = friend.FamilyName != null ? friend.FamilyName.Trim() : null;
+                    friend.Name = friend.Name != null ? friend.Name.Trim() : null;
+                    friend.PatronymicName = friend.PatronymicName != null ? friend.PatronymicName.Trim() : null;
+                    friend.TextQRcode = friend.TextQRcode != null ? friend.TextQRcode.Trim() : null;
 
-                    if (searchFriend.Count == 0)
+                    List<Friend> searchFriend = _context.Friend.Include(f => f.GroupU).Where(frnd => frnd.Name.Trim().Equals(friend.Name) && frnd.FamilyName.Trim().Equals(friend.FamilyName) && frnd.PatronymicName.Trim().Equals(friend.PatronymicName) && frnd.DateBirth.Value.Date == friend.DateBirth.Value.Date && frnd.IdFriend != friend.IdFriend).ToList();
+
+                    if (friend.DateBirth.Value.Year < 1900 || friend.DateBirth.Value.Year > 2003)
+                    {
+                        ModelState.AddModelError("", "Дата рождения меньше 1900 или больше 2003!");
+                    }
+                    else if (searchFriend.Count == 0)
                     {
                         Friend friendQrText = null;
                         Friend friendNumberPhone = null;
                         if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                         {
-                            friendQrText = ServiceFriends.FindUserByQRtextForText(friend.TextQRcode);
+                            friendQrText = ServiceFriends.FindUserByQRtext(friend.TextQRcode);
                         }
                         if (friend.Telephone != null && !friend.Telephone.Trim().Equals(""))
                         {
@@ -521,13 +541,11 @@ namespace voteCollector.Controllers
                                 {
                                     ModelState.AddModelError("", "Не указан участок!");
                                 }
-
                             }
                             else
                             {
                                 ModelState.AddModelError("", "Не корректно заполнено поле с адресом!");
                             }
-
                         }
                         else
                         {
@@ -568,7 +586,6 @@ namespace voteCollector.Controllers
                                     return RedirectToAction(nameof(Index));
                                 }
                                 else ModelState.AddModelError("", "Не указан полный адрес или не выбран участок!");
-
                             }
                             else
                             {
@@ -578,7 +595,7 @@ namespace voteCollector.Controllers
                     }
                         else ModelState.AddModelError("", "Участник с данными телефоном или QR-кодом, уже был внесен в списки ранее!");
                     }
-                    else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен в списки ранее!");
+                    else ModelState.AddModelError("", "Участник с данными ФИО и датой рождения уже был внесен ранее в списки в " + searchFriend[0].GroupU.Name + "!");
                 }
                 else ModelState.AddModelError("", "Не все поля были заполнены");
             }
@@ -589,7 +606,8 @@ namespace voteCollector.Controllers
 
             ViewData["GroupUId"] = new SelectList(groupsUser, "IdGroup", "Name", friend.GroupUId);
             ViewData["CityId"] = new SelectList(_context.City, "IdCity", "Name", friend.CityId);
-            ViewData["CityDistrictId"] = new SelectList(_context.CityDistrict, "IdCityDistrict", "Name", friend.CityDistrictId);
+            List<CityDistrict> cityDistricts = _context.CityDistrict.Where(cd => cd.CityId == friend.CityId).ToList();
+            ViewData["CityDistrictId"] = new SelectList(cityDistricts, "IdCityDistrict", "Name", friend.CityDistrictId);
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", friend.ElectoralDistrictId);
             List<Fieldactivity> fieldactivitiesSelect = _context.Fieldactivity.Where(fac => idFieldActivityUser.Contains(fac.IdFieldActivity)).ToList();
             ViewData["FieldActivityId"] = new SelectList(fieldactivitiesSelect, "IdFieldActivity", "Name", friend.FieldActivityId);

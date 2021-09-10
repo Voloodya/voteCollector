@@ -47,20 +47,21 @@ namespace voteCollector.Models
                 if (x.Name.Trim().Equals("")) s1 = "0";
                 if (y.Name.Trim().Equals("")) s2 = "0";
                 return Convert.ToInt32(s1) - Convert.ToInt32(s2);
-            }
-            
+            }            
         }
-
         public int CompareTo(Station other)
         {
             if (other == null) return 1;
             else
             {
-                string s1 = this.Name;
-                string s2 = other.Name;
-                if (this.Name.Trim().Equals("")) s1 = "0";
-                if (other.Name.Trim().Equals("")) s2 = "0";
-                return Convert.ToInt32(s1) - Convert.ToInt32(s2);
+                int count1 = 0;
+                int count2 = 0;
+                if (this.Name.Trim().Equals(""));
+                else if (int.TryParse(this.Name, out count1));
+                if (other.Name.Trim().Equals(""));
+                else if (int.TryParse(other.Name, out count2));
+
+                return count1 - count2;
             }
         }
     }

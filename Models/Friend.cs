@@ -89,9 +89,9 @@ namespace voteCollector.Models
         [DisplayName("Организация")]
         [Column("FieldActivity_id")]
         public int? FieldActivityId { get; set; }
-        [MinLength(11)]
-        [MaxLength(12)]
-        [RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
+        //[MinLength(11)]
+        //[MaxLength(12)]
+        //[RegularExpression(@"(^[+]{0,1}[0-9]{11})"), StringLength(12)]
         [DisplayName("Тел. ответств-го")]
         [Column("Phone_number_responsible", TypeName = "varchar(12)")]
         public string PhoneNumberResponsible { get; set; }

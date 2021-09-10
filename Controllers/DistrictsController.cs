@@ -28,7 +28,8 @@ namespace voteCollector.Controllers
         //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         public async Task<IActionResult> Index()
         {
-            var districtsContext = _context.District.Include(s => s.Station).Include(p => p.ElectoralDistrict);
+            var districtsContext = _context.District.Include(s => s.Station).Include(p => p.ElectoralDistrict).Include(d => d.ElectoralDistrictGovDuma)
+                .Include(d => d.ElectoralDistrictAssemblyLaw);
 
             return View(await districtsContext.ToListAsync());
         }
@@ -38,6 +39,8 @@ namespace voteCollector.Controllers
         public ActionResult Create()
         {
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name");
+            ViewData["ElectoralDistrictGovDumaId"] = new SelectList(_context.ElectoralDistrictGovDuma, "IdElectoralDistrictGovDuma", "Name");
+            ViewData["ElectoralDistrictAssemblyLawId"] = new SelectList(_context.ElectoralDistrictAssemblyLaw, "IdElectoralDistrictAssemblyLaw", "Name");
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name");
 
             return View();
@@ -46,7 +49,7 @@ namespace voteCollector.Controllers
         // POST: DistrictsController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdDistrict,Name,ElectoralDistrictId,StationId,CityId,StreetId")] District district)
+        public async Task<IActionResult> Create([Bind("IdDistrict,Name,ElectoralDistrictId,ElectoralDistrictGovDumaId,ElectoralDistrictAssemblyLawId,StationId,CityId,StreetId")] District district)
         {
             if (ModelState.IsValid)
             {
@@ -56,6 +59,8 @@ namespace voteCollector.Controllers
             }
 
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", district.ElectoralDistrictId);
+            ViewData["ElectoralDistrictGovDumaId"] = new SelectList(_context.ElectoralDistrictGovDuma, "IdElectoralDistrictGovDuma", "Name", district.ElectoralDistrictGovDumaId);
+            ViewData["ElectoralDistrictAssemblyLawId"] = new SelectList(_context.ElectoralDistrictAssemblyLaw, "IdElectoralDistrictAssemblyLaw", "Name", district.ElectoralDistrictAssemblyLawId);
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", district.StationId);
 
             return View(district);
@@ -77,6 +82,8 @@ namespace voteCollector.Controllers
             }
 
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", district.ElectoralDistrictId);
+            ViewData["ElectoralDistrictGovDumaId"] = new SelectList(_context.ElectoralDistrictGovDuma, "IdElectoralDistrictGovDuma", "Name", district.ElectoralDistrictGovDumaId);
+            ViewData["ElectoralDistrictAssemblyLawId"] = new SelectList(_context.ElectoralDistrictAssemblyLaw, "IdElectoralDistrictAssemblyLaw", "Name", district.ElectoralDistrictAssemblyLawId);
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", district.StationId);
 
             return View(district);
@@ -85,7 +92,7 @@ namespace voteCollector.Controllers
         // POST: DistrictsController1/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdDistrict,Name,ElectoralDistrictId,StationId,CityId,StreetId")] District district)
+        public async Task<IActionResult> Edit(int id, [Bind("IdDistrict,Name,ElectoralDistrictId,ElectoralDistrictGovDumaId,ElectoralDistrictAssemblyLawId,StationId,CityId,StreetId")] District district)
         {
             if (id != district.IdDistrict)
             {
@@ -114,6 +121,8 @@ namespace voteCollector.Controllers
             }
 
             ViewData["ElectoralDistrictId"] = new SelectList(_context.ElectoralDistrict, "IdElectoralDistrict", "Name", district.ElectoralDistrictId);
+            ViewData["ElectoralDistrictGovDumaId"] = new SelectList(_context.ElectoralDistrictGovDuma, "IdElectoralDistrictGovDuma", "Name", district.ElectoralDistrictGovDumaId);
+            ViewData["ElectoralDistrictAssemblyLawId"] = new SelectList(_context.ElectoralDistrictAssemblyLaw, "IdElectoralDistrictAssemblyLaw", "Name", district.ElectoralDistrictAssemblyLawId);
             ViewData["StationId"] = new SelectList(_context.Station, "IdStation", "Name", district.StationId);
 
             return View(district);
@@ -132,7 +141,6 @@ namespace voteCollector.Controllers
                 .Include(d => d.ElectoralDistrict)
                 .Include(d => d.Station)
                 .Include(d => d.CityDistrict)
-                .Include(d => d.Street)
                 .FirstOrDefaultAsync(m => m.IdDistrict == id);
             if (district == null)
             {

@@ -21,14 +21,24 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdDistrict" />
             @*<div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>*@
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <label asp-for="ElectoralDistrictId" class="control-label"></label>
                 <select asp-for="ElectoralDistrictId" class="form-control" asp-items="ViewBag.ElectoralDistrictId"></select>
                 <span asp-validation-for="ElectoralDistrictId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ElectoralDistrictGovDumaId" class="control-label"></label>
+                <select asp-for="ElectoralDistrictGovDumaId" class="form-control" asp-items="ViewBag.ElectoralDistrictGovDumaId"></select>
+                <span asp-validation-for="ElectoralDistrictGovDumaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ElectoralDistrictAssemblyLawId" class="control-label"></label>
+                <select asp-for="ElectoralDistrictAssemblyLawId" class="form-control" asp-items="ViewBag.ElectoralDistrictAssemblyLawId"></select>
+                <span asp-validation-for="ElectoralDistrictAssemblyLawId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="StationId" class="control-label"></label>

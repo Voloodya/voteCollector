@@ -65,6 +65,13 @@ else
     <a asp-controller="Account" asp-action="Login">Вход</a>
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
+<hr />
+<br />
+<p>
+    <a asp-controller="Reports" asp-action="ReportDistrictGovLaw">Отчет по округам</a> |
+    <a asp-controller="Reports" asp-action="ReportStations">Отчет по участкам</a> |
+    <a asp-controller="Reports" asp-action="ReportCities">Отчет по МО</a> |
+</p>
 <br />
 <h1>Отчет</h1>
 <hr />
@@ -139,7 +146,7 @@ else
                         @Html.DisplayFor(modelItem => item.NumberQRcodesText)
                     </td>
                     <td>
-                        <a asp-action="ReportOrganization" asp-route-id="@item.IdOdject">Отчет по подразделениям</a>
+                        <a asp-controller="Reports" asp-action="ReportOrganization" asp-route-id="@item.IdOdject">Отчет по подразделениям</a>
                     </td>
                 </tr>
             }

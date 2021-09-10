@@ -1,0 +1,191 @@
+﻿@model IEnumerable<voteCollector.Models.ReportStation>
+
+@{
+    ViewData["Title"] = "ReportStations";
+}
+
+<style>
+    .table input {
+        font-size: 12px;
+        padding: 4px 2px;
+        border: solid 1px burlywood;
+        width: 100%;
+        margin: 2px 0 20px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    /*    #reportDistrictsTable {
+            counter-reset: rowNumber;
+            font-size: 14px;
+        }
+    */
+    .table thead {
+        background: Gainsboro;
+        word-wrap: break-word;
+        /* word-break: break-all; */
+    }
+
+    /*        #reportDistrictsTable tbody tr {
+                counter-increment: rowNumber;
+                font-size: 14px;
+            }
+    */
+    .table tr td:first-child::before {
+        /*          content: counter(rowNumber);*/
+        min-width: 1em;
+        margin-right: 0.5em;
+        font-size: 14px;
+    }
+
+    .table col {
+        width: auto;
+    }
+</style>
+
+<div id="buttonsright">
+    <p>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
+    </p>
+</div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
+
+    <p>
+        <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
+        <a asp-controller="Admin" asp-action="LkAdmin">Участники</a> |
+        <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+        <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+        <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+        <a asp-controller="Stations" asp-action="Index">Участки</a> |
+        <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+        <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
+    </p>
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login">Вход</a>
+    <a asp-controller="Account" asp-action="Register">Регистрация</a>
+}
+<hr />
+<br />
+<p>
+    <a asp-controller="Reports" asp-action="ReportDistrictGovLaw">Отчет по округам</a> |
+    <a asp-controller="Reports" asp-action="ReportStations">Отчет по участкам</a> |
+    <a asp-controller="Reports" asp-action="ReportCities">Отчет по МО</a> |
+</p>
+<br />
+<br />
+<h1>Отчет</h1>
+<hr />
+
+
+<table class="table" id="reportStationsTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DistrictName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberVoters)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberVoted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersentVotedByVoters)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberQRcodesText)
+            </th>
+            @*<th></th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DistrictName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberVoters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberVoted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersentVotedByVoters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberQRcodesText)
+            </td>
+            @*<td>
+                <a asp-action="Details" asp-route-id="@item.IdOdject">Details</a> |
+        </td>*@
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>
+                <font size="3" color="black" b face="Arial"><b>Итого: </b></font>
+            </td>
+            <td id="totalFriends">
+            </td>
+            <td id="totalRegistretion">
+            </td>
+            <td></td>
+            <td id="totalNumberQRcodeText"></td>
+        </tr>
+    </tfoot>
+</table>
+
+@*<table class="table" id="tableResoltCount">
+        <tbody>
+            <tr>
+                <td>
+                    <font size="3" color="black" b face="Arial"><b>Итого: </b></font>
+                </td>
+                <td id="totalFriends" >
+                </td>
+                <td id="totalRegistretion">
+                </td>
+            </tr>
+        </tbody>
+    </table>*@
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/dataTables.jqueryui.min.js"></script>
+
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.0/js/dataTables.jqueryui.min.js"></script>
+
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Report_Stations.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}
+

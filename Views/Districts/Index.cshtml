@@ -84,10 +84,13 @@
         <tr>
             <th></th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.ElectoralDistrict)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ElectoralDistrict)
+                @Html.DisplayNameFor(model => model.ElectoralDistrictGovDuma)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ElectoralDistrictAssemblyLaw)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Station)
@@ -95,26 +98,29 @@
             <th></th>
         </tr>
     </thead>
-    @if (@User.Identity.Name.Equals("vldmr@ya.ru"))
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru") || @User.Identity.Name.Equals("sincev@yandex.ru"))
     {
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td align="center"></td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Station.Name)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.IdDistrict">Править</a>
-                    </td>
-                </tr>
+            <tr>
+                <td align="center"></td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ElectoralDistrictGovDuma.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ElectoralDistrictAssemblyLaw.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Station.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdDistrict">Править</a>
+                </td>
+            </tr>
             }
         </tbody>
     }

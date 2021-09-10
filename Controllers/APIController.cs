@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,10 +34,10 @@ namespace voteCollector.Controllers
         }
 
         //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
-        [HttpGet("getSities")]
-        public IActionResult GetSities()
+        [HttpGet("GetSitiesDistricts/{idcity}")]
+        public IActionResult GetSitiesDistricts(int idcity)
         {
-            List<CityDistrict> Cities = _context.CityDistrict.ToList();
+            List<CityDistrict> Cities = _context.CityDistrict.Where(cd => cd.CityId == idcity).ToList();
 
             if (Cities.Any())
             {
@@ -45,6 +46,20 @@ namespace voteCollector.Controllers
             }
             return NoContent();
         }
+
+        [HttpGet("getSities")]
+        public IActionResult GetSities()
+        {
+            List<City> Cities = _context.City.ToList();
+
+            if (Cities.Any())
+            {
+                List<CityDTO> citiesDTO = Cities.Select(s => new CityDTO { IdCity = s.IdCity, Name = s.Name }).ToList();
+                return Ok(citiesDTO);
+            }
+            return NoContent();
+        }
+
 
         //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         [HttpGet("getElectoralDistrict")]
@@ -203,9 +218,20 @@ namespace voteCollector.Controllers
         [HttpPost("searchStations/city")]
         public IActionResult SearchStationsCity(CityDTO cityDTO)
         {
-            List<PollingStation> pollingStations = _context.PollingStation.Where(ps => ps.CityDistrictId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+            List<PollingStation> pollingStations;
+            if (cityDTO.Name == null || cityDTO.Name.Equals("") || cityDTO.Name.Equals(" "))
+            {
+                List<Station> stations = _context.Station.ToList();
+                List<StationDTO> stationDTOs = stations.Select(s => new StationDTO { IdStation = s.IdStation, Name = s.Name }).ToList();
+                stationDTOs.Insert(0, new StationDTO { IdStation = 0, Name = "" });
+                return Ok(stationDTOs);
+            }
+            else
+            {
+                pollingStations = _context.PollingStation.Where(ps => ps.CityDistrictId == cityDTO.IdCity).ToList().GroupBy(p => p.Name).Select(grp => grp.First()).ToList();
+            }
 
-            if (pollingStations.Any())
+            if (pollingStations != null && pollingStations.Any())
             {
                 int[] stationsId = pollingStations.Select(p => p.StationId ?? 0).ToArray();
 
@@ -433,70 +459,100 @@ namespace voteCollector.Controllers
         }
 
         [HttpGet("CheackStationsAndDistricts")]
-        public IActionResult CheackStationsAndDistricts()
+        public async Task<IActionResult> CheackStationsAndDistricts()
         {
             int countSeccefful = 0;
             int countError = 0;
 
             List<FriendDTOShot> friendDTOs = new List<FriendDTOShot>();
 
-            List<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.Street).Include(f => f.House).Include(f => f.FieldActivity)
-                .Include(f => f.Organization_).Include(f => f.GroupU).Where(f => f.CityDistrictId != 1 && f.Unpinning==false).ToList();
+            List<Friend> friends = _context.Friend.Where(f => f.CityId == 1 && f.Unpinning==false).ToList();
 
             foreach(Friend friend in friends)
             {
                 int idStation = 0;
                 int idElectoralDistrict = 0;
-                try
-                {
-                    PollingStation pollingStation = _context.PollingStation.FirstOrDefault(p => p.HouseId==friend.HouseId);
+
+                    PollingStation pollingStation = null;
+                    if (friend.HouseId != null)
+                    {
+                        try
+                        {
+                            pollingStation = _context.PollingStation.FirstOrDefault(p => p.HouseId == friend.HouseId);
+                        }
+                        catch
+                        {
+                            countError++;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        countError++;
+                        continue;
+                    }
+
                     if (pollingStation != null)
                     {
                         idStation = pollingStation.StationId ?? 0;
-
-                        idElectoralDistrict = _context.District.FirstOrDefault(d => d.StationId == idStation).ElectoralDistrictId ?? 0;
+                        try
+                        {
+                            idElectoralDistrict = _context.District.FirstOrDefault(d => d.StationId == idStation).ElectoralDistrictId ?? 0;
+                        }
+                        catch
+                        {
+                            countError++;
+                            continue;
+                        }
                     }
-                }
-                catch
+                else
                 {
-                    friendDTOs.Add(new FriendDTOShot { Name = friend.Name, FamilyName = friend.FamilyName, PatronymicName = friend.PatronymicName,
-                        FieldActivityName = friend.FieldActivity.Name, Organization = friend.Organization_.Name, Group = friend.GroupU.Name,
-                         City = friend.City.Name, Street = friend.Street.Name, House = friend.House.Name});
                     countError++;
+                    continue;
                 }
+                    //friendDTOs.Add(new FriendDTOShot { Name = friend.Name, FamilyName = friend.FamilyName, PatronymicName = friend.PatronymicName,
+                    //    FieldActivityName = friend.FieldActivity.Name, Organization = friend.Organization_.Name, Group = friend.GroupU.Name,
+                    //     City = friend.City.Name, Street = friend.Street.Name, House = friend.House.Name});
 
-                if(idStation!=0 && idElectoralDistrict != 0)
+                if(idStation != 0 && idElectoralDistrict != 0)
                 {
                     friend.StationId = idStation;
                     friend.ElectoralDistrictId = idElectoralDistrict;
                     try
                     {
-                        _context.Update(friend);
-                        _context.SaveChangesAsync();
+                        _context.Update(friend);                        
                         countSeccefful++;
                     }
                     catch (DbUpdateConcurrencyException ex)
                     {
                         countError++;
-                        friendDTOs.Add(new FriendDTOShot
-                        {
-                            Name = friend.Name,
-                            FamilyName = friend.FamilyName,
-                            PatronymicName = friend.PatronymicName,
-                            FieldActivityName = friend.FieldActivity.Name,
-                            Organization = friend.Organization_.Name,
-                            Group = friend.GroupU.Name,
-                            City = friend.City.Name,
-                            Street = friend.Street.Name,
-                            House = friend.House.Name
-                        });
-
+                        continue;
+                        //friendDTOs.Add(new FriendDTOShot
+                        //{
+                        //    Name = friend.Name,
+                        //    FamilyName = friend.FamilyName,
+                        //    PatronymicName = friend.PatronymicName,
+                        //    FieldActivityName = friend.FieldActivity.Name,
+                        //    Organization = friend.Organization_.Name,
+                        //    Group = friend.GroupU.Name,
+                        //    City = friend.City.Name,
+                        //    Street = friend.Street.Name,
+                        //    House = friend.House.Name
+                        //});
                     }
                 }
+            }
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return Ok("Изменения не сохранены!");
 
             }
-           // return Ok("Успешно обновленных записей: "+countSeccefful.ToString()+ " Необновленных: "+countError.ToString());
-            return Ok(friendDTOs);
+            return Ok("Выгружено записей: " + friends.Count +" Успешно обновленных записей: " + countSeccefful.ToString() + " Необновленных: " + countError.ToString());
+            //return Ok(friendDTOs);
 
         }
 

@@ -122,7 +122,7 @@
             <th></th>
         </tr>
     </thead>
-    @if (@User.Identity.Name.Equals("vldmr@ya.ru"))
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru") || @User.Identity.Name.Equals("sincev@yandex.ru"))
     {
         <tbody id="tableBodyPollingStation">
             @foreach (var item in Model)

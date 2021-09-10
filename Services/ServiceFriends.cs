@@ -48,11 +48,11 @@ namespace voteCollector.Services
             }
             catch
             {
-                throw new Exception("Пользователь с данным QR кодом не найден!");
+                return null;
             }
             if (friend == null)
             {
-                throw new Exception("Пользователь с данным QR кодом не найден!");
+                return null;
             }
             return friend;
         }
@@ -281,7 +281,6 @@ namespace voteCollector.Services
             return numberFriendsDTO;
         }
 
-
         public IQueryable<Friend> SearchFriendsByGroupAndGroupsUsersLimit(GroupDTO groupDTO, List<Groupu> groupsUser, int limit)
         {
             IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
@@ -372,15 +371,34 @@ namespace voteCollector.Services
                 throw new Exception("Не указана или указана в неверном формате дата рождения!");
             }
 
-            List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Equals(friendDTO.Name.Trim()) && frnd.FamilyName.Equals(friendDTO.FamilyName.Trim()) && frnd.PatronymicName.Equals(friendDTO.PatronymicName.Trim()) && frnd.DateBirth.Value.Date == datesBirth).ToList();
+            friendDTO.FamilyName = friendDTO.FamilyName != null ? friendDTO.FamilyName.Trim() : null;
+            friendDTO.Name = friendDTO.Name != null ? friendDTO.Name.Trim() : null ;
+            friendDTO.PatronymicName = friendDTO.PatronymicName != null ? friendDTO.PatronymicName.Trim() : null;
+            friendDTO.Adress = friendDTO.Adress != null ? friendDTO.Adress.Trim() : null ;
+            friendDTO.Unpinning = friendDTO.Unpinning != null ? friendDTO.Unpinning.Trim() : null;
+            friendDTO.PollingStationName = friendDTO.PollingStationName != null ? friendDTO.PollingStationName.Trim() : null;
+            friendDTO.CityDistrict = friendDTO.CityDistrict != null ? friendDTO.CityDistrict.Trim() : null;
+            friendDTO.Street = friendDTO.Street != null ? friendDTO.Street.Trim() : null;
+            friendDTO.House = friendDTO.House != null ? friendDTO.House.Trim() : null;
+            friendDTO.Telephone = friendDTO.Telephone != null ? friendDTO.Telephone.Trim() : null;
+            friendDTO.PhoneNumberResponsible = friendDTO.PhoneNumberResponsible != null ? friendDTO.PhoneNumberResponsible.Trim() : null;
+            friendDTO.TextQRcode = friendDTO.TextQRcode != null ? friendDTO.TextQRcode.Trim() : null;
+            friendDTO.Organization = friendDTO.Organization != null ? friendDTO.Organization.Trim() : null;
+            friendDTO.FieldActivityName = friendDTO.FieldActivityName != null ? friendDTO.FieldActivityName.Trim() : null;
+            friendDTO.Group = friendDTO.Group != null ? friendDTO.Group.Trim() : null;
+            friendDTO.LoginUsers = friendDTO.LoginUsers != null ? friendDTO.LoginUsers.Trim() : null;
+            friendDTO.FriendStatus = friendDTO.FriendStatus != null ? friendDTO.FriendStatus.Trim() : null;
 
+            List <Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Trim().Equals(friendDTO.Name) && frnd.FamilyName.Trim().Equals(friendDTO.FamilyName) && frnd.PatronymicName.Trim().Equals(friendDTO.PatronymicName) && frnd.DateBirth.Value.Date == datesBirth).ToList();
+
+            // Если дублей пользователя в БД не найдено
             if (searchFriend.Count == 0)
             {
-                if (!friendDTO.FamilyName.Trim().Equals("") && !friendDTO.Name.Trim().Equals(""))
+                if (!friendDTO.FamilyName.Equals("") && !friendDTO.Name.Equals(""))
                 {
-                    newFriend.FamilyName = friendDTO.FamilyName.Trim();
-                    newFriend.Name = friendDTO.Name.Trim();
-                    newFriend.PatronymicName = friendDTO.PatronymicName.Trim();
+                    newFriend.FamilyName = friendDTO.FamilyName;
+                    newFriend.Name = friendDTO.Name;
+                    newFriend.PatronymicName = friendDTO.PatronymicName;
                 }
                 else
                 {
@@ -389,7 +407,7 @@ namespace voteCollector.Services
                 newFriend.DateBirth = datesBirth;
                 newFriend.DateRegistrationSite = dateRegistration;
 
-                if (friendDTO.FriendStatus != null && !friendDTO.FriendStatus.Trim().Equals(""))
+                if (friendDTO.FriendStatus != null && !friendDTO.FriendStatus.Equals(""))
                 {
                     FriendStatus friendStatus = _context.FriendStatus.Where(fs => fs.Name.Equals(friendDTO.FriendStatus)).FirstOrDefault();
                     if (friendStatus != null) {
@@ -410,21 +428,23 @@ namespace voteCollector.Services
 
                 bool unpinning = false;
 
-                if (friendDTO.Unpinning != null && !friendDTO.Unpinning.Trim().Equals(""))
+                if (friendDTO.Unpinning != null && !friendDTO.Unpinning.Equals(""))
                 {
-                    unpinning = friendDTO.Unpinning.Trim().Equals("Да") ? true : false;
+                    unpinning = friendDTO.Unpinning.Equals("Да") ? true : false;
                 }
 
                 City city = _context.City.FirstOrDefault(c => c.Name.Equals(friendDTO.City));
 
+                // Если city != null
                 if (city != null)
                 {
                     newFriend.CityId = city.IdCity;
 
+                    // Если откреплен
                     if (unpinning)
                     {
                         newFriend.Unpinning = unpinning;
-                        if (friendDTO.Adress != null && !friendDTO.Adress.Trim().Equals(""))
+                        if (friendDTO.Adress != null && !friendDTO.Adress.Equals(""))
                         {
                             newFriend.Adress = friendDTO.Adress;
                         }
@@ -433,9 +453,9 @@ namespace voteCollector.Services
                             throw new Exception("Не указан адресс для иногороднего!");
                         }
 
-                        if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Trim().Equals(""))
+                        if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Equals(""))
                         {
-                            PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.Name.Equals(friendDTO.PollingStationName.Trim())).FirstOrDefault();
+                            PollingStation pollingStationSearch = _context.PollingStation.Where(p => p.Name.Equals(friendDTO.PollingStationName)).FirstOrDefault();
 
                             if (pollingStationSearch != null)
                             {
@@ -457,11 +477,11 @@ namespace voteCollector.Services
                                 throw new Exception("Не указан или указан не верно избирательный участок!");
                             }
                         }
-                    }
+                    } // Если откреплен
                     else
                     {
                         if (friendDTO.CityDistrict == null) friendDTO.CityDistrict = " ";
-                        if (friendDTO.CityDistrict.Trim().Equals("Оренбург")) friendDTO.CityDistrict = " ";                        
+                        if (friendDTO.CityDistrict.Equals("Оренбург")) friendDTO.CityDistrict = " ";                        
                         if (friendDTO.CityDistrict != null)
                         {
                             CityDistrict cityDistrict = _context.CityDistrict.Where(c => c.Name.Equals(friendDTO.CityDistrict)).FirstOrDefault();
@@ -477,9 +497,9 @@ namespace voteCollector.Services
                             }
 
                             int? streetId=null;
-                            if (friendDTO.Street != null && !friendDTO.Street.Trim().Equals(""))
+                            if (friendDTO.Street != null && !friendDTO.Street.Equals(""))
                             {
-                                Street street = _context.Street.Where(s => s.Name.Equals(friendDTO.Street.Trim())).FirstOrDefault();
+                                Street street = _context.Street.Where(s => s.Name.Equals(friendDTO.Street)).FirstOrDefault();
                                 if (street != null)
                                 {
                                     streetId = street.IdStreet;
@@ -506,7 +526,7 @@ namespace voteCollector.Services
                             House house = null;
                             if (streetId != null)
                             {
-                                house = _context.House.FirstOrDefault(h => h.StreetId == streetId && h.Name.Equals(friendDTO.House.Trim()));
+                                house = _context.House.FirstOrDefault(h => h.StreetId == streetId && h.Name.Equals(friendDTO.House));
                             }
 
                             if (house != null)
@@ -514,7 +534,7 @@ namespace voteCollector.Services
                                 newFriend.HouseId = house.IdHouse;
                                 if (friendDTO.Apartment != null)
                                 {
-                                    newFriend.Apartment = friendDTO.Apartment.Trim();
+                                    newFriend.Apartment = friendDTO.Apartment != null ? friendDTO.Apartment.Trim() : null;
                                 }
 
                                 PollingStation pollingStation = _context.PollingStation.FirstOrDefault(p => (p.CityDistrictId == cityDistrictId && p.StreetId == streetId && p.HouseId == house.IdHouse));
@@ -532,9 +552,9 @@ namespace voteCollector.Services
                                         throw new Exception("Не найден избирательный округ по указанному участку!");
                                     }
                                 }
-                                else if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Trim().Equals(""))
+                                else if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Equals(""))
                                 {
-                                    PollingStation pollingStationSearch = _context.PollingStation.FirstOrDefault(p => p.Name.Equals(friendDTO.PollingStationName.Trim()));
+                                    PollingStation pollingStationSearch = _context.PollingStation.FirstOrDefault(p => p.Name.Equals(friendDTO.PollingStationName));
                                     //newFriend.PollingStationId = pollingStationSearch.IdPollingStation;
                                     
                                     if (pollingStationSearch != null)
@@ -569,9 +589,9 @@ namespace voteCollector.Services
                         }
                         else
                         {
-                            if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Trim().Equals(""))
+                            if (friendDTO.PollingStationName != null && !friendDTO.PollingStationName.Equals(""))
                             {
-                                PollingStation pollingStationSearch = _context.PollingStation.FirstOrDefault(p => p.Name.Equals(friendDTO.PollingStationName.Trim()));
+                                PollingStation pollingStationSearch = _context.PollingStation.FirstOrDefault(p => p.Name.Equals(friendDTO.PollingStationName));
 
                                 if (pollingStationSearch != null)
                                 {
@@ -602,9 +622,9 @@ namespace voteCollector.Services
 
                     // Телефон избирателя, телефон ответственного, Email, QRcode
                     string telephone = friendDTO.Telephone;
-                    if (telephone != null && !telephone.Trim().Equals(""))
+                    if (telephone != null && !telephone.Equals(""))
                     {
-                        string processedTelephone =ServicePhoneNumber.LeaveOnlyNumbers(friendDTO.Telephone.Trim());
+                        string processedTelephone =ServicePhoneNumber.LeaveOnlyNumbers(friendDTO.Telephone);
                         if (regexTelephone.IsMatch(processedTelephone))
                         {
                             newFriend.Telephone = processedTelephone;
@@ -620,7 +640,7 @@ namespace voteCollector.Services
                     }
                     if (friendDTO.PhoneNumberResponsible != null && !friendDTO.PhoneNumberResponsible.Equals(""))
                     {
-                        string telephoneResponsible = friendDTO.PhoneNumberResponsible.Trim().Replace("-", "");
+                        string telephoneResponsible = friendDTO.PhoneNumberResponsible.Replace("-", "");
                         if (regexTelephone.IsMatch(telephoneResponsible))
                         {
                             newFriend.PhoneNumberResponsible = telephoneResponsible;
@@ -633,12 +653,12 @@ namespace voteCollector.Services
 
                     if (friendDTO.Email != null && !friendDTO.Email.Trim().Equals(""))
                     {
-                        newFriend.Email = friendDTO.Email.Trim();
+                        newFriend.Email = friendDTO.Email != null ? friendDTO.Email.Trim() : null;
                     }
 
-                    if (friendDTO.TextQRcode != null && !friendDTO.TextQRcode.Trim().Equals(""))
+                    if (friendDTO.TextQRcode != null && !friendDTO.TextQRcode.Equals(""))
                     {
-                        newFriend.TextQRcode = friendDTO.TextQRcode.Trim();
+                        newFriend.TextQRcode = friendDTO.TextQRcode != null ? friendDTO.TextQRcode : null;
 
                         // Генерация QR кода
                         newFriend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(newFriend.FamilyName + " " + newFriend.Name + " " + newFriend.PatronymicName, newFriend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + newFriend.TextQRcode, "png", WayPathQrCodes);
@@ -648,9 +668,22 @@ namespace voteCollector.Services
                     ///////////////////////////////////////////////////////////////////////////////////////////
 
                     // Отрасль, организация, группа
-                    if (friendDTO.Organization != null && !friendDTO.Organization.Trim().Equals(""))
+                    if (friendDTO.FieldActivityName != null && !friendDTO.FieldActivityName.Equals(""))
                     {
-                        newFriend.Organization = friendDTO.Organization.Trim();
+                        newFriend.FieldActivityId = _context.Fieldactivity.Where(f => f.Name.Equals(friendDTO.FieldActivityName)).FirstOrDefault().IdFieldActivity;
+                    }
+                    else if (groupsUser[0].FieldActivityId != null)
+                    {
+                        newFriend.FieldActivityId = groupsUser[0].FieldActivityId;
+                    }
+                    else
+                    {
+                        throw new Exception("Не найдено структурное подразделение для указанной учетной записи (логина)!");
+                    }
+
+                    if (friendDTO.Organization != null && !friendDTO.Organization.Equals(""))
+                    {
+                        newFriend.Organization = friendDTO.Organization;
                         Organization organization = _context.Organization.FirstOrDefault(org => org.Name.Equals(friendDTO.Organization));
                         if (organization != null)
                         {
@@ -673,21 +706,10 @@ namespace voteCollector.Services
                     {
                         throw new Exception("Не найдено структурное подразделение для указанной учетной записи (логина)!");
                     }
-                    if (friendDTO.FieldActivityName != null && !friendDTO.FieldActivityName.Trim().Equals(""))
+
+                    if (friendDTO.Group != null && !friendDTO.Group.Equals(""))
                     {
-                        newFriend.FieldActivityId = _context.Fieldactivity.Where(f => f.Name.Equals(friendDTO.FieldActivityName.Trim())).FirstOrDefault().IdFieldActivity;
-                    }
-                    else if(groupsUser[0].FieldActivityId!=null)
-                    {
-                        newFriend.FieldActivityId = groupsUser[0].FieldActivityId;
-                    }
-                    else
-                    {
-                        throw new Exception("Не найдено структурное подразделение для указанной учетной записи (логина)!");
-                    }
-                    if (friendDTO.Group != null && !friendDTO.Group.Trim().Equals(""))
-                    {
-                        newFriend.GroupUId = _context.Groupu.Where(g => g.Name.Equals(friendDTO.Group.Trim())).FirstOrDefault().IdGroup;
+                        newFriend.GroupUId = _context.Groupu.Where(g => g.Name.Equals(friendDTO.Group)).FirstOrDefault().IdGroup;
                     }
                     else if(groupsUser[0]!=null)
                     {
@@ -701,33 +723,31 @@ namespace voteCollector.Services
                     
 
                     // Дата голосования, Vote ? true : false
-                    if (friendDTO.VotingDate != null && !friendDTO.VotingDate.Trim().Equals(""))
-                    {
-                        string[] datesV = friendDTO.VotingDate.Trim().Split('.');
-                        DateTime datesVoting = new DateTime(Convert.ToInt32(datesV[2]), Convert.ToInt32(datesV[1]), Convert.ToInt32(datesV[0]));
-                        newFriend.VotingDate = datesVoting;
-                    }           
-                    if (friendDTO.Vote != null && !friendDTO.Vote.Trim().Equals(""))
-                    {
-                        newFriend.Voter = friendDTO.Vote.ToLower().Trim().Equals("да") ? true : false;
-                    }
+                    //if (friendDTO.VotingDate != null && !friendDTO.VotingDate.Trim().Equals(""))
+                    //{
+                    //    string[] datesV = friendDTO.VotingDate.Trim().Split('.');
+                    //    DateTime datesVoting = new DateTime(Convert.ToInt32(datesV[2]), Convert.ToInt32(datesV[1]), Convert.ToInt32(datesV[0]));
+                    //    newFriend.VotingDate = datesVoting;
+                    //}           
+                    //if (friendDTO.Vote != null && !friendDTO.Vote.Trim().Equals(""))
+                    //{
+                    //    newFriend.Voter = friendDTO.Vote.ToLower().Trim().Equals("да") ? true : false;
+                    //}
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+                    // Описание
                     newFriend.Description = friendDTO.Description;
-                }
+
+                } // Если city != null
                 else
                 {
                     throw new Exception("Город не найден!");
                 }
-            }
+            } // Если дублей пользователя в БД не найдено
             else
             {
                 throw new Exception("Пользователь уже есть в списках!");
-            }
-
-            if (newFriend.StationId == null)
-            {
-                throw new Exception("Не удалось определить избирательный участок!");
             }
 
             return newFriend;
