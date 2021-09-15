@@ -37,6 +37,8 @@ namespace voteCollector.DTO
         public string LoginUsers { get; set; }
         public string Adress { get; set; }
         public string FriendStatus { get; set; }
+        public byte[] ByteQrcode { get; set; }
+        public string qrCodeImageAsBase64 { get; set; }
 
     }
 }

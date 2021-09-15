@@ -95,42 +95,79 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Password)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FamilyName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PatronymicName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateBirth)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telephone)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Role.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdUser">Править</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdUser">Удалить</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (!@User.Identity.Name.Equals("unknown@ya.ru"))
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Password)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FamilyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PatronymicName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateBirth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdUser">Править</a> |
+                        <a asp-action="Delete" asp-route-id="@item.IdUser">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+            }
+            else {
+<tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FamilyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PatronymicName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telephone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role.Name)
+            </td>
+            <td>
+            </td>
+        </tr>
+    }
+</tbody>}
+  </table>
 
 <environment include="Development">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

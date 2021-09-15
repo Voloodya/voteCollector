@@ -49,16 +49,27 @@
 {
     <p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
 
-    <p>
-        <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
-        <a asp-action="LkAdmin">Участники</a> |
-        <a asp-controller="Users" asp-action="Index">Пользователи</a> |
-        <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
-        <a asp-controller="Groupus" asp-action="Index">Группы</a> |
-        <a asp-controller="Stations" asp-action="Index">Участки</a> |
-        <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
-        <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
-    </p>
+    @if (!@User.Identity.Name.Equals("unknown@ya.ru"))
+    {
+        <p>
+            <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
+            <a asp-action="LkAdmin">Участники</a> |
+            <a asp-controller="Users" asp-action="Index">Пользователи</a> |
+            <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
+            <a asp-controller="Groupus" asp-action="Index">Группы</a> |
+            <a asp-controller="Stations" asp-action="Index">Участки</a> |
+            <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
+            <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
+            <a asp-controller="RequestQRcodes" asp-action="Index">Запрос QR-кодов</a> |
+        </p>
+    }
+    else
+    {
+        <p>
+            <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
+            <a asp-action="LkAdmin">Участники</a> |
+        </p>
+    }
 }
 else
 {
@@ -187,4 +198,45 @@ else
             }
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+                <font size="3" color="black" b face="Arial"><b>Итого: </b></font>
+            </td>
+            <td id="totalFriends"></td>
+            <td id="totalRegistretion"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td id="totalNumberQRcodeText"></td>
+            <td></td>
+        </tr>
+    </tfoot>
 </table>
+
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+<environment include="Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+
+@section Scripts {
+
+    <script type="text/javascript" src="~/js/JS_Index_Admin_report.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        if (TempData["msg"] != null)
+        {
+            <script>
+            alert('@TempData["msg"]')
+            </script>
+        }
+    }
+}

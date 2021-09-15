@@ -66,7 +66,7 @@ namespace voteCollector.Controllers
                     {
                         friendsDTO[i].UserId = userSave.IdUser;
                         //Friend newFriend = CreateFreand(friendsDTO[i]);
-                        Friend newFriend = serviceFriends.CreateFreand(friendsDTO[i], regexTelephone,userSave, groupsUser, dateRegistration, _context);
+                        Friend newFriend = serviceFriends.CreateFreandAbbreviatedVersion(friendsDTO[i], regexTelephone,userSave, groupsUser, dateRegistration, _context);
                         _context.Add(newFriend);
                     }
                     catch(Exception ex)

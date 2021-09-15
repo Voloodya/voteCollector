@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,12 @@ namespace voteCollector.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize(Roles = "admin, user")]
     public class APIFriendsController : ControllerBase
     {
         private readonly VoterCollectorContext _context;
         private ServiceFriends _serviceFriends;
         private ServiceUser _serviceUser;
-
-
 
         public APIFriendsController(VoterCollectorContext context)
         {
@@ -39,16 +39,28 @@ namespace voteCollector.Controllers
         }
 
         // GET: api/APIFriends/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Friend>> GetFriend(long id)
+        [HttpGet("GetFriend/{id}")]
+        public async Task<IActionResult> GetFriend(long id)
         {
-            var friend = await _context.Friend.FindAsync(id);
+            Friend friend = await _context.Friend.FindAsync(id);
 
             if (friend == null)
             {
                 return NotFound();
             }
-            return friend;
+
+
+            FriendDTO friendDTO = new FriendDTO
+            {
+                Name = friend.Name,
+                FamilyName = friend.FamilyName,
+                PatronymicName = friend.PatronymicName,
+                Telephone = friend.Telephone,
+                TextQRcode = friend.TextQRcode,
+                qrCodeImageAsBase64 = friend.ByteQrcode != null ? QRcodeServices.BytecodeQRinStringImageAsBase64(friend.ByteQrcode) : null
+            };
+
+            return Ok(friendDTO);
         }
 
         // PUT: api/APIFriends/5

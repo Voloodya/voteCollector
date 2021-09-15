@@ -85,31 +85,60 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.GroupU.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.FamilyName)
-                    @Html.DisplayFor(modelItem => item.User.Name)
-                    @Html.DisplayFor(modelItem => item.User.PatronymicName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru") || @User.Identity.Name.Equals("alexandr@ya.ru") || @User.Identity.Name.Equals("mininda@ya.ru"))
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupU.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.FamilyName)
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                        @Html.DisplayFor(modelItem => item.User.PatronymicName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdGroupsUsers">Править</a> |
+                        <a asp-action="Delete" asp-route-id="@item.IdGroupsUsers">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupU.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.FamilyName)
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                        @Html.DisplayFor(modelItem => item.User.PatronymicName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupU.FieldActivity.Name)
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
 </table>
 
 <environment include="Development">

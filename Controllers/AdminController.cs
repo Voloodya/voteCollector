@@ -309,7 +309,10 @@ namespace CollectVoters.Controllers
                         friend.UserId = userSave.IdUser;
                         friend.PhoneNumberResponsible = userSave.Telephone;
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                        friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
+                        if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
+                        {
+                            friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                        }
                         //friend.Qrcode = fileNameQRcode;
                         friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
 
@@ -385,7 +388,7 @@ namespace CollectVoters.Controllers
                                 {
                                     _context.Add(friend);
                                     await _context.SaveChangesAsync();
-                                    return RedirectToAction(nameof(Index));
+                                    return RedirectToAction(nameof(LkAdmin));
                                 }
                                 else ModelState.AddModelError("", "Не указан полный адрес или не выбран участок!");
                             }
@@ -556,12 +559,16 @@ namespace CollectVoters.Controllers
                         if ((friendQrText == null || friendQrText.IdFriend == friend.IdFriend) && (friendNumberPhone == null || friendNumberPhone.IdFriend == friend.IdFriend)) { 
 
                             User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                        //friend.UserId = userSave.IdUser;
-                        //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                        friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
-                        //friend.Qrcode = fileNameQRcode;
+                            //friend.UserId = userSave.IdUser;
+                            //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
+                            //friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
+                            if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
+                            {
+                                friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                            }
+                            //friend.Qrcode = fileNameQRcode;
 
-                        if (friend.CityId != 1)
+                            if (friend.CityId != 1)
                         {
                             friend.CityDistrictId = null;
                             friend.StreetId = null;
@@ -598,7 +605,7 @@ namespace CollectVoters.Controllers
                                                 throw;
                                             }
                                         }
-                                        return RedirectToAction(nameof(Index));
+                                        return RedirectToAction(nameof(LkAdmin));
                                     }
                                     else
                                     {

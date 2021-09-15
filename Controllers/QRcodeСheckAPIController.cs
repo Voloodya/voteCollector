@@ -281,8 +281,6 @@ namespace voteCollector.Controllers
         public async Task<string> PostRequestHttpAsync(string url, string json)
         {
             using HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            httpClient.DefaultRequestHeaders.Add("Application", "remoteData");
-            //httpClient.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
             using HttpResponseMessage response = await httpClient.PostAsync(url, content).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);

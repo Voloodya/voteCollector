@@ -199,7 +199,10 @@ namespace voteCollector.Controllers
                         friend.UserId = userSave.IdUser;
                         friend.PhoneNumberResponsible = userSave.Telephone;
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                        friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
+                        if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
+                        {
+                            friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                        }
                         //friend.Qrcode = fileNameQRcode;
                         friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
 
@@ -466,11 +469,14 @@ namespace voteCollector.Controllers
 
                             User userSave = _context.User.Where(u => u.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                         friend.UserId = userSave.IdUser;
-                        //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
-                        friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
-                        //friend.Qrcode = fileNameQRcode;
+                            //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
+                            if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
+                            {
+                                friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                            }
+                            //friend.Qrcode = fileNameQRcode;
 
-                        if (friend.CityId != 1)
+                            if (friend.CityId != 1)
                         {
                             friend.CityDistrictId = null;
                             friend.StreetId = null;

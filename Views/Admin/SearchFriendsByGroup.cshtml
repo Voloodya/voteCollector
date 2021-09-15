@@ -68,94 +68,169 @@
                 @Html.DisplayNameFor(model => model.TextQRcode)
             </th>
             @*<th>
-            @Html.DisplayNameFor(model => model.MicroDistrict)
-        </th>*@
+                    @Html.DisplayNameFor(model => model.MicroDistrict)
+                </th>*@
             <th>
-                Удалить
+                Пометить
             </th>
             <th>Действия</th>
         </tr>
     </thead>
-    <tbody id="TbodyFriendTable">
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td align="center"></td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.IdFriend)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FamilyName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PatronymicName)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.FieldActivity.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Organization_.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.GroupU.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.City.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Station.Name)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Street.Name)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.House.Name)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Building)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Apartment)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.Telephone)
-            </td>
-            <td style="display:none">
-                @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.DateRegistrationSite)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.VotingDate)
-            </td>
-            <td class="colFilter">
-                @Html.DisplayFor(modelItem => item.Voter)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TextQRcode)
-            </td>
-
-            @*<td class="colFilter">
-            @Html.DisplayFor(modelItem => item.MicroDistrict.Name)
-        </td>*@
-            <td>
-                <input type="checkbox">
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdFriend">Править</a> |
-                <a asp-action="Details" asp-route-id="@item.IdFriend">Подробнее</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdFriend">Удалить</a>
-            </td>
-        </tr>
-        }
-    </tbody>
+    @if (!@User.Identity.Name.Equals("unknown@ya.ru"))
+    {
+        <tbody id="TbodyFriendTable">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center"></td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.IdFriend)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FamilyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PatronymicName)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Organization_.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.GroupU.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.City.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Street.Name)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.House.Name)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Building)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Apartment)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.DateRegistrationSite)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.VotingDate)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Voter)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TextQRcode)
+                    </td>
+                    <td>
+                        <input type="checkbox">
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdFriend">Править</a> |
+                        <a asp-action="Details" asp-route-id="@item.IdFriend">Подробнее</a> |
+                        <a asp-action="Delete" asp-route-id="@item.IdFriend">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody id="TbodyFriendTable">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center"></td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.IdFriend)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FamilyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PatronymicName)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Organization_.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.GroupU.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.City.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.ElectoralDistrict.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Station.Name)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Street.Name)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.House.Name)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Building)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Apartment)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Telephone)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.PhoneNumberResponsible)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.DateRegistrationSite)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.VotingDate)
+                    </td>
+                    <td class="colFilter">
+                        @Html.DisplayFor(modelItem => item.Voter)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TextQRcode)
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.IdFriend">Подробнее</a> |
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
     <tfoot>
         <tr>
             <th></th>

@@ -91,6 +91,16 @@ namespace voteCollector.Services
             }
         }
 
-        
+        public static string BytecodeQRinStringImageAsBase64(Byte[] bytesQRcode)
+        {
+            QRCodeData qrCodeData = new QRCodeData(bytesQRcode, QRCodeData.Compression.Uncompressed);
+            var imgType = Base64QRCode.ImageType.Jpeg;
+            Base64QRCode qrCode = new Base64QRCode(qrCodeData);
+            string qrCodeImageAsBase64 = qrCode.GetGraphic(20, Color.Black, Color.White, true, imgType);
+
+            return qrCodeImageAsBase64;
+        }
+
+
     }
 }

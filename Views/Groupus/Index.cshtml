@@ -95,43 +95,84 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FieldActivity.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Organization.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Level)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GroupParents.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserResponsible.FamilyName)
-                    @Html.DisplayFor(modelItem => item.UserResponsible.Name)
-                    @Html.DisplayFor(modelItem => item.UserResponsible.PatronymicName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NumberEmployees)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatorGroup)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a> |
-                    <a asp-action="GetChildGroups" asp-route-id="@item.IdGroup">Подчиненные гр.</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+    @if (@User.Identity.Name.Equals("vldmr@ya.ru") || @User.Identity.Name.Equals("alexandr@ya.ru") || @User.Identity.Name.Equals("mininda@ya.ru"))
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Organization.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Level)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupParents.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserResponsible.FamilyName)
+                        @Html.DisplayFor(modelItem => item.UserResponsible.Name)
+                        @Html.DisplayFor(modelItem => item.UserResponsible.PatronymicName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberEmployees)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatorGroup)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.IdGroup">Править</a> |
+                        <a asp-action="GetChildGroups" asp-route-id="@item.IdGroup">Подчиненные гр.</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FieldActivity.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Organization.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Level)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GroupParents.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserResponsible.FamilyName)
+                        @Html.DisplayFor(modelItem => item.UserResponsible.Name)
+                        @Html.DisplayFor(modelItem => item.UserResponsible.PatronymicName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberEmployees)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatorGroup)
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
 </table>
 
 <environment include="Development">

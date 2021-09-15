@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace voteCollector.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize(Roles = "admin, user")]
     public class APIController : ControllerBase
     {
         private readonly VoterCollectorContext _context;
@@ -33,7 +35,7 @@ namespace voteCollector.Controllers
             _logger = logger;
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         [HttpGet("GetSitiesDistricts/{idcity}")]
         public IActionResult GetSitiesDistricts(int idcity)
         {
@@ -61,7 +63,7 @@ namespace voteCollector.Controllers
         }
 
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         [HttpGet("getElectoralDistrict")]
         public IActionResult GetElectoralDistrict()
         {
@@ -76,7 +78,7 @@ namespace voteCollector.Controllers
             return NoContent();
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         [HttpGet("getfieldactivite")]
         public IActionResult GetFieldActivite()
         {
@@ -109,7 +111,7 @@ namespace voteCollector.Controllers
             return Ok(organizationDTOs);
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         [HttpGet("getorganizationall")]
         public IActionResult GetOrganizationAll()
         {
@@ -159,7 +161,7 @@ namespace voteCollector.Controllers
             return Ok(groupDTOs);
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 300)]
         [HttpGet("getgroupsall")]
         public IActionResult GetGroupsAll()
         {
@@ -405,7 +407,7 @@ namespace voteCollector.Controllers
             }
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 600)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 600)]
         [HttpGet("getAllElectoraldistrict")]
         public IActionResult GetAllElectoraldistrict()
         {
@@ -437,11 +439,12 @@ namespace voteCollector.Controllers
         public IActionResult RegenerateQRCodes()
         {
             List<string> errors = new List<string>();
-            List<Friend> friends = _context.Friend.ToList();
+            List<Friend> friends = _context.Friend.Where(f => f.TextQRcode != null && !f.TextQRcode.Trim().Equals("")).ToList();
 
             foreach (Friend frnd in friends)
-            {                
-                frnd.ByteQrcode = QRcodeServices.GenerateQRcodeFile(frnd.FamilyName + " " + frnd.Name + " " + frnd.PatronymicName, frnd.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + frnd.TextQRcode, "png", WayPathQrCodes);
+            {
+                //frnd.ByteQrcode = QRcodeServices.GenerateQRcodeFile(frnd.FamilyName + " " + frnd.Name + " " + frnd.PatronymicName, frnd.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + frnd.TextQRcode, "png", WayPathQrCodes);
+                frnd.ByteQrcode = QRcodeServices.GenerateQRcodeFile(frnd.FamilyName + " " + frnd.Name + " " + frnd.PatronymicName, frnd.DateBirth.Value.Date.ToString("d"),frnd.TextQRcode, "png", WayPathQrCodes);
 
                 try
                 {
@@ -559,8 +562,6 @@ namespace voteCollector.Controllers
         [HttpGet("PostRequestQRcodes")]
         public IActionResult PostRequestQRcodes()
         {
-
-
             return Ok();
         }
 

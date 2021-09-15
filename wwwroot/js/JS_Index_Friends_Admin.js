@@ -811,3 +811,50 @@ function OnOffButton(idButton, onOff) {
 
     document.getElementById(idButton).disabled = !onOff;
 }
+
+function CreatePDFfileForUser(idObj) {
+
+    $.ajax({
+        url: partMyURL + "/api/APIFriends/GetFriend" + "/" + idObj,
+        headers:
+        {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        type: 'GET',
+        dataType: "json",
+        success: function (data) {
+
+            if (data != undefined) {
+
+                CreatePDFfile(data['name'], data['familyName'], data['telephone'], data['textQRcode'], data['qrCodeImageAsBase64']);
+            }
+        },
+        error: function (result, status, er) {
+            alert("error: " + result + " status: " + status + " er:" + er);
+        }
+    });
+}
+
+// Создание PDF
+function CreatePDFfile(name, familyName, phoneNumber, textQRcode, imageDataString) {
+
+    var doc = new jsPDF({
+        //   orientation: "landscape",
+        //    format: [4, 2]
+    });
+    var image = 'data:image/png;base64,' + imageDataString;
+    doc.addFont();
+
+    doc.text(10, 40, textQRcode);
+    doc.addImage(image, 'png', 35, 20, 40, 40,);
+    //doc.text(10, 90, 'НОМЕР ТЕЛЕФОНА:');
+    doc.text(10, 80, phoneNumber);
+    //doc.addPage();
+    //doc.text(20, 20, 'Do you like that ' + idObj +'?');
+
+    doc.save('QR-code_' + name + '_' + familyName + '.pdf');
+    return false;
+}
+
