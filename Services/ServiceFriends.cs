@@ -800,11 +800,11 @@ namespace voteCollector.Services
             friendDTO.FriendStatus = friendDTO.FriendStatus != null ? friendDTO.FriendStatus.Trim() : null;
 
             int qrCode = Convert.ToInt32(friendDTO.TextQRcode);
-            List<Friend> searchFriend = _context.Friend.Where(frnd => frnd.Name.Trim().Equals(friendDTO.Name) && frnd.FamilyName.Trim().Equals(friendDTO.FamilyName) && frnd.PatronymicName.Trim().Equals(friendDTO.PatronymicName) && frnd.DateBirth.Value.Date == datesBirth).ToList();
+            List<Friend> searchFriend = null; //_context.Friend.Where(frnd => frnd.Name.Trim().Equals(friendDTO.Name) && frnd.FamilyName.Trim().Equals(friendDTO.FamilyName) && frnd.PatronymicName.Trim().Equals(friendDTO.PatronymicName) && frnd.DateBirth.Value.Date == datesBirth).ToList();
             Friend searchFriendQR = _context.Friend.FirstOrDefault(frnd => Convert.ToInt32(frnd.TextQRcode.Trim()) == qrCode);
-
+            Friend searchFriendPhone = FindUserByPhoneNumber(friendDTO.Telephone);
             // Если дублей пользователя в БД не найдено
-            if (searchFriend.Count == 0 && searchFriendQR == null)
+            if (searchFriendPhone == null && searchFriendQR == null)
             {
                 if (friendDTO.FamilyName != null && !friendDTO.FamilyName.Equals("") && friendDTO.Name != null && !friendDTO.Name.Equals(""))
                 {

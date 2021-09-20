@@ -3,7 +3,7 @@ let partMyURL = "";
 if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = "";
 }
-let numberColumnWhithVote = 19;
+let numberColumnWhithVote = 20;
 
 // Define a custom selector icontains instead of overriding the existing expression contains
 // A global js asset file will be a good place to put this code
@@ -110,7 +110,7 @@ function UpdateTablePlagin () {
 
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('numberRecords').innerHTML = "Количество избирателей: " + (nrows);
-document.getElementById('totalFriends').innerHTML = nrows;
+// document.getElementById('totalFriends').innerHTML = nrows;
 
 $('friendTable').ready(CountVoters('friendTable', numberColumnWhithVote));
 $('friendTable').change(CountVoters('friendTable', numberColumnWhithVote));
@@ -234,7 +234,7 @@ function CreatePDFfileForUser(idObj) {
 
             if (data != undefined) {
 
-                CreatePDFfile(data['name'], data['familyName'],data['telephone'], data['textQRcode'], data['qrCodeImageAsBase64']);
+                CreatePDFfile(data['name'], data['patronymicName'], data['familyName'],data['telephone'], data['textQRcode'], data['qrCodeImageAsBase64']);
             }
         },
         error: function (result, status, er) {
@@ -244,23 +244,36 @@ function CreatePDFfileForUser(idObj) {
 }
 
 // Создание PDF
-function CreatePDFfile(name, familyName, phoneNumber, textQRcode, imageDataString) {
+function CreatePDFfile(name, patronymicName, familyName, phoneNumber, textQRcode, imageDataString) {
 
     var doc = new jsPDF({
      //   orientation: "landscape",
     //    format: [4, 2]
     });
-    var image = 'data:image/png;base64,' + imageDataString;
-    doc.addFont();
-    
-    doc.text(10, 40, textQRcode);
-    doc.addImage(image, 'png', 35, 20, 40, 40,);
-    //doc.text(10, 90, 'НОМЕР ТЕЛЕФОНА:');
-    doc.text(10, 80, phoneNumber);
-    //doc.addPage();
-    //doc.text(20, 20, 'Do you like that ' + idObj +'?');
 
-    doc.save('QR-code_' + name+'_'+ familyName+'.pdf');
+    if (textQRcode !== null && textQRcode !== undefined && textQRcode !== '') {
+        var image = 'data:image/png;base64,' + imageDataString;
+        doc.addFont();
+
+        doc.text(10, 40, textQRcode);
+        doc.addImage(image, 'png', 35, 20, 40, 40,);
+        //doc.text(10, 90, 'НОМЕР ТЕЛЕФОНА:');
+        doc.text(10, 80, phoneNumber);
+        //doc.addPage();
+        //doc.text(20, 20, 'Do you like that ' + idObj +'?');
+    } else {
+        doc.text(10, 40, 'Not QR code');
+        doc.text(10, 80, phoneNumber);
+    }
+
+    if (familyName !== undefined && name !== undefined && patronymicName !== undefined) {
+        doc.save('QR-code_' + familyName + '_' + name + '_' + patronymicName + '.pdf');
+    } else if (familyName !== undefined && name !== undefined) {
+        doc.save('QR-code_' + familyName + '_' + name + '.pdf');
+    }
+    else {
+        doc.save('QR-code_' + phoneNumber + '.pdf');
+    }
 
     return false;
 }

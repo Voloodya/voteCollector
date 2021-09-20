@@ -4,20 +4,20 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#dt/dt-1.11.0
+ *   https://datatables.net/download/#dt/dt-1.11.2
  *
  * Included libraries:
- *   DataTables 1.11.0
+ *   DataTables 1.11.2
  */
 
-/*! DataTables 1.11.0
+/*! DataTables 1.11.2
  * ©2008-2021 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     DataTables
  * @description Paginate, search and order HTML tables
- * @version     1.11.0
+ * @version     1.11.2
  * @file        jquery.dataTables.js
  * @author      SpryMedia Ltd
  * @contact     www.datatables.net
@@ -1106,8 +1106,8 @@
 					dataType: 'json',
 					url: oLanguage.sUrl,
 					success: function ( json ) {
-						_fnLanguageCompat( json );
 						_fnCamelToHungarian( defaults.oLanguage, json );
+						_fnLanguageCompat( json );
 						$.extend( true, oLanguage, json );
 			
 						_fnCallbackFire( oSettings, null, 'i18n', [oSettings]);
@@ -5407,7 +5407,7 @@
 	
 		// Read all widths in next pass
 		_fnApplyToChildren( function(nSizer) {
-			let style = window.getComputedStyle ?
+			var style = window.getComputedStyle ?
 				window.getComputedStyle(nSizer).width :
 				_fnStringToCss( $(nSizer).width() );
 	
@@ -9590,7 +9590,7 @@
 	 *  @type string
 	 *  @default Version number
 	 */
-	DataTable.version = "1.11.0";
+	DataTable.version = "1.11.2";
 
 	/**
 	 * Private data store, containing all of the settings objects that are
@@ -14015,7 +14015,7 @@
 		 *
 		 *  @type string
 		 */
-		build:"dt/dt-1.11.0",
+		build:"dt/dt-1.11.2",
 	
 	
 		/**

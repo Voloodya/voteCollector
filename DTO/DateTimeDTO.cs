@@ -12,5 +12,10 @@ namespace voteCollector.DTO
         public string Date { get; set; }
         [JsonProperty("time")]
         public string Time { get; set; }
+
+        [JsonProperty("dateTo")]
+        public string DateTo { get; set; }
+        [JsonProperty("timeTo")]
+        public string TimeTo { get; set; }
     }
 }

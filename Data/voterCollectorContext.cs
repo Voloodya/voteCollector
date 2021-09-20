@@ -45,9 +45,9 @@ namespace voteCollector.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=voterCollector; default command timeout=30", x => x.ServerVersion("8.0.22-mysql"));
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=voterCollector; default command timeout=30", x => x.ServerVersion("8.0.22-mysql"));
                 //optionsBuilder.UseMySql("server=37.140.192.100;port=3306;user=u1451597_root;password=@volodyaadmin001;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=u1451597_root;password=@volodyaadmin001;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
+                //optionsBuilder.UseMySql("server=localhost;port=3306;user=u1451597_root;password=@volodyaadmin001ч;database=u1451597_voterCollector; default command timeout=30", x => x.ServerVersion("10.5.10-MariaDB-log"));
                 //optionsBuilder.UseMySql("server=195.226.209.40;port=3306;user=volodya;password=volodyaroot;database=voterCollector; default command timeout=30", x => x.ServerVersion("8.0.22-mysql"));
             }
         }

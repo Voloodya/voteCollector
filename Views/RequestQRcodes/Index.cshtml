@@ -48,111 +48,123 @@
 
 <h4>Загрузка файла</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <div class="form-row">
-            <div class="form-group col-md-6" style="display : none">
-                <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Запросить QR-коды" onclick="RequestQRcodes('idDate','idTime');" />
+@if (@User.Identity.Name.Equals("vldmr@ya.ru") || @User.Identity.Name.Equals("alexandr@ya.ru") || @User.Identity.Name.Equals("mininda@ya.ru"))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="button" id="btnUploadFriends" class="btn btn-secondary btn-block" value="Запросить QR-коды" onclick="RequestQRcodes('idDate','idTime','idDateTo','idTimeTo');" />
+                </div>
             </div>
+            <div class="form-row">
+                <p>
+                    <label for="idDate">Дата: </label>
+                    <input type="date" id="idDate" name="date" />
+                </p>
+                <p>
+                    <label for="idTime">Время: </label>
+                    <input type="time" id="idTime" name="time" />
+                </p>
+            </div>
+            <div class="form-row">
+                <p>
+                    <label for="idDateTo">Дата: </label>
+                    <input type="date" id="idDateTo" name="date" />
+                </p>
+                <p>
+                    <label for="idTimeTo">Время: </label>
+                    <input type="time" id="idTimeTo" name="time" />
+                </p>
+            </div>
+            <div id="idDivMessage" style="color:red"></div>
         </div>
-        <div class="form-row">
-            <p>
-                <label for="idDate">Дата: </label>
-                <input type="date" id="idDate" name="date" />
-            </p>
-            <p>
-                <label for="idTime">Время: </label>
-                <input type="time" id="idTime" name="time" />
-            </p>
+    </div>
+}
+    <div class="row">
+        <div class="col-md-4">
+            <div id="idDivStatus" style="color:black"></div>
+            <div id="idDivError" style="color:darkred"></div>
+            <div id="idDivNumberReceivedCodes" style="color:black"></div>
+            <div id="idDivNumberMarkedCodes" style="color:black"></div>
+            <div id="idDivNumberNotFound" style="color:black"></div>
+            <div id="idDivDateTimeRequest" style="color:black"></div>
         </div>
-        <div id="idDivMessage" style="color:red"></div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-4">
-        <div id="idDivStatus" style="color:black"></div>
-        <div id="idDivError" style="color:darkred"></div>
-        <div id="idDivNumberReceivedCodes" style="color:black"></div>
-        <div id="idDivNumberMarkedCodes" style="color:black"></div>
-        <div id="idDivNumberNotFound" style="color:black"></div>
-        <div id="idDivDateTimeRequest" style="color:black"></div>
+    <br />
+    <hr />
+    <h4>Ненайденные QR-кода</h4>
+    <hr />
+
+    <div id="outText" class="form-group col-md-6">
+        <output></output>
     </div>
-</div>
 
-<br />
-<hr />
-<h4>Ненайденные QR-кода</h4>
-<hr />
-
-<div id="outText" class="form-group col-md-6">
-    <output></output>
-</div>
-
-<table  id="qrCodesNotFoundTable" class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>
-                QR-код
-            </th>
-            <th>
-                Время регистрации
-            </th>
-        </tr>
-    </thead>
-    <tbody id="tBodyqrCodes">
+    <table id="qrCodesNotFoundTable" class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    QR-код
+                </th>
+                <th>
+                    Время регистрации
+                </th>
+            </tr>
+        </thead>
+        <tbody id="tBodyqrCodes">
         <td></td>
         <td></td>
         <td></td>
-    </tbody>
-</table>
-<br />
-<hr />
+        </tbody>
+    </table>
+    <br />
+    <hr />
 
-<h4>Найденные QR-кода</h4>
-<hr />
-<table class="table" id="qrCodesFoundTable">
-    <thead>
-        <tr>
-            <th></th>
-            <th>
-                QR-код
-            </th>
-            <th>
-                Время регистрации
-            </th>
-        </tr>
-    </thead>
-    <tbody id="tBodyqrCodes">
+    <h4>Найденные QR-кода</h4>
+    <hr />
+    <table class="table" id="qrCodesFoundTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    QR-код
+                </th>
+                <th>
+                    Время регистрации
+                </th>
+            </tr>
+        </thead>
+        <tbody id="tBodyqrCodes">
         <td></td>
         <td></td>
         <td></td>
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
 
-<environment include="Development">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-</environment>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    </environment>
 
-<environment include="Production">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-</environment>
+    <environment include="Production">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    </environment>
 
 
-@section Scripts {
+    @section Scripts {
 
-    <script type="text/javascript" src="~/js/JS_RequestQRcodes.js"></script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script type="text/javascript" src="~/js/JS_RequestQRcodes.js"></script>
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    @{
-        if (TempData["msg"] != null)
-        {
-            <script>
+        @{
+            if (TempData["msg"] != null)
+            {
+                <script>
                 alert('@TempData["msg"]')
-            </script>
+                </script>
+            }
         }
     }
-}
 

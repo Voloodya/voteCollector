@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,8 +32,7 @@ namespace voteCollector.Controllers
         [HttpPost("AcceptReplyMessageBot")]
         public async Task<IActionResult> AcceptReplyMessageBot([FromBody] MessageData messageData)
         {
-            Friend friend = _serviceFriends.FindUserByPhoneNumber(ServicePhoneNumber.LeaveOnlyNumbers(messageData.PhoneNumber));
-            
+            Friend friend = _serviceFriends.FindUserByPhoneNumber(ServicePhoneNumber.LeaveOnlyNumbers(messageData.PhoneNumber));            
 
             string textQrCode = null;
 
@@ -49,7 +49,9 @@ namespace voteCollector.Controllers
             {
                 responseMessage = new ResponseMessageData { TextMessage = "Участник с данным номером телефона не найден!" };
             }
-            return Ok();
+            string jsonResponse = JsonSerializer.Serialize(responseMessage);
+
+            return Ok(jsonResponse);
         }
 
 

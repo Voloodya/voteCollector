@@ -4,6 +4,11 @@ $(document).ready(function () {
     document.getElementById('totalFriends').innerHTML = CountValuetdTable('reportStationsTable', 1);
     document.getElementById('totalRegistretion').innerHTML = CountValuetdTable('reportStationsTable', 2);
     document.getElementById('totalNumberQRcodeText').innerHTML = CountValuetdTable('reportStationsTable', 4);
+
+    if (document.getElementById('totalRegistretion').innerHTML !== 0) {
+        document.getElementById('totalPersentRegistration').innerHTML = ((document.getElementById('totalRegistretion').innerHTML / document.getElementById('totalFriends').innerHTML) * 100).toFixed(2);
+    }
+
 });
 
 

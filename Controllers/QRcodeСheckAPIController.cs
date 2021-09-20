@@ -23,14 +23,11 @@ namespace voteCollector.Controllers
     public class QRcodeСheckAPIController : ControllerBase
     {
         private readonly HttpClient httpClient;
-        private readonly IHttpClientFactory httpClientFactory;
-
         private readonly ILogger<QRcodeСheckAPIController> _logger;
 
-        public QRcodeСheckAPIController(ILogger<QRcodeСheckAPIController> logger, IHttpClientFactory clientFactory)
+        public QRcodeСheckAPIController(ILogger<QRcodeСheckAPIController> logger)
         {
             _logger = logger;
-            httpClientFactory = clientFactory;
             httpClient = new HttpClient();
         }
 
@@ -193,33 +190,50 @@ namespace voteCollector.Controllers
         }
 
         [HttpPost]
-        [Route("requestqrcodesreceivingadm")]
+        [Route("requestqrcodesreceiving")]
         public async Task<IActionResult> RequestQRcodesReceiving([FromBody] DateTimeDTO dateTimeStr)
         {
             string url = "https://etsa.online/app/api/barcodes/get.php";
             ReportQrCodeExchange reportQrCodeExchange = new ReportQrCodeExchange();
             ResponseMessageDataQRCode responseData = null;
             string dateTimeNow;
+            string dateTimeTo;
             DateTime dateTimeFront;
+            DateTime dateTimeFrontTo;
 
-            if (dateTimeStr != null && dateTimeStr.Date !=null && !dateTimeStr.Date.Equals("") && dateTimeStr.Time != null && !dateTimeStr.Time.Equals(""))
+            if (dateTimeStr != null && dateTimeStr.Date !=null && !dateTimeStr.Date.Equals("") && dateTimeStr.Time != null && !dateTimeStr.Time.Equals("") && dateTimeStr.DateTo!= null && dateTimeStr.TimeTo!=null)
             {
                 String[] date = dateTimeStr.Date.Split('-');
                 string[] time = dateTimeStr.Time.Split(':');
-                dateTimeFront = new DateTime(Convert.ToInt32(date[0]), Convert.ToInt32(date[1]), Convert.ToInt32(date[2]), Convert.ToInt32(time[0]), Convert.ToInt32(time[1]),0);
-                dateTimeNow = dateTimeFront.ToString("yyyy-MM-dd hh:mm:ss");
+                String[] dateTo = dateTimeStr.DateTo.Split('-');
+                string[] timeTo = dateTimeStr.TimeTo.Split(':');
+                dateTimeFront = new DateTime(Convert.ToInt32(date[0]), Convert.ToInt32(date[1]), Convert.ToInt32(date[2]), Convert.ToInt32(time[0]), Convert.ToInt32(time[1]),00);
+                string month = dateTimeFront.Month.ToString().Length < 2 ? "0" + dateTimeFront.Month.ToString() : dateTimeFront.Month.ToString();
+                string day = dateTimeFront.Day.ToString().Length < 2 ? "0" + dateTimeFront.Day.ToString() : dateTimeFront.Day.ToString();
+                string houre = dateTimeFront.Hour.ToString().Length < 2 ? "0" + dateTimeFront.Hour.ToString() : dateTimeFront.Hour.ToString();
+                string minute = dateTimeFront.Minute.ToString().Length < 2 ? "0" + dateTimeFront.Minute.ToString() : dateTimeFront.Minute.ToString();
+                dateTimeNow = dateTimeFront.Year.ToString() + "-" + month + "-" + day+" "+ houre + ":"+ minute + ":"+ "00";
+                dateTimeFrontTo = new DateTime(Convert.ToInt32(dateTo[0]), Convert.ToInt32(dateTo[1]), Convert.ToInt32(dateTo[2]), Convert.ToInt32(timeTo[0]), Convert.ToInt32(timeTo[1]),00);
+                string monthTo = dateTimeFrontTo.Month.ToString().Length < 2 ? "0" + dateTimeFront.Month.ToString() : dateTimeFront.Month.ToString();
+                string dayTo = dateTimeFrontTo.Day.ToString().Length < 2 ? "0" + dateTimeFrontTo.Day.ToString() : dateTimeFrontTo.Day.ToString();
+                string houreTo = dateTimeFrontTo.Hour.ToString().Length < 2 ? "0" + dateTimeFrontTo.Hour.ToString() : dateTimeFrontTo.Hour.ToString();
+                string minuteTo = dateTimeFrontTo.Minute.ToString().Length < 2 ? "0" + dateTimeFrontTo.Minute.ToString() : dateTimeFrontTo.Minute.ToString();
+                dateTimeTo = dateTimeFrontTo.Year.ToString() + "-" + monthTo + "-" + dayTo + " " + houreTo + ":" + minuteTo + ":" + "00";
+                //dateTimeTo = dateTimeFrontTo.ToString("yyyy-MM-dd hh:mm:ss");
             }
             else
             {
                 DateTime dateTimeUTC = DateTime.UtcNow;
                 dateTimeNow = dateTimeUTC.AddHours(3).ToString("yyyy-MM-dd hh:mm:ss");
+                dateTimeTo = "";
             }           
 
 
             Dictionary<string, string> requestMessageDict = new Dictionary<string, string>
             {
                 ["token"] = "N2U1OThkZDZkZDliZGFiM/lAfhoRNk0D+iJh2Z1h1fpYEUWXkzsbvGg1",
-                ["date"] = dateTimeNow
+                ["date"] = dateTimeNow,
+                ["to"] = dateTimeTo
             };
 
             //try
@@ -274,13 +288,16 @@ namespace voteCollector.Controllers
                     return Ok(reportQrCodeExchange);
                 }
             }
-
+            List<Item> items = new List<Item>();
+            items.Add(reportQrCodeExchange.foundQRcodes.Last());
+            reportQrCodeExchange.foundQRcodes.Clear();
+            reportQrCodeExchange.foundQRcodes = items;
             return Ok(reportQrCodeExchange);
         }
 
-        public async Task<string> PostRequestHttpAsync(string url, string json)
+        public async Task<string> PostRequestHttpAsync(string url, string jsonData)
         {
-            using HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            using HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await httpClient.PostAsync(url, content).ConfigureAwait(false);
 
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -350,7 +367,7 @@ namespace voteCollector.Controllers
 
             foreach (KeyValuePair<string,string> keyValue in dataQRcodes.items)
             {
-                if (keyValue.Key != null && keyValue.Key != "")
+                if (keyValue.Key != null && !keyValue.Key.Equals(""))
                 {
                     DateTime dateTimeCheck;
                     try
@@ -371,7 +388,7 @@ namespace voteCollector.Controllers
                     {
                         numberMarkedCodes++;
                         numberNotFound++;
-                        reportQrCodeExchange.notFoundQRcodes.Add(new Item { qrText = keyValue.Key, date = keyValue.Value });
+                        //reportQrCodeExchange.notFoundQRcodes.Add(new Item { qrText = keyValue.Key, date = keyValue.Value });
                     }
                 }
             }
@@ -383,27 +400,38 @@ namespace voteCollector.Controllers
 
         public async Task<bool> CheckQrCode(string qrCodes, DateTime dateTime, ServiceFriends serviceFriends)
         {
-                Friend friendUpdate;
-                try
+            Friend friendUpdate;
+            try
+            {
+                friendUpdate = serviceFriends.FindUserByQRtext(qrCodes);
+                if (friendUpdate != null && friendUpdate.Voter)
                 {
-                    friendUpdate = serviceFriends.FindUserByQRtext(qrCodes);
+                    return true;
+                }
+                else if(friendUpdate != null) {
                     friendUpdate.Voter = true;
                     friendUpdate.VotingDate = dateTime;
                 }
-                catch
+                else
                 {
                     return false;
                 }
+                
+            }
+            catch
+            {
+                return false;
+            }
 
-                try
-                {
-                    await serviceFriends.SaveFriends(friendUpdate);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }            
+            try
+            {
+                await serviceFriends.SaveFriends(friendUpdate);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         //Проверка типа объекта в JSON после имени свойства "items"

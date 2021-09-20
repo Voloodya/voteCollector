@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
 using System;
 using voteCollector.Data;
+using voteCollector.ModelsHttpSender;
 
 namespace voteCollector
 {
@@ -75,6 +77,28 @@ namespace voteCollector
 
             //Add
             services.AddControllers().AddNewtonsoftJson();
+
+            // Add
+            //services.AddQuartz(q =>
+            //{
+            //    q.UseMicrosoftDependencyInjectionJobFactory();
+
+            //    // Create a "key" for the job
+            //    var jobKey = new JobKey("RequestJob");
+
+            //    // Register the job with the DI container
+            //    q.AddJob<RequestJob>(opts => opts.WithIdentity(jobKey));
+
+            //    // Create a trigger for the job
+            //    q.AddTrigger(opts => opts
+            //        .ForJob(jobKey) // link to the RequestJob
+            //        .WithIdentity("RequestJob-trigger") // give the trigger a unique name
+            //        .StartNow()
+            //        .WithSimpleSchedule(x =>
+            //            x.WithIntervalInMinutes(20)
+            //            .RepeatForever()));
+            //});
+            //services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

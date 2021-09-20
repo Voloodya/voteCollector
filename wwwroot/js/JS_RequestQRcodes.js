@@ -4,12 +4,16 @@ if (window.location.href.substring(0, 16) == "http://localhost") {
     partMyURL = '';
 }
 
-async function RequestQRcodes(idObjectDate, idObjectTime) {
+async function RequestQRcodes(idObjectDate, idObjectTime, idObjectDateTo, idObjectTimeTo) {
 
     var date = document.getElementById(idObjectDate).value;
     var time = document.getElementById(idObjectTime).value;
 
-    var formData = { 'date': date, 'time': time };
+    var dateTo = document.getElementById(idObjectDateTo).value;
+    var timeTo = document.getElementById(idObjectTimeTo).value;
+
+    var formData = { 'date': date, 'time': time, 'dateTo': dateTo, 'timeTo': timeTo};
+
     $.ajax({
         type: 'POST',
         url: partMyURL + '/api/QRcodeСheckAPI/requestqrcodesreceiving',
