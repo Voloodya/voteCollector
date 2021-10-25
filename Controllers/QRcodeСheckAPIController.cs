@@ -19,7 +19,7 @@ namespace voteCollector.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    //[Authorize(Roles = "admin, user")]
+    [Authorize(Roles = "admin, user")]
     public class QRcodeСheckAPIController : ControllerBase
     {
         private readonly HttpClient httpClient;
@@ -33,7 +33,7 @@ namespace voteCollector.Controllers
 
         // "/api/QRcodeСheckAPI/checkqrcode?qrText="
         [HttpGet]
-        [Route("checkqrcode0")]
+        [Route("checkqrcode")]
         public async Task<IActionResult> CheckQRcode(String qrText)
         {
             if (qrText != null && qrText != "")
@@ -72,7 +72,7 @@ namespace voteCollector.Controllers
 
         // "/api/QRcodeСheckAPI/checphonenumber?phoneNumber="
         [HttpGet]
-        [Route("checkphonenumber0")]
+        [Route("checkphonenumber")]
         public async Task<IActionResult> CheckPhoneNumber(String phoneNumber)
         {
             if (phoneNumber != null && phoneNumber != "")
@@ -111,7 +111,7 @@ namespace voteCollector.Controllers
 
         //"/api/QRcodeСheckAPI/checkmasjsonqrcode"
         [HttpPost]
-        [Route("checkmasjsonqrcode0")]
+        [Route("checkmasjsonqrcode")]
         public void CheckMasjsonqrcode(string[] qrCodeDTOs)
         {
             if (qrCodeDTOs.Length > 0)
@@ -149,7 +149,7 @@ namespace voteCollector.Controllers
 
         //"/api/QRcodeСheckAPI/checkmasjsonphonenumber"
         [HttpPost]
-        [Route("checkmasjsonphonenumber0")]
+        [Route("checkmasjsonphonenumber")]
         public void CheckMasjsonPhonenumber(string[] phoneNumberDTOs)
         {
 

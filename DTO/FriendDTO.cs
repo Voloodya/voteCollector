@@ -23,7 +23,9 @@ namespace voteCollector.DTO
         public string ElectiralDistrict { get; set; }
         public string PollingStationName { get; set; }
         public string Organization { get; set; }
+        public int IdOrganization { get; set; }
         public string FieldActivityName { get; set; }
+        public int IdFieldActivity { get; set; }
         public string PhoneNumberResponsible { get; set; }
         public string DateRegistrationSite { get; set; }
         public string VotingDate { get; set; }
@@ -32,6 +34,7 @@ namespace voteCollector.DTO
         public string Email { get; set; }
         public string Description { get; set; }
         public string Group { get; set; }
+        public int IdGroup { get; set; }
         public long? UserId { get; set; }
         public string UserName { get; set; }
         public string LoginUsers { get; set; }
@@ -39,6 +42,7 @@ namespace voteCollector.DTO
         public string FriendStatus { get; set; }
         public byte[] ByteQrcode { get; set; }
         public string qrCodeImageAsBase64 { get; set; }
+        public string userNameMessanger { get; set; }
 
     }
 }

@@ -1,198 +1,8 @@
-﻿@model IEnumerable<voteCollector.Models.Friend>
-
+﻿@model IEnumerable<Friend>;
 @{
-    ViewData["Title"] = "Index";
-}
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
-@functions {
-    public string GetAntiXsrfRequestToken()
-    {
-        return Xsrf.GetAndStoreTokens(Context).RequestToken;
-    }
-}
-<style>
-    #buttonsright input {
-        font-size: 12px;
-        padding: 4px 2px;
-        border: solid 1px burlywood;
-        width: 100%;
-        margin: 2px 0 20px;
-        border-radius: 5px;
-        display: block;
-    }
-
-    #friendTable {
-        counter-reset: rowNumber;
-        font-size: 14px;
-    }
-
-        #friendTable thead {
-            background: Gainsboro;
-            word-wrap: break-word;
-            /* word-break: break-all; */
-        }
-
-        #friendTable tbody tr {
-            counter-increment: rowNumber;
-            font-size: 14px;
-        }
-
-        #friendTable tr td:first-child::before {
-            content: counter(rowNumber);
-            min-width: 1em;
-            margin-right: 0.5em;
-            font-size: 14px;
-        }
-</style>
-
-<div id="buttonsright">
-    <p>
-        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Выйти</a>
-    </p>
-</div>
-
-@if (User.Identity.IsAuthenticated)
-{
-    <p><font size="4" color="black" face="Arial">@User.Identity.Name</font></p>
-
-    @if (!@User.Identity.Name.Equals("unknown@ya.ru"))
-    {
-        <p>
-            <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
-            <a asp-action="LkAdmin">Участники</a> |
-            <a asp-controller="Users" asp-action="Index">Пользователи</a> |
-            <a asp-controller="Groupsusers" asp-action="Index">Группы пользователей</a> |
-            <a asp-controller="Groupus" asp-action="Index">Группы</a> |
-            <a asp-controller="Stations" asp-action="Index">Участки</a> |
-            <a asp-controller="Districts" asp-action="Index">Участки по округам</a> |
-            <a asp-controller="PollingStations" asp-action="Index">Участки по адресам</a> |
-            <a asp-controller="RequestQRcodes" asp-action="Index">Запрос QR-кодов</a> |
-        </p>
-    }
-    else
-    {
-        <p>
-            <a asp-controller="Admin" asp-action="Index">Отчеты</a> |
-            <a asp-action="LkAdmin">Участники</a> |
-        </p>
-    }
-}
-else
-{
-    <a asp-controller="Account" asp-action="Login">Вход</a>
-    <a asp-controller="Account" asp-action="Register">Регистрация</a>
-}
-<br />
-<h1>Участники</h1>
-<hr />
-
-@if (!@User.Identity.Name.Equals("unknown@ya.ru"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-outline-success"><i class="far fa-plus-square"></i>Добавить участника</a>
-        <a class="btn btn-outline-danger" onclick="deleteSelected('friendTable', 21)"><i class="far fa-plus-square"></i>Удалить выбранных</a>
-    </p>
+    ViewData["Title"] = "SearchFriendsByFIO";
 }
 
-<div class="row">
-    <input type="hidden" id="RequestVerificationToken"
-           name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
-
-    <div class="col-md-2">
-        <div class="form-group">
-            <label class="control-label">Организация</label>
-            <select id="SelectFieldActivityId" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="control-label">Подразделение</label>
-            <select id="SelectOrganizationId" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label class="control-label">Подведомств. учреждение</label>
-            <select id="SelectGroupId" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label class="control-label">ФИО</label>
-            <input type="text" id="inputFIO" />
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label class="control-label">  </label>
-            <a class="btn btn-outline-success" onclick="SearchByFIO('inputFIO')"><i class="far fa-plus-square"></i>Поиск</a>
-        </div>
-    </div>
-</div>
-
-
-<table class="table" id="resultVotersDbTable">
-    <tbody>
-        <tr>
-            <td>
-            </td>
-            <td width="200">
-                <font size="3" color="black" face="Arial"><b>Всего участников:</b></font>
-            </td>
-            <td id="totalFriendsServ" align="left">
-                <font size="4" color="black" face="Arial"><b></b></font>
-            </td>
-            <td width="80">
-                <font size="3" color="black" face="Arial"><b>Зарегистрированных:</b></font>
-            </td>
-            <td id="totalVoteServ">
-                <font size="4" color="black" face="Arial"><b></b></font>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td align="center">
-            </td>
-        </tr>
-    </tbody>
-</table>
 <table class="table" id="friendTable">
     <thead>
         <tr>
@@ -257,9 +67,6 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.TextQRcode)
             </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.MicroDistrict)
-                </th>*@
             <th>
                 Пометить
             </th>
@@ -339,8 +146,7 @@ else
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.IdFriend">Править</a> |
                         <a asp-action="Details" asp-route-id="@item.IdFriend">Подробнее</a> |
-                        <a asp-action="Delete" asp-route-id="@item.IdFriend">Удалить</a> |
-                        <a onClick="CreatePDFfileForUser(@item.IdFriend);" href="#">Создать буклет</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdFriend">Удалить</a>
                     </td>
                 </tr>
             }
@@ -482,9 +288,6 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Voter)
             </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.MicroDistrict)
-                </th>*@
             <th>
 
             </th>
@@ -492,105 +295,3 @@ else
         </tr>
     </tfoot>
 </table>
-<table class="table" id="resultTable">
-    <tbody>
-        <tr>
-            <td>
-                <p>
-                    <a id="buttonUploadAll" class="btn btn-secondary btn-block" onclick="UpdateVotersFullFilters()"><i class="far fa-plus-square"></i>Показать всех</a>
-                </p>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td style="display:none">
-            </td>
-            <td style="display:none">
-                <font size="3" color="black" b face="Arial"><b>Итого проголосовавших:</b></font>
-            </td>
-            <td id="totalVoter" style="display:none">
-            </td>
-            <td style="display:none">
-                <font size="3" color="black" b face="Arial"><b>Всего избирателей:</b></font>
-            </td>
-            <td id="totalFriends" align="center" style="display:none">
-                <font size="3" color="black" b face="Arial"></font>
-            </td>
-            <td style="display:none">
-            </td>
-            <td align="center">
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-
-
-
-<environment include="Development">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.2/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.2/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.2/js/dataTables.jqueryui.min.js"></script>
-
-</environment>
-
-<environment include="Production">
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.2/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.2/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="~/lib/DataTables/DataTables-1.11.2/js/dataTables.jqueryui.min.js"></script>
-
-</environment>
-
-@section Scripts {
-
-    <script type="text/javascript" src="~/js/JS_Index_Friends_Admin.js"></script>
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    @{
-        if (TempData["msg"] != null)
-        {
-            <script>
-            alert('@TempData["msg"]')
-            </script>
-        }
-    }
-}
-
-
-

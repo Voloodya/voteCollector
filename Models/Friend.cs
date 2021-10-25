@@ -27,6 +27,9 @@ namespace voteCollector.Models
         [DisplayName("Отчество")]
         [Column("Patronymic_name", TypeName = "varchar(256)")]
         public string PatronymicName { get; set; }
+        [DisplayName("Имя пользователя в Messanger")]
+        [Column("userNameMessanger", TypeName = "varchar(256)")]
+        public string userNameMessanger { get; set; }
         [DisplayName("Дата рожд.")]
         [Required(ErrorMessage = "Не указана дата рождения")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

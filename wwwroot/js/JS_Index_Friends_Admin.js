@@ -339,6 +339,55 @@ function UploadAllElectoralDistrict() {
     });
 }
 
+function SearchByFIO(idObject) {
+
+    var idFielfActivity = Number.parseInt($('#SelectFieldActivityId').val());
+    var idorganization = Number.parseInt($('#SelectOrganizationId').val());
+    var idGroup = Number.parseInt($('#SelectGroupId').val());
+    var inputfio = document.getElementById(idObject);
+    var fiostr = inputfio.value.trim();
+    var masfio = fiostr.split(' ');
+    var formData = {
+        'FamilyName': masfio[0], 'Name': masfio[1],
+        'IdFieldActivity': idFielfActivity, 'IdOrganization': idorganization, 'IdGroup': idGroup
+    };
+    $.ajax({
+        type: 'POST',
+        //    url: '@Url.Action("GetPolingStationsByElectoralDistrict")',
+        url: '/Admin/SearchFriendsByFIO/',
+        headers:
+        {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': $('#RequestVerificationToken').val()
+        },
+        data: JSON.stringify(formData),
+        success: function (data) {
+
+            // Delete rows
+            var friendDataTable = $('#friendTable').DataTable();
+            friendDataTable.rows().remove().draw();
+            //friendDataTable.rows.add($(data)).draw();
+            //friendDataTable.Empty();
+            $('#friendTable').empty();
+            // Destroy object DataTable
+            friendDataTable.destroy();
+
+            // Update tbody new rows with data
+            $('#friendTable').replaceWith(data);
+            UpdatingFields('friendTable', 'numberRecords', 'totalFriends');
+
+            UpdateTablePlagin();
+            CountVoters('friendTable', numberColumnWhithVote);
+
+            OnOffButton('buttonUploadAll', true);
+        },
+        error: function (result, status, er) {
+            alert('error: ' + result + ' status: ' + status + ' er:' + er);
+        }
+    });
+}
+
+
 
 let nrows = document.getElementById('friendTable').tBodies[0].rows.length;
 document.getElementById('totalFriends').innerHTML = nrows;

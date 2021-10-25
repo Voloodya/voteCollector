@@ -311,7 +311,7 @@ namespace CollectVoters.Controllers
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
                         if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                         {
-                            friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                            friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
                         }
                         //friend.Qrcode = fileNameQRcode;
                         friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
@@ -564,7 +564,7 @@ namespace CollectVoters.Controllers
                             //friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
                             if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                             {
-                                friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                                friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
                             }
                             //friend.Qrcode = fileNameQRcode;
 
@@ -952,6 +952,29 @@ namespace CollectVoters.Controllers
             }
             return PartialView(friends);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Obsolete]
+        public async Task<IActionResult> SearchFriendsByFIO([FromBody] FriendDTO friendDTO)
+        {
+            List<Groupu> groupsUser = _serviceUser.GetGroupsUser(User.Identity.Name);
+            Groupu mainGroup = _context.Groupu.Where(g => g.Name.Equals("Main")).FirstOrDefault();
+
+            List<Friend> friends = null;
+
+                if (mainGroup != null && groupsUser.Contains(mainGroup))
+                {
+                    friends = await _serviceFriends.SearchFriendsByFIO(friendDTO).ToListAsync();
+                }
+                else
+                {
+                    friends = await _serviceFriends.SearchFriendsByFIOGroupsUsers(friendDTO, groupsUser).ToListAsync();
+                }
+
+            return PartialView(friends);
+        }
+
 
 
         private bool FriendExists(long id)

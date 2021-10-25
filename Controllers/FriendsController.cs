@@ -201,7 +201,7 @@ namespace voteCollector.Controllers
                         //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
                         if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                         {
-                            friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                            friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
                         }
                         //friend.Qrcode = fileNameQRcode;
                         friend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friend.Telephone);
@@ -472,7 +472,7 @@ namespace voteCollector.Controllers
                             //friend.GroupUId = userSave.Groupsusers.First().GroupUId;
                             if (friend.TextQRcode != null && !friend.TextQRcode.Trim().Equals(""))
                             {
-                                friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), friend.TextQRcode, "png", WayPathQrCodes);
+                                friend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(friend.FamilyName + " " + friend.Name + " " + friend.PatronymicName, friend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + friend.TextQRcode, "png", WayPathQrCodes);
                             }
                             //friend.Qrcode = fileNameQRcode;
 

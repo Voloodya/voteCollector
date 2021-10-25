@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Transactions;
 using voteCollector.Data;
 using voteCollector.DTO;
 using voteCollector.Models;
@@ -68,11 +70,32 @@ namespace voteCollector.Services
             }
             catch (Exception ex)
             {
-                //throw new Exception("Пользователь с данным номером телефона не найден!");
+                Console.WriteLine(ex.Message);
+                return null;
             }
             if (friend==null)
             {
-                //throw new Exception("Пользователь с данным номером телефона не найден!");
+                return null;
+            }
+
+            return friend;
+        }
+        public Friend FindFriendByUserNameMessanger(string userNamemessanger)
+        {
+            Friend friend = null;
+
+            try
+            {
+                friend = _context.Friend.Where(frnd => frnd.userNameMessanger.Equals(userNamemessanger)).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+            if (friend == null)
+            {
+                return null;
             }
 
             return friend;
@@ -92,6 +115,30 @@ namespace voteCollector.Services
                 return ex.ToString();
             }
         }
+
+        public async Task<bool> SaveNewFriends(Friend friend)
+        {
+            try
+            {
+                _context.Add(friend);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
 
         public IQueryable<Friend> GetAllFriends()
         {
@@ -255,7 +302,6 @@ namespace voteCollector.Services
             return numberFriendsDTO;
         }
 
-
         public IQueryable<Friend> SearchFriendsByGroupLimit(GroupDTO groupDTO, int limit)
         {
             IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
@@ -285,6 +331,80 @@ namespace voteCollector.Services
         {
             IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
                 Include(f => f.FriendStatus).Include(f => f.Organization_).Where(frnd => frnd.GroupUId == groupDTO.IdGroup && groupsUser.Contains(frnd.GroupU)).Take(limit);
+
+            return friends;
+        }
+
+        [Obsolete]
+        public IQueryable<Friend> SearchFriendsByFIO(FriendDTO friendDTO)
+        {
+            var predicate = PredicateBuilder.True<Friend>();
+
+            if (friendDTO.FamilyName != null && !friendDTO.FamilyName.Equals(""))
+            {
+                predicate = predicate.And(f => f.FamilyName.Equals(friendDTO.FamilyName));
+            }
+            if (friendDTO.Name != null && !friendDTO.Name.Equals(""))
+            {
+                predicate = predicate.And(f => f.Name.Equals(friendDTO.Name));
+            }
+            if (friendDTO.PatronymicName != null && !friendDTO.PatronymicName.Equals(""))
+            {
+                predicate = predicate.And(f => f.PatronymicName.Equals(friendDTO.PatronymicName));
+            }
+            if (friendDTO.IdFieldActivity != 0)
+            {
+                predicate = predicate.And(f => f.FieldActivityId == friendDTO.IdFieldActivity);
+            }
+            if (friendDTO.IdOrganization != 0)
+            {
+                predicate = predicate.And(f => f.OrganizationId == friendDTO.IdOrganization);
+            }
+            if (friendDTO.IdGroup != 0)
+            {
+                predicate = predicate.And(f => f.GroupUId == friendDTO.IdGroup);
+            }
+
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(predicate);
+
+            return friends;
+        }
+
+        [Obsolete]
+        public IQueryable<Friend> SearchFriendsByFIOGroupsUsers(FriendDTO friendDTO, List<Groupu> groupsUser)
+        {
+            var predicate = PredicateBuilder.True<Friend>();
+
+            predicate = predicate.And(frnd => groupsUser.Contains(frnd.GroupU));
+
+            if (friendDTO.FamilyName != null && !friendDTO.FamilyName.Equals(""))
+            {
+                predicate = predicate.And(f => f.FamilyName.Equals(friendDTO.FamilyName));
+            }
+            if (friendDTO.Name != null && !friendDTO.Name.Equals(""))
+            {
+                predicate = predicate.And(f => f.Name.Equals(friendDTO.Name));
+            }
+            if (friendDTO.PatronymicName != null && !friendDTO.PatronymicName.Equals(""))
+            {
+                predicate = predicate.And(f => f.PatronymicName.Equals(friendDTO.PatronymicName));
+            }
+            if (friendDTO.IdFieldActivity != 0)
+            {
+                predicate = predicate.And(f => f.FieldActivityId == friendDTO.IdFieldActivity);
+            }
+            if (friendDTO.IdOrganization != 0)
+            {
+                predicate = predicate.And(f => f.OrganizationId == friendDTO.IdOrganization);
+            }
+            if (friendDTO.IdGroup != 0)
+            {
+                predicate = predicate.And(f => f.GroupUId == friendDTO.IdGroup);
+            }
+
+            IQueryable<Friend> friends = _context.Friend.Include(f => f.City).Include(f => f.ElectoralDistrict).Include(f => f.FieldActivity).Include(f => f.GroupU).Include(f => f.House).Include(f => f.MicroDistrict).Include(f => f.Station).Include(f => f.Street).Include(f => f.User).
+                Include(f => f.FriendStatus).Include(f => f.Organization_).Where(predicate);
 
             return friends;
         }
@@ -1045,7 +1165,7 @@ namespace voteCollector.Services
 
                 // Генерация QR кода
                 //newFriend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(newFriend.FamilyName + " " + newFriend.Name + " " + newFriend.PatronymicName, newFriend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + newFriend.TextQRcode, "png", WayPathQrCodes);
-                newFriend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(newFriend.FamilyName + " " + newFriend.Name + " " + newFriend.PatronymicName, newFriend.DateBirth.Value.Date.ToString("d"), newFriend.TextQRcode, "png", WayPathQrCodes);
+                newFriend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(newFriend.FamilyName + " " + newFriend.Name + " " + newFriend.PatronymicName, newFriend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + newFriend.TextQRcode, "png", WayPathQrCodes);
                 // newFriend.Qrcode = fileNameQRcode;
 
             }
@@ -1111,6 +1231,78 @@ namespace voteCollector.Services
             return newFriend;
         }
 
+        public Friend CreateFreandMessanger(FriendDTO friendDTO, DateTime dateRegistration)
+        {
+            Friend newFriend = new Friend();
+
+            ServiceUser serviceUser = new ServiceUser(_context);
+
+            newFriend.UserId = friendDTO.UserId;
+            DateTime datesBirth = new DateTime(1980, 1, 1);
+
+            friendDTO.FamilyName = friendDTO.FamilyName != null ? friendDTO.FamilyName.Trim() : null;
+            friendDTO.Name = friendDTO.Name != null ? friendDTO.Name.Trim() : null;
+            friendDTO.PatronymicName = friendDTO.PatronymicName != null ? friendDTO.PatronymicName.Trim() : null;
+            friendDTO.Telephone = friendDTO.Telephone != null ? friendDTO.Telephone.Trim() : null;
+            friendDTO.TextQRcode = friendDTO.TextQRcode != null ? friendDTO.TextQRcode.Trim() : null;
+            friendDTO.Organization = friendDTO.Organization != null ? friendDTO.Organization.Trim() : null;
+            friendDTO.FieldActivityName = friendDTO.FieldActivityName != null ? friendDTO.FieldActivityName.Trim() : null;
+            friendDTO.Group = friendDTO.Group != null ? friendDTO.Group.Trim() : null;
+            friendDTO.LoginUsers = friendDTO.LoginUsers != null ? friendDTO.LoginUsers.Trim() : null;
+            friendDTO.FriendStatus = "Регистрация через мессенджер";
+
+            if (friendDTO.FamilyName != null && !friendDTO.FamilyName.Equals("") && friendDTO.Name != null && !friendDTO.Name.Equals(""))
+            {
+                newFriend.FamilyName = friendDTO.FamilyName;
+                newFriend.Name = friendDTO.Name;
+                newFriend.PatronymicName = friendDTO.PatronymicName;
+            }
+            else
+            {
+                throw new Exception("Не указана фамилия или имя избирателя!");
+            }
+
+            newFriend.DateBirth = datesBirth;
+            newFriend.DateRegistrationSite = dateRegistration;
+            newFriend.Telephone = ServicePhoneNumber.LeaveOnlyNumbers(friendDTO.Telephone);
+
+            User user = serviceUser.SearchUserByUserName(friendDTO.LoginUsers);
+            if (user != null)
+            {
+                newFriend.UserId = user.IdUser;
+            }
+            else
+            {
+                throw new Exception("Не найден пользователь для регистрации!");
+            }
+
+            newFriend.FieldActivityId = _context.Fieldactivity.Where(f => f.Name.Equals(friendDTO.FieldActivityName)).FirstOrDefault().IdFieldActivity;
+
+            Organization organization = _context.Organization.FirstOrDefault(org => org.Name.Equals(friendDTO.Organization));
+
+            if (organization != null)
+            {
+                newFriend.OrganizationId = organization.IdOrganization;
+            }
+            if (friendDTO.Group != null && !friendDTO.Group.Equals(""))
+            {
+                newFriend.GroupUId = _context.Groupu.Where(g => g.Name.Equals(friendDTO.Group)).FirstOrDefault().IdGroup;
+            }
+
+            if (friendDTO.TextQRcode != null && !friendDTO.TextQRcode.Equals(""))
+            {
+                newFriend.TextQRcode = friendDTO.Telephone;
+
+                // Генерация QR кода
+                //newFriend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(newFriend.FamilyName + " " + newFriend.Name + " " + newFriend.PatronymicName, newFriend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + newFriend.TextQRcode, "png", WayPathQrCodes);
+                newFriend.ByteQrcode = QRcodeServices.GenerateQRcodeFile(newFriend.FamilyName + " " + newFriend.Name + " " + newFriend.PatronymicName, newFriend.DateBirth.Value.Date.ToString("d"), NameServer + WayController + '?' + NameQRcodeParametrs + '=' + newFriend.TextQRcode, "png", WayPathQrCodes);
+                // newFriend.Qrcode = fileNameQRcode;
+            }
+            newFriend.FriendStatusId = 3;
+            newFriend.userNameMessanger = friendDTO.userNameMessanger;
+            // Если дублей пользователя в БД не найдено
+            return newFriend;
+        }
 
         public void RemoveFriends(List<Friend> friends)
         {
